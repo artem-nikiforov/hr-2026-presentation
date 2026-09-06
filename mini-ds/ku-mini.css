@@ -1,0 +1,307 @@
+/* ════════════════════════════════════════════════════════════════════════
+   KU MINI · бренд-фундамент (только цвета + корпоративный шрифт)
+   ────────────────────────────────────────────────────────────────────────
+   Облегчённая версия дизайн-системы KU для ЭКСПЕРИМЕНТАЛЬНЫХ, непотоковых
+   проектов. Тут НЕТ компонентов, интерактивов, SCORM-логики и служебных
+   отступов — только фирменные цвета (полная система токенов) и шрифты.
+   Строй что угодно поверх: токены дадут бренд, остальное — на твоё усмотрение.
+
+   ПОДКЛЮЧЕНИЕ (папка mini/ самодостаточна — просто скопируй её в проект):
+     <link rel="stylesheet" href="ku-mini.css">
+     <html lang="ru" data-audience="bk-base">   ← выбор подраздела (см. ниже)
+
+   ЧТО ВНУТРИ
+     1. Шрифты (@font-face) + флюидный корень + минимальный reset
+     2. Слой 1 — палитра (сырые цвета, источник правды)
+     3. Слой 2 — семантические токены + тёмная тема
+     4. Подразделы ЦА («переодевание»): один атрибут перекрашивает проект
+
+   ПОЛНАЯ ДС (компоненты, интерактивы, SCORM, инструменты для курсов) —
+   в корне репозитория. Mini и полная версия используют ОДНИ И ТЕ ЖЕ имена
+   токенов (--ku-*), поэтому разметку легко перенести между ними.
+   ════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   1. ШРИФТЫ + ФЛЮИДНЫЙ КОРЕНЬ + МИНИ-RESET
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Flame — фирменный акцидентный (заголовки). Полная кириллица. */
+@font-face {
+  font-family: "Flame";
+  src: url("fonts/Flame-Regular.otf") format("opentype");
+  font-weight: 400 600; font-display: swap;
+}
+@font-face {
+  font-family: "Flame";
+  src: url("fonts/Flame-Bold.otf") format("opentype");
+  font-weight: 700 900; font-display: swap;
+}
+/* Golos Text — открытый (SIL OFL), основной текст БК-базы. */
+@font-face {
+  font-family: "Golos Text";
+  src: url("fonts/golos-text-cyrillic-wght-normal.woff2") format("woff2");
+  font-weight: 400 700; font-display: swap;
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: "Golos Text";
+  src: url("fonts/golos-text-latin-wght-normal.woff2") format("woff2");
+  font-weight: 400 700; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2212;
+}
+
+
+/* Шрифт как токен — подраздел его переопределяет (дефолт — БК-база). */
+:root {
+  --ku-font-display: "Flame", "Golos Text", system-ui, sans-serif;
+  --ku-font-body:    "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Флюидный корневой размер: плавно 15→18px (мобайл) и 16→20px (десктоп). */
+html {
+  --ku-fs-mobile-min: 15; --ku-fs-mobile-max: 18;
+  --ku-fs-desk-min: 16;   --ku-fs-desk-max: 20;
+  --ku-vw-min: 320; --ku-vw-mid: 768; --ku-vw-max: 1600;
+  font-size: calc(var(--ku-fs-mobile-min) * 1px);
+}
+@media screen and (min-width: 320px) {
+  html { font-size: calc(var(--ku-fs-mobile-min) * 1px +
+    (var(--ku-fs-mobile-max) - var(--ku-fs-mobile-min)) *
+    ((100vw - var(--ku-vw-min) * 1px) / (var(--ku-vw-mid) - var(--ku-vw-min)))); }
+}
+@media screen and (min-width: 768px) {
+  html { font-size: calc(var(--ku-fs-desk-min) * 1px +
+    (var(--ku-fs-desk-max) - var(--ku-fs-desk-min)) *
+    ((100vw - var(--ku-vw-mid) * 1px) / (var(--ku-vw-max) - var(--ku-vw-mid)))); }
+}
+@media screen and (min-width: 1600px) { html { font-size: calc(var(--ku-fs-desk-max) * 1px); } }
+
+/* Минимальный reset — ровно чтобы шрифт и цвета «сели». Никаких компонентов. */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--ku-font-body);
+  color: var(--ku-text);
+  background-color: var(--ku-bg);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .28s ease, color .28s ease;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ku-font-display);
+  font-weight: 700; line-height: 1.1; margin: 0;
+}
+img, svg, video { display: block; max-width: 100%; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2. ПАЛИТРА — сырые значения (единственный источник правды).
+      Семантика и подразделы ссылаются ТОЛЬКО сюда. Меняешь бренд — тут.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --ku__white: #ffffff;
+  --ku__black: #1c1206;
+
+  /* Flame / оранжевый (основной бренд-акцент) */
+  --ku__flame-50:  #fff4ea; --ku__flame-100: #ffe6cd; --ku__flame-200: #ffc999;
+  --ku__flame-300: #ffab66; --ku__flame-400: #ff9645; --ku__flame-500: #ff8732;
+  --ku__flame-600: #f26a12; --ku__flame-700: #cc5107; --ku__flame-800: #9e3f0a;
+  --ku__flame-900: #7a330d;
+
+  /* Ember / красный (нажатие, «пламя», ошибка) */
+  --ku__ember-50: #fdecea; --ku__ember-100: #fbc9c2; --ku__ember-300: #f2705f;
+  --ku__ember-500: #d62300; --ku__ember-600: #b81e00; --ku__ember-700: #931800;
+
+  /* Cream / тёплый песочный */
+  --ku__cream-50: #fdfaf5; --ku__cream-100: #f9f2e7; --ku__cream-200: #f5ebdc;
+  --ku__cream-300: #ecdec5; --ku__cream-400: #ddc9a6;
+
+  /* Ink / коричневый (текст, «уголь» бренда) */
+  --ku__ink-400: #8a6a55; --ku__ink-500: #6b4632; --ku__ink-600: #502314;
+  --ku__ink-700: #3c1a0f; --ku__ink-900: #241009;
+
+  /* Функциональные */
+  --ku__green-100: #e2f5e8; --ku__green-500: #198737; --ku__green-600: #126128;
+  --ku__amber-400: #ffaa00; --ku__amber-100: #fff0cf;
+  --ku__sky-500: #2e79d6;   --ku__sky-100: #e4eefb;
+
+  /* Тёмная тема: холодные «ночные» нейтрали */
+  --ku__night-700: #2a2118; --ku__night-800: #201812;
+  --ku__night-900: #17110c; --ku__night-950: #100b07;
+
+  /* Подраздел МС — цвета направлений (main / contrast), из Figma. */
+  --ku__ms-inzh: #2256DE;     --ku__ms-inzh-contrast: #D72300;
+  --ku__ms-lc: #00C040;       --ku__ms-lc-contrast: #8390FA;
+  --ku__ms-restoran: #7968E8; --ku__ms-restoran-contrast: #FF1053;
+  --ku__ms-lyudi: #36AEA1;    --ku__ms-lyudi-contrast: #FF64AF;
+  --ku__ms-produkty: #FF7C0F; --ku__ms-produkty-contrast: #74B133;
+  --ku__ms-stancii: #4C2719;  --ku__ms-stancii-contrast: #A2D6F9;
+  --ku__ms-king: #FF0035;     --ku__ms-king-contrast: #66C7F4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   3. СЕМАНТИЧЕСКИЕ ТОКЕНЫ (для чего цвет) + ТЁМНАЯ ТЕМА
+      Используй В СВОЁМ коде именно эти имена — тогда смена бренда/темы/
+      подраздела перекрасит проект без правок.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  color-scheme: light;
+  --ku-brand-on: #ffffff;                     /* текст поверх бренд-заливки */
+
+  /* Поверхности */
+  --ku-bg: var(--ku__white);
+  --ku-surface: var(--ku__cream-100);
+  --ku-surface-2: var(--ku__cream-200);
+  --ku-card: var(--ku__white);
+  --ku-elevated: var(--ku__white);
+
+  /* Текст */
+  --ku-text: var(--ku__ink-600);
+  --ku-text-soft: var(--ku__ink-500);
+  --ku-text-muted: color-mix(in srgb, var(--ku__ink-500) 60%, transparent);
+  --ku-text-on-dark: var(--ku__cream-50);
+
+  /* Линии */
+  --ku-border: color-mix(in srgb, var(--ku__ink-600) 14%, transparent);
+  --ku-border-soft: color-mix(in srgb, var(--ku__ink-600) 8%, transparent);
+  --ku-divider: var(--ku__cream-300);
+
+  /* Функциональные (+ мягкие подложки) */
+  --ku-success: var(--ku__green-500);   --ku-success-soft: var(--ku__green-100);
+  --ku-danger:  var(--ku__ember-500);   --ku-danger-soft:  var(--ku__ember-50);
+  --ku-warning: var(--ku__amber-400);   --ku-warning-soft: var(--ku__amber-100);
+  --ku-info:    var(--ku__sky-500);     --ku-info-soft:    var(--ku__sky-100);
+
+  /* Инфографика — 5 различимых серий */
+  --ku-viz-1: var(--ku__flame-500); --ku-viz-2: var(--ku__sky-500);
+  --ku-viz-3: var(--ku__green-500); --ku-viz-4: var(--ku__amber-400);
+  --ku-viz-5: var(--ku__ink-500);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ku-brand-on: #1c1206;
+
+  --ku-bg: var(--ku__night-900);
+  --ku-surface: var(--ku__night-800);
+  --ku-surface-2: var(--ku__night-700);
+  --ku-card: var(--ku__night-800);
+  --ku-elevated: var(--ku__night-700);
+
+  --ku-text: var(--ku__cream-100);
+  --ku-text-soft: color-mix(in srgb, var(--ku__cream-100) 78%, transparent);
+  --ku-text-muted: color-mix(in srgb, var(--ku__cream-100) 52%, transparent);
+  --ku-text-on-dark: var(--ku__cream-50);
+
+  --ku-border: color-mix(in srgb, var(--ku__cream-100) 16%, transparent);
+  --ku-border-soft: color-mix(in srgb, var(--ku__cream-100) 9%, transparent);
+  --ku-divider: color-mix(in srgb, var(--ku__cream-100) 12%, transparent);
+
+  --ku-success-soft: color-mix(in srgb, var(--ku__green-500) 20%, var(--ku__night-800));
+  --ku-danger-soft:  color-mix(in srgb, var(--ku__ember-500) 20%, var(--ku__night-800));
+  --ku-warning-soft: color-mix(in srgb, var(--ku__amber-400) 18%, var(--ku__night-800));
+  --ku-info-soft:    color-mix(in srgb, var(--ku__sky-500) 20%, var(--ku__night-800));
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   4. ПОДРАЗДЕЛЫ ЦА («переодевание»)
+      Один-два атрибута в корне перекрашивают весь проект + меняют шрифт:
+        <html data-audience="bk-base">              ← база (по умолчанию)
+        <html data-audience="ms" data-direction="lyudi">  ← МС + направление
+      Оттенки/градиент бренда ВЫВОДЯТСЯ из --ku-brand + --ku-contrast.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Деривация: из двух цветов — полная брендовая палитра (фолбэк-значения). */
+:root {
+  --ku-brand:        var(--ku__flame-500);
+  --ku-contrast:     var(--ku__ember-500);
+  --ku-contrast-on:  #ffffff;
+  --ku-brand-strong: color-mix(in srgb, var(--ku-brand) 82%, #000);
+  --ku-brand-press:  color-mix(in srgb, var(--ku-brand) 64%, #000);
+  --ku-brand-ring:   color-mix(in srgb, var(--ku-brand) 45%, transparent);
+  --ku-brand-soft:   color-mix(in srgb, var(--ku-brand) 12%, var(--ku__white));
+  --ku-shadow-brand: 0 10px 28px color-mix(in srgb, var(--ku-brand) 35%, transparent);
+  --ku-grad-brand:   linear-gradient(135deg, var(--ku-brand), var(--ku-contrast));
+  --ku-grad-brand-soft: linear-gradient(135deg,
+                        color-mix(in srgb, var(--ku-brand) 14%, var(--ku__white)),
+                        color-mix(in srgb, var(--ku-contrast) 12%, var(--ku__white)));
+}
+[data-theme="dark"] {
+  --ku-brand-soft: color-mix(in srgb, var(--ku-brand) 18%, var(--ku__night-800));
+}
+
+/* Трек · БК · База — Flame + Golos Text, фирменный градиент, белые фоны. */
+:root[data-audience="bk-base"] {
+  --ku-audience-name: "БК · База";
+  --ku-font-display: "Flame", "Golos Text", system-ui, sans-serif;
+  --ku-font-body:    "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ku-surface:   #ffffff;
+  --ku-surface-2: #f2f4f6;
+  --ku-divider:   #e9ecef;
+  --ku-brand:        var(--ku__flame-500);
+  --ku-contrast:     var(--ku__ember-500);
+  --ku-brand-strong: var(--ku__flame-600);
+  --ku-brand-press:  var(--ku__ember-500);
+  --ku-grad-brand:   linear-gradient(135deg, var(--ku__flame-400), var(--ku__ember-500));
+}
+
+/* Локальные акценты БК-базы: класс на блоке перекрашивает его ветку в другой
+   фирменный цвет (оттенки выведутся сами). Работает только в bk-base. */
+.ku-tint-ember { --_tint: var(--ku__ember-500); }
+.ku-tint-sky   { --_tint: var(--ku__sky-500); }
+.ku-tint-green { --_tint: var(--ku__green-500); }
+.ku-tint-amber { --_tint: var(--ku__amber-400); }
+.ku-tint-ink   { --_tint: var(--ku__ink-500); }
+:root[data-audience="bk-base"] [class*="ku-tint-"] {
+  --ku-brand:        var(--_tint);
+  --ku-brand-strong: color-mix(in srgb, var(--_tint) 78%, #000);
+  --ku-brand-press:  color-mix(in srgb, var(--_tint) 62%, #000);
+  --ku-brand-soft:   color-mix(in srgb, var(--_tint) 12%, var(--ku__white));
+  --ku-brand-ring:   color-mix(in srgb, var(--_tint) 45%, transparent);
+  --ku-shadow-brand: 0 10px 28px color-mix(in srgb, var(--_tint) 35%, transparent);
+  --ku-grad-brand:   linear-gradient(135deg, var(--_tint), color-mix(in srgb, var(--_tint) 70%, #3a1505));
+}
+
+/* Трек · МС · Менеджер смены — Montserrat, своя нейтральная палитра, цвета от
+   направления (data-direction). Тёмная тема у МС не предусмотрена. */
+:root[data-audience="ms"] {
+  --ku-audience-name: "МС · Менеджер смены";
+  --ku-font-display: "Montserrat", system-ui, sans-serif;
+  --ku-font-body:    "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ku-brand:    var(--ku__ms-inzh);
+  --ku-contrast: var(--ku__ms-inzh-contrast);
+  --ku-bg:        #ffffff;
+  --ku-surface:   color-mix(in srgb, var(--ku-brand) 5%, #f4f6f8);
+  --ku-surface-2: color-mix(in srgb, var(--ku-brand) 9%, #e9edf1);
+  --ku-card:      #ffffff;
+  --ku-elevated:  #ffffff;
+  --ku-text:      color-mix(in srgb, var(--ku-brand) 18%, #14181f);
+  --ku-text-soft: color-mix(in srgb, var(--ku-text) 72%, transparent);
+  --ku-text-muted:color-mix(in srgb, var(--ku-text) 48%, transparent);
+  --ku-border:      color-mix(in srgb, var(--ku-brand) 20%, #d9dee4);
+  --ku-border-soft: color-mix(in srgb, var(--ku-brand) 10%, #e7ebef);
+  --ku-divider:     color-mix(in srgb, var(--ku-brand) 12%, #e7ebef);
+}
+:root[data-audience="ms"][data-direction="inzh"]     { --ku-direction-name: "Инженерный обход";      --ku-brand: var(--ku__ms-inzh);     --ku-contrast: var(--ku__ms-inzh-contrast); }
+:root[data-audience="ms"][data-direction="lc"]       { --ku-direction-name: "Показатель LC";         --ku-brand: var(--ku__ms-lc);       --ku-contrast: var(--ku__ms-lc-contrast); }
+:root[data-audience="ms"][data-direction="restoran"] { --ku-direction-name: "Управление рестораном"; --ku-brand: var(--ku__ms-restoran); --ku-contrast: var(--ku__ms-restoran-contrast); }
+:root[data-audience="ms"][data-direction="lyudi"]    { --ku-direction-name: "Люди";                  --ku-brand: var(--ku__ms-lyudi);    --ku-contrast: var(--ku__ms-lyudi-contrast); }
+:root[data-audience="ms"][data-direction="produkty"] { --ku-direction-name: "Продукты";              --ku-brand: var(--ku__ms-produkty); --ku-contrast: var(--ku__ms-produkty-contrast); }
+:root[data-audience="ms"][data-direction="stancii"]  { --ku-direction-name: "Станции и касса";        --ku-brand: var(--ku__ms-stancii);  --ku-contrast: var(--ku__ms-stancii-contrast);  --ku-contrast-on: #14181f; }
+:root[data-audience="ms"][data-direction="king-avto"]{ --ku-direction-name: "Кинг Авто";              --ku-brand: var(--ku__ms-king);     --ku-contrast: var(--ku__ms-king-contrast);     --ku-contrast-on: #14181f; }
+
+/* Треки ДР/ЗД и ТУ — подготовлены (Flame + Golos), при желании активируй. */
+:root[data-audience="dr-zd"] {
+  --ku-audience-name: "ДР/ЗД · Директор ресторана";
+  --ku-font-display: "Flame", "Golos Text", system-ui, sans-serif;
+  --ku-font-body:    "Golos Text", system-ui, sans-serif;
+  --ku-brand: var(--ku__ember-500); --ku-contrast: var(--ku__ink-600);
+}
+:root[data-audience="tu"] {
+  --ku-audience-name: "ТУ · Территориальный управляющий";
+  --ku-font-display: "Flame", "Golos Text", system-ui, sans-serif;
+  --ku-font-body:    "Golos Text", system-ui, sans-serif;
+  --ku-brand: var(--ku__ink-500); --ku-contrast: var(--ku__flame-500);
+}

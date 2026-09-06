@@ -1,0 +1,831 @@
+<meta charset="utf-8">
+<title>Учебный центр · Сцены</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;900&display=swap">
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   Токены — копия слоёв 2–4 из mini-ds/ku-mini.css (audience: bk-base,
+   theme: dark). Имена совпадают с полной ДС, поэтому вёрстка переносится.
+   Flame подключается локально из mini-ds/fonts; если файла нет
+   (например, при публикации вовне) — падаем на Golos Text.
+   ═══════════════════════════════════════════════════════════════════ */
+@font-face{font-family:"Flame";src:url("mini-ds/fonts/Flame-Bold.otf") format("opentype");font-weight:700 900;font-display:swap}
+@font-face{font-family:"Flame";src:url("mini-ds/fonts/Flame-Regular.otf") format("opentype");font-weight:400 600;font-display:swap}
+
+:root{
+  /* палитра */
+  --ku__white:#ffffff; --ku__black:#1c1206;
+  --ku__flame-100:#ffe6cd; --ku__flame-200:#ffc999; --ku__flame-300:#ffab66;
+  --ku__flame-400:#ff9645; --ku__flame-500:#ff8732; --ku__flame-600:#f26a12;
+  --ku__ember-500:#d62300; --ku__ember-300:#f2705f;
+  --ku__cream-50:#fdfaf5; --ku__cream-100:#f9f2e7; --ku__cream-200:#f5ebdc; --ku__cream-300:#ecdec5;
+  --ku__ink-400:#8a6a55; --ku__ink-500:#6b4632; --ku__ink-600:#502314;
+  --ku__green-500:#198737; --ku__amber-400:#ffaa00; --ku__sky-500:#2e79d6;
+  --ku__night-700:#2a2118; --ku__night-800:#201812; --ku__night-900:#17110c; --ku__night-950:#100b07;
+
+  /* семантика · dark */
+  color-scheme:dark;
+  --ku-brand:var(--ku__flame-500);
+  --ku-contrast:var(--ku__ember-500);
+  --ku-brand-on:#1c1206;
+  --ku-brand-strong:var(--ku__flame-600);
+  --ku-brand-ring:color-mix(in srgb,var(--ku-brand) 45%,transparent);
+  --ku-grad-brand:linear-gradient(135deg,var(--ku__flame-400),var(--ku__ember-500));
+  --ku-bg:var(--ku__night-900);
+  --ku-surface:var(--ku__night-800);
+  --ku-surface-2:var(--ku__night-700);
+  --ku-card:var(--ku__night-800);
+  --ku-text:var(--ku__cream-100);
+  --ku-text-soft:color-mix(in srgb,var(--ku__cream-100) 78%,transparent);
+  --ku-text-muted:color-mix(in srgb,var(--ku__cream-100) 52%,transparent);
+  --ku-border:color-mix(in srgb,var(--ku__cream-100) 16%,transparent);
+  --ku-border-soft:color-mix(in srgb,var(--ku__cream-100) 9%,transparent);
+  --ku-success:var(--ku__green-500); --ku-warning:var(--ku__amber-400);
+  --ku-viz-1:var(--ku__flame-500); --ku-viz-2:var(--ku__sky-500);
+  --ku-viz-3:var(--ku__green-500); --ku-viz-4:var(--ku__amber-400); --ku-viz-5:var(--ku__cream-300);
+
+  --ku-font-display:"Flame","Golos Text",system-ui,sans-serif;
+  --ku-font-body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--ku__night-950);color:var(--ku-text);
+  font-family:var(--ku-font-body);-webkit-font-smoothing:antialiased;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+h1,h2,h3{font-family:var(--ku-font-display);font-weight:700;line-height:1.02;margin:0;letter-spacing:-.015em}
+p{margin:0}
+img,svg{display:block;max-width:100%}
+
+/* ═══ КАДР 16:9 ═══ */
+.frame{
+  position:relative;
+  width:min(100vw,calc((100vh - 92px) * 16 / 9));
+  aspect-ratio:16/9;
+  background:var(--ku-bg);
+  overflow:hidden;
+  container-type:size;container-name:stage;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);
+}
+body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
+
+.scene{
+  position:absolute;inset:0;opacity:0;visibility:hidden;
+  transition:opacity .55s ease,visibility .55s;
+}
+.scene.on{opacity:1;visibility:visible}
+
+/* фото-подложка */
+.shot{position:absolute;inset:0;overflow:hidden;background:var(--ku__night-950)}
+.shot figure{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .8s ease}
+.shot figure.on{opacity:1}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:center;
+  animation:kb 14s ease-out both}
+@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.11)}}
+.shot .ph{
+  position:absolute;inset:0;display:flex;flex-direction:column;gap:1.4cqh;
+  align-items:center;justify-content:center;text-align:center;padding:6cqw;
+  background:
+    repeating-linear-gradient(135deg,transparent 0 14px,rgba(255,135,50,.05) 14px 28px),
+    radial-gradient(70% 60% at 50% 40%,var(--ku__night-700),var(--ku__night-950));
+}
+.shot .ph .k{font-family:var(--ku-font-display);font-size:2.8cqh;color:var(--ku-brand);letter-spacing:.16em;text-transform:uppercase}
+.shot .ph .t{font-size:3.4cqh;color:var(--ku-text-soft);max-width:60ch;line-height:1.45}
+.shot .ph .f{font-size:2.4cqh;color:var(--ku-text-muted);font-variant-numeric:tabular-nums}
+.veil{position:absolute;inset:0;background:linear-gradient(90deg,rgba(16,11,7,.94) 0%,rgba(16,11,7,.78) 42%,rgba(16,11,7,.24) 100%)}
+.veil.center{background:radial-gradient(75% 75% at 50% 50%,rgba(16,11,7,.55),rgba(16,11,7,.93))}
+.veil.soft{background:linear-gradient(0deg,rgba(16,11,7,.9) 8%,rgba(16,11,7,.35) 60%,rgba(16,11,7,.55) 100%)}
+
+/* слой текста и инфографики */
+.layer{position:absolute;inset:0;padding:7cqh 7cqw;display:flex;flex-direction:column;justify-content:center;gap:2.6cqh}
+.layer.center{align-items:center;text-align:center}
+.layer.wide{padding-inline:5cqw}
+
+.kicker{font-family:var(--ku-font-display);font-size:2.8cqh;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ku-brand);display:flex;align-items:center;gap:1.4cqw}
+.kicker::before{content:"";width:5cqw;height:2px;background:var(--ku-brand)}
+.layer.center .kicker{justify-content:center}
+.title{font-size:8.6cqh;max-width:16ch;text-wrap:balance}
+.title.sm{font-size:7.2cqh;max-width:20ch}
+.sub{font-size:4.2cqh;line-height:1.35;color:var(--ku-text-soft);max-width:40ch}
+.huge{font-family:var(--ku-font-display);font-weight:900;font-size:26cqh;line-height:.82;
+  background:var(--ku-grad-brand);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-variant-numeric:tabular-nums}
+.huge.plain{background:none;color:var(--ku-text)}
+
+/* цифры */
+.stats{display:flex;gap:6cqw;flex-wrap:wrap}
+.stat .v{font-family:var(--ku-font-display);font-weight:900;font-size:14cqh;line-height:.9;color:var(--ku-brand);font-variant-numeric:tabular-nums}
+.stat .c{font-size:3.4cqh;color:var(--ku-text-soft);margin-top:.6cqh}
+
+/* лесенка ролей */
+.ladder{display:flex;flex-direction:column;gap:.9cqh;width:100%}
+.rung{display:grid;grid-template-columns:11cqw 1fr;gap:2.4cqw;align-items:center;
+  padding:1.6cqh 0;border-top:1px solid var(--ku-border-soft);opacity:.28;transition:opacity .5s ease}
+.rung.lit{opacity:1}
+.rung .yr{font-family:var(--ku-font-display);font-size:4.2cqh;color:var(--ku-text-muted)}
+.rung.lit .yr{color:var(--ku-brand)}
+.rung.dead{opacity:.4;filter:grayscale(1)}
+.chips{display:flex;flex-wrap:wrap;gap:.7cqw}
+.chip{font-size:3cqh;padding:.7cqh 1.6cqw;border-radius:999px;border:1px solid var(--ku-border);
+  color:var(--ku-text-muted);transition:.45s}
+.rung.lit .chip{border-color:var(--ku-brand-ring);color:var(--ku__flame-200);background:color-mix(in srgb,var(--ku-brand) 12%,transparent)}
+.rung .meta{font-size:2.7cqh;color:var(--ku-text-muted);margin-top:.4cqh}
+
+/* карточки */
+.cards{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2cqw;width:100%}
+.card{background:color-mix(in srgb,var(--ku-surface) 88%,transparent);backdrop-filter:blur(8px);
+  border-radius:.6cqw;padding:4cqh 2.6cqw;display:flex;flex-direction:column;gap:1.2cqh;
+  border-top:3px solid var(--ku-contrast)}
+.card.ok{border-top-color:var(--ku-success)}
+.card h3{font-size:4.6cqh}
+.card p{font-size:3.2cqh;color:var(--ku-text-soft);line-height:1.4}
+.card .n{font-family:var(--ku-font-display);font-size:2.6cqh;letter-spacing:.14em;color:var(--ku-contrast)}
+.card.ok .n{color:var(--ku-success)}
+
+/* было → стало */
+.res{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2cqw;width:100%}
+.ba{background:color-mix(in srgb,var(--ku-surface) 88%,transparent);border-radius:.6cqw;padding:3.4cqh 2.2cqw;
+  display:flex;flex-direction:column;gap:1.4cqh}
+.ba .k{font-size:3cqh;color:var(--ku-text-soft);min-height:8cqh}
+.ba .was{font-family:var(--ku-font-display);font-size:4.4cqh;color:var(--ku-text-muted);text-decoration:line-through;text-decoration-thickness:2px}
+.ba .now{font-family:var(--ku-font-display);font-weight:900;font-size:8.4cqh;line-height:1;color:var(--ku-success);font-variant-numeric:tabular-nums}
+.ba.brand .now{color:var(--ku-brand)}
+
+/* хаос → порядок */
+.flow{display:grid;grid-template-columns:1fr auto 1fr;gap:3cqw;align-items:center;width:100%}
+.docs{display:flex;flex-direction:column;gap:.9cqh}
+.doc{font-size:3cqh;color:var(--ku-text-muted);background:var(--ku-surface);border:1px solid var(--ku-border-soft);
+  padding:1.4cqh 1.6cqw;border-radius:.3cqw}
+.docs.mess .doc:nth-child(1){transform:rotate(-1.4deg)}
+.docs.mess .doc:nth-child(2){transform:rotate(1deg) translateX(1.6cqw)}
+.docs.mess .doc:nth-child(3){transform:rotate(-.6deg) translateX(-.8cqw)}
+.docs.mess .doc:nth-child(4){transform:rotate(1.8deg) translateX(2.4cqw)}
+.docs.neat .doc{border-left:3px solid var(--ku-brand);color:var(--ku-text-soft)}
+.flow .ar{font-size:7cqh;color:var(--ku-brand)}
+
+/* график */
+.chart{display:grid;grid-template-columns:repeat(4,1fr);gap:2.4cqw;align-items:end;width:100%;height:44cqh}
+.col{display:flex;flex-direction:column;justify-content:flex-end;gap:1cqh;height:100%}
+.col .v{font-family:var(--ku-font-display);font-weight:900;font-size:5.6cqh;color:var(--ku-text)}
+.col .k{font-size:2.5cqh;color:var(--ku-text-muted)}
+.col .bar{background:var(--ku-grad-brand);border-radius:.3cqw .3cqw 0 0;height:0;transition:height 1s cubic-bezier(.2,.8,.2,1)}
+.col .yr{font-family:var(--ku-font-display);font-size:3.4cqh;color:var(--ku-text-soft);
+  border-top:1px solid var(--ku-border);padding-top:.9cqh;margin-top:.6cqh;display:flex;align-items:center;gap:.8cqw}
+.langs{display:flex;gap:.35cqw}
+.langs i{width:1.4cqh;height:1.4cqh;border-radius:50%;background:var(--ku-warning)}
+
+/* аватар-заглушка */
+.avatar{position:absolute;right:4cqw;top:5cqh;width:24cqh;height:24cqh;border-radius:50%;
+  border:2px dashed var(--ku-brand-ring);display:flex;align-items:center;justify-content:center;
+  text-align:center;font-size:2.2cqh;color:var(--ku-text-muted);padding:2.2cqh;background:rgba(16,11,7,.7)}
+
+/* аватар не должен наезжать на инфографику */
+.scene:has(.avatar) .layer{padding-right:26cqw}
+.scene:has(.avatar) .layer.center{padding-inline:26cqw}
+
+/* мозаика */
+.mosaic{display:grid;grid-template-columns:repeat(12,1fr);gap:.5cqw;width:56cqw}
+.mosaic i{aspect-ratio:1;border-radius:.2cqw;background:var(--ku-surface-2)}
+.mosaic i:nth-child(3n){background:color-mix(in srgb,var(--ku-brand) 45%,var(--ku-surface-2))}
+.mosaic i:nth-child(7n){background:color-mix(in srgb,var(--ku-contrast) 40%,var(--ku-surface-2))}
+
+/* ═══ ПУЛЬТ ═══ */
+.deck{display:flex;align-items:center;gap:10px;padding:14px 8px 0;width:min(100vw,calc((100vh - 92px)*16/9))}
+body.full .deck{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:auto;
+  background:rgba(16,11,7,.86);backdrop-filter:blur(10px);border:1px solid var(--ku-border);
+  border-radius:999px;padding:8px 10px;opacity:0;transition:opacity .3s}
+body.full .deck:hover,body.full .deck:focus-within{opacity:1}
+.btn{font-family:var(--ku-font-body);font-weight:600;font-size:15px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--ku-border);background:transparent;color:var(--ku-text);padding:11px 20px;
+  transition:background .18s,color .18s,transform .18s}
+.btn:hover{background:var(--ku-surface-2);transform:translateY(-1px)}
+.btn.primary{background:var(--ku-brand);border-color:var(--ku-brand);color:var(--ku-brand-on)}
+.btn.primary:hover{background:var(--ku-brand-strong)}
+.btn.icon{padding:11px 15px}
+.btn[aria-pressed="true"]{background:var(--ku-brand);border-color:var(--ku-brand);color:var(--ku-brand-on)}
+.btn:focus-visible{outline:2px solid var(--ku-brand);outline-offset:3px}
+.deck .spacer{flex:1}
+.deck .pos{font-size:13px;color:var(--ku-text-muted);font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.dots{display:flex;gap:5px}
+.dots button{width:7px;height:7px;padding:0;border-radius:50%;border:0;background:var(--ku-surface-2);cursor:pointer;transition:.3s}
+.dots button[aria-current="true"]{background:var(--ku-brand);width:20px;border-radius:4px}
+
+/* субтитр озвучки */
+.vo{position:absolute;left:9cqw;right:9cqw;bottom:3.2cqh;font-size:2.9cqh;line-height:1.35;
+  color:var(--ku-text-soft);text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.8);opacity:0;transition:opacity .3s}
+.vo.on{opacity:1}
+body.nosub .vo{display:none}
+
+/* serega */
+.serega-gentle,.serega-emotional{display:inline-block;perspective:900px;transform-style:preserve-3d}
+.serega-gentle__word,.serega-emotional__word{display:inline-block;white-space:nowrap}
+.serega-gentle__unit,.serega-emotional__unit{display:inline-block;backface-visibility:hidden;
+  transform-origin:50% 55%;white-space:pre;will-change:opacity,transform}
+@media (prefers-reduced-motion:reduce){
+  .serega-gentle__unit,.serega-emotional__unit{will-change:auto}
+  .shot img{animation:none}
+  .scene{transition:none}
+}
+</style>
+
+<div class="frame" id="frame" aria-live="polite"></div>
+
+<div class="deck" role="group" aria-label="Управление показом">
+  <button class="btn icon" id="prev" title="Назад (←)" aria-label="Предыдущая сцена">←</button>
+  <button class="btn primary" id="next">Начать показ</button>
+  <button class="btn" id="auto" aria-pressed="false" title="Автопереход по окончании озвучки">Авто</button>
+  <span class="pos" id="pos">01 / 12</span>
+  <span class="spacer"></span>
+  <div class="dots" id="dots" role="tablist" aria-label="Сцены"></div>
+  <span class="spacer"></span>
+  <button class="btn" id="sub" aria-pressed="true" title="Показ реплик озвучки">Титры</button>
+  <button class="btn" id="snd" aria-pressed="true" title="Звуковые акценты">Звук</button>
+  <button class="btn" id="fs" title="Во весь экран (F)">⤢</button>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   1. КОНСТАНТЫ ПРОМТОВ — собраны по VISUAL_REF/burger_king_visual_bible.ru.json
+      (prompt_assembly.recommended_order + generation_detail_contract).
+      Каждый промт разворачивается ПОЛНЫМ текстом: помещение, роль и форма,
+      действие, оборудование, материалы, свет, камера, ограничения, negative.
+   ═══════════════════════════════════════════════════════════════════════ */
+const P = {
+  BASE:"Фотореалистичная документальная коммерческая фотография действующего городского ресторана быстрого обслуживания Burger King, естественные люди и рабочие позы, правдоподобные материалы, умеренная резкость, реалистичная экспозиция, без ощущения 3D-рендера.",
+  /* Для сцен вне ресторана (офис Учебного центра, документы, методология).
+     В визуальной библии таких модулей нет — база выведена из её же языка:
+     та же документальная съёмка, те же ограничения реализма и тот же свет. */
+  OFFICE:"Фотореалистичная документальная коммерческая фотография современного российского корпоративного офиса компании общественного питания: тёплые деревянные поверхности, матовый бежевый и графитовый интерьер, живые рабочие позы, правдоподобные материалы, умеренная резкость, реалистичная экспозиция, без ощущения 3D-рендера и без глянцевого стока.",
+
+  CHBR:"Сотрудник ЧБР — линейный персонал — в основном форменном поло: чёрный воротник, короткая чёрная планка на 2–3 пуговицы, чёрные рукава и тёмный низ; в верхней трети обязательна крупная непрерывная цветная зона из зелёной плечевой кокетки, красной полосы, тёмно-коричневой полосы и узкой карамельно-бежевой либо оранжевой полосы. Чёрные брюки и обувь, один бейдж. Вне открытой пищевой зоны допустима чёрная кепка; на производстве только одноразовая чёрная полупрозрачная нейлоновая сетка для волос с видимыми мелкими ячейками и тонкой резинкой, не beanie и не вязаная шапка. На производстве отдельный чёрный фартук, не закрывающий цветные плечи и верх груди, и перчатки по задаче; не однотонное чёрное поло.",
+  AUP:"Сотрудник АУП — директор или менеджер — в чёрной форменной рубашке с коротким рукавом, полноценным воротником и полной вертикальной планкой пуговиц; на левом нагрудном кармане сотрудника, справа для зрителя, обязательна маленькая прямоугольная нашивка из 3–4 коротких горизонтальных полос зелёного, красного, оранжевого и светло-коричневого цветов. Чёрные брюки, ремень и закрытая обувь, один оранжево-белый именной бейдж; без поло и без широких полос через торс. На производстве волосы полностью убраны под одноразовую чёрную полупрозрачную нейлоновую сетку с видимыми мелкими ячейками и тонкой резинкой; не beanie, не вязаная и не плотная тканевая шапка. Вне открытой пищевой зоны допустимо без головного убора.",
+
+  L_HALL:"Тёплый дневной свет: мягкий свет из витринных окон плюс тёплые подвесные светильники, средний контраст, мягкие вытянутые тени, естественная текстура кожи и дерева.",
+  L_COUNTER:"Смешанный свет: тёплые подвесы над прилавком и нейтральные потолочные панели за ним, контролируемые блики на нержавейке, средний контраст.",
+  L_KITCHEN:"Ровный яркий нейтрально-холодный свет потолочных панелей коммерческой кухни, короткие мягкие тени, контролируемые отражения на нержавеющей стали, без выбитых белых стен.",
+  L_COLD:"Холодный ровный свет светодиодных панелей холодильной камеры, слабые тени, лёгкий синеватый оттенок на белых стенах.",
+  L_OFFICE:"Мягкий дневной свет из большого окна сбоку плюс нейтральные потолочные панели, средний контраст, спокойные тени, тёплая рефлексия от дерева.",
+
+  C_WIDE:"Ракурс: уровень глаз, эквивалент 24–28 мм, большая глубина резкости, фон остаётся узнаваемым, кадр 16:9.",
+  C_PORTRAIT:"Ракурс: уровень глаз, эквивалент 35–50 мм, умеренное размытие фона, объект в средней трети кадра, кадр 16:9.",
+  C_CLOSE:"Ракурс: крупный предметный план, эквивалент 35–50 мм, резкость на руках и рабочем действии, кадр 16:9.",
+  C_POV:"Ракурс: POV от первого лица, руки входят из нижнего края кадра, эквивалент 20–24 мм, широкоугольная перспектива без fisheye, кадр 16:9.",
+
+  ERR:"Точное число персонажей и предметов, анатомически корректные руки, согласованная перспектива, цельное оборудование, физически разные материалы, правильная санитарная логика, один логотип на предмете, пустые области вместо длинного генерируемого текста.",
+  NOTEXT:"КРИТИЧНО: в кадре нет никакого читаемого текста — ни надписей, ни цифр, ни логотипов, ни вывесок, ни меню, ни текста на экранах и упаковке. Вместо них — чистые однотонные поверхности и нейтральные пустые зоны: весь текст и инфографика добавляются отдельным слоем.",
+  NEG:"искажённые руки, лишние пальцы, дублированные люди, повторяющиеся лица, деформированные стаканы и подносы, бессмысленный текст, искажённые логотипы, невозможная геометрия оборудования, двойные экраны и краны, плавающие предметы, ломаная плиточная сетка, однотонное полностью чёрное поло CHBR, CHBR без крупной цветной верхней зоны, цветные полосы CHBR исчезли под фартуком, рубашка AUP без маленькой полосатой нашивки, широкая цветная кокетка CHBR на рубашке AUP, рубашка АУП превращается в поло, ЧБР в менеджерской рубашке, одновременно кепка и сетка для волос, beanie на производстве, вязаная шапка вместо hairnet, плотная непрозрачная тканевая шапочка, шапка с отворотом, ребристая вязка, hairnet без видимой мелкой сетчатой структуры, двойной бейдж, распущенные волосы над едой, отсутствие перчаток при контакте с открытой едой, чрезмерное боке, пластиковая кожа, HDR-ореолы, неон, стерильный 3D-рендер, экстремальный fisheye, любой читаемый текст, буквы, цифры, надписи, субтитры, водяные знаки"
+};
+const shot = (file, alt, body, light, cam, base) =>
+  ({file, alt, prompt:[base||P.BASE, body, light, cam, P.ERR, P.NOTEXT].join(" "), neg:P.NEG});
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2. СЦЕНАРИЙ. shots[] — стартовые кадры (заглушки → потом видео),
+      vo[] — реплики озвучки (файл audio/vo/<id>.mp3, иначе синтез в браузере).
+   ═══════════════════════════════════════════════════════════════════════ */
+const SCENES = [
+{
+  id:"s01", name:"М-м-м", fx:"hero",
+  shots:[ shot("img/s01_bite.jpg","Гость откусывает Воппер",
+    "Гость лет тридцати сидит за прямоугольным столом у длинной красной виниловой банкетки в гостевом зале, делает первый укус большого бургера в бумажной обёртке, глаза чуть прикрыты, лицо выражает спокойное удовольствие; на чёрном подносе лежит второй свёрток и тонкий золотистый картофель, рядом синий бумажный стакан. Светлая деревянная стеновая панель с продольным рисунком волокон, крупная матовая бежевая плитка пола, чёрный открытый потолок с оранжевыми подвесными светильниками.",
+    P.L_HALL, P.C_PORTRAIT) ],
+  veil:"center",
+  html:`<div class="layer center">
+    <p class="huge" data-fx="emotional">М-м-м</p>
+    <p class="sub" data-fx="gentle">Ради этого «м-м-м» здесь всё и вертится</p>
+  </div>`,
+  vo:[{id:"s01_1",text:"Вот ради этого «м-м-м» здесь всё и вертится. А как мы создаём это «м-м-м»?"}],
+  sfx:"crunch"
+},
+{
+  id:"s02", name:"Каждый день", fx:"cut",
+  shots:[
+    shot("img/s02a_storage.jpg","Приёмка на складе",
+      "Один сотрудник в холодильной камере ресторана проверяет прозрачный контейнер с нарезанным овощем, держит его двумя руками на уровне груди; вокруг зелёные проволочные стеллажи с картонными коробками, пакетами салата и ящиками томатов, белые санитарные стены и серый рифлёный пол. "+P.CHBR,
+      P.L_COLD, P.C_WIDE),
+    shot("img/s02b_manager.jpg","Менеджер сверяет цифры",
+      "Один менеджер стоит у белой плиточной стены служебной зоны кухни перед большим пустым бумажным планинг-листом и указывает на него пальцем, вторая рука держит планшет-планшетку; рядом металлический стеллаж с чистыми гастроёмкостями. "+P.AUP,
+      P.L_KITCHEN, P.C_PORTRAIT),
+    shot("img/s02c_smile.jpg","Сотрудник улыбается гостю",
+      "Один сотрудник за серой крапчатой композитной стойкой прилавка передаёт чёрный поднос гостю, спокойно и дружелюбно улыбается, корпус развёрнут к гостю; на стойке ёмкость с голубыми трубочками и кассовый терминал без читаемого экрана, за спиной сотрудника открытая кухонная линия из нержавеющей стали. "+P.CHBR,
+      P.L_COUNTER, P.C_PORTRAIT)
+  ],
+  veil:"soft",
+  html:`<div class="layer">
+    <p class="kicker" data-fx="gentle">Каждый день</p>
+    <h2 class="title sm" data-fx="gentle">Закупает, везёт, жарит, улыбается</h2>
+    <p class="sub" data-fx="gentle">За каждым идеально собранным Воппером стоит человек, который сначала научился делать всё правильно.</p>
+  </div>`,
+  vo:[{id:"s02_1",text:"Чтобы гость получил беззаботное удовольствие, команда БК ежедневно творит магию. Закупает, везёт, жарит, улыбается. Но за каждым идеально собранным Воппером стоит человек, который сначала должен научиться делать всё правильно."}],
+  sfx:"whoosh"
+},
+{
+  id:"s03", name:"Масштаб", fx:"count",
+  shots:[ shot("img/s03_hall.jpg","Заполненный зал",
+    "Заполненный гостевой зал ресторана: длинный центральный проход к стеклянным входным дверям, по сторонам красные виниловые диваны и прямоугольные столы светлого дерева, за столами разные по возрасту гости с подносами, у прохода два высоких белых киоска самообслуживания с тёмными экранами без изображения, деревянные перегородки-рейки, чёрный открытый потолок с оранжевыми подвесами, крупная матовая бежевая плитка.",
+    P.L_HALL, P.C_WIDE) ],
+  veil:"left",
+  html:`<div class="layer">
+    <p class="kicker" data-fx="gentle">Масштаб</p>
+    <div class="stats">
+      <div class="stat"><div class="v" data-count="886">886</div><p class="c">ресторанов</p></div>
+      <div class="stat"><div class="v" data-count="12328">12 328</div><p class="c">сотрудников</p></div>
+    </div>
+    <p class="sub" data-fx="gentle">Как сделать так, чтобы эта машина работала как единый организм?</p>
+  </div>`,
+  vo:[{id:"s03_1",text:"Более восьмисот восьмидесяти ресторанов. Более двенадцати тысяч сотрудников. Как сделать так, чтобы эта огромная машина работала как единый организм?"}],
+  sfx:"tick"
+},
+{
+  id:"s04", name:"2023", fx:"plain",
+  shots:[ shot("img/s04_empty.jpg","Пустой зал до открытия",
+    "Пустой гостевой зал ресторана рано утром до открытия: свет в зале выключен, работает только холодное дежурное освещение и дневной свет из витрины, красные диваны и деревянные столы без гостей, стулья ровно задвинуты, на стене светлая деревянная панель с пустой прямоугольной областью там, где обычно висит графика, крупная бежевая плитка с чистыми швами, атмосфера паузы и ожидания.",
+    "Холодный приглушённый утренний свет из витрины, длинные мягкие тени, пониженная насыщенность, средний контраст.", P.C_WIDE) ],
+  veil:"center",
+  html:`<div class="layer center">
+    <p class="kicker" data-fx="gentle">2023 · точка отсчёта</p>
+    <h2 class="title" data-fx="gentle">Глобальный бренд ушёл. А вместе с ним — все учебные программы</h2>
+    <p class="sub" data-fx="gentle">Паника? Нет. Мы начали строить самолёт прямо в полёте.</p>
+  </div>`,
+  vo:[
+    {id:"s04_1",text:"Давайте вспомним двадцать третий. Глобальный бренд ушёл, а вместе с ним — все наши учебные программы."},
+    {id:"s04_2",text:"Паника? Нет. Мы просто начали строить самолёт прямо в полёте."}
+  ],
+  sfx:"drop"
+},
+{
+  id:"s05", name:"Лесенка ролей", fx:"ladder",
+  shots:[ shot("img/s05_kitchen.jpg","Кухонная линия в работе",
+    "Два сотрудника работают у станции картофеля в узком свободном проходе ярко освещённой коммерческой кухни: первый двумя руками опускает корзину фритюрницы, второй рядом придерживает металлический лоток тепловой зоны; массивное оборудование из нержавеющей стали с мягкими отражениями и следами эксплуатации, белая плитка стен, серый рифлёный пол. Первый сотрудник: "+P.AUP+" Второй сотрудник: "+P.CHBR,
+    P.L_KITCHEN, P.C_WIDE) ],
+  veil:"soft",
+  html:`<div class="layer wide">
+    <p class="kicker" data-fx="gentle">Четыре года · роль за ролью</p>
+    <div class="ladder">
+      <div class="rung" data-r="0"><span class="yr">2022</span><div><div class="chips"><span class="chip">готовые программы бренда</span></div></div></div>
+      <div class="rung dead" data-r="1"><span class="yr">2023</span><div><div class="chips"><span class="chip">программы недоступны</span></div></div></div>
+      <div class="rung" data-r="2"><span class="yr">2023</span><div><div class="chips"><span class="chip">ЧБР</span><span class="chip">МС</span></div><p class="meta">4 трека · 120 артефактов</p></div></div>
+      <div class="rung" data-r="3"><span class="yr">2024</span><div><div class="chips"><span class="chip">ЗД</span><span class="chip">ДР</span></div><p class="meta">4 трека · 300 артефактов</p></div></div>
+      <div class="rung" data-r="4"><span class="yr">2025</span><div><div class="chips"><span class="chip">Повара</span><span class="chip">НУ</span><span class="chip">ТУ</span><span class="chip">ОД</span></div><p class="meta">5 треков · 400 артефактов · 5 языков</p></div></div>
+      <div class="rung" data-r="5"><span class="yr">2026</span><div><div class="chips"><span class="chip">Кассиры</span><span class="chip">Курьеры</span><span class="chip">Операторы КЦ</span></div><p class="meta">5 треков · ~300 артефактов · 8 языков</p></div></div>
+    </div>
+  </div>`,
+  vo:[{id:"s05_1",text:"В двадцать третьем с нуля создали треки для ЧБР и МС. В двадцать четвёртом добавили ЗД и ДР. В двадцать пятом — поваров, НУ, ТУ и ОД. А в двадцать шестом закрыли вообще всех: от кассиров до операторов контактного центра."}],
+  sfx:"ladder"
+},
+{
+  id:"s06", name:"100% ролей", fx:"hero",
+  shots:[ shot("img/s06_team.jpg","Смена у линии выдачи",
+    "Четверо сотрудников разного возраста и телосложения стоят вдоль кухонной линии из нержавеющей стали в рабочих позах, повёрнуты к камере в три четверти, спокойные уверенные выражения, руки заняты рабочими предметами: металлические гастроёмкости, лоток, щипцы; белая плитка стен, серый рифлёный пол, ровный свет. Все четверо: "+P.CHBR,
+    P.L_KITCHEN, P.C_WIDE) ],
+  veil:"center",
+  html:`<div class="layer center">
+    <p class="huge" data-count="100" data-suffix="%">100%</p>
+    <p class="sub" data-fx="gentle">ролей охвачено собственными треками обучения</p>
+  </div>`,
+  vo:[{id:"s06_1",text:"Звучит эпично. Сто процентов ролей охвачено. Тадам!"}],
+  sfx:"chime"
+},
+{
+  id:"s07", name:"Но…", fx:"plain",
+  shots:[ shot("img/s07_but.jpg","Пауза в подсобке",
+    "Один сотрудник стоит в служебном коридоре ресторана у белой плиточной стены, опустил руки, смотрит в сторону, поза короткой паузы и раздумья; рядом металлический стеллаж и закрытая дверь холодильной камеры, серый рифлёный пол. "+P.CHBR,
+    P.L_KITCHEN, P.C_PORTRAIT) ],
+  veil:"center",
+  html:`<div class="layer center">
+    <p class="huge plain" data-fx="emotional">Но…</p>
+    <p class="sub" data-fx="gentle">Миссия ещё не завершена. Дальше — честно про грабли.</p>
+  </div>`,
+  vo:[{id:"s07_1",text:"Но… миссия ещё не завершена. И тут мы честно расскажем, где мы наступили на грабли."}],
+  sfx:"scratch"
+},
+{
+  id:"s08", name:"Грабли", fx:"cards",
+  shots:[ shot("img/s08_wifi.jpg","Ловит только под потолком",
+    "Один сотрудник стоит в углу служебной зоны ресторана и вытягивает руку со смартфоном высоко над головой, приподнявшись на носках, лицо сосредоточенное и слегка комичное, вторая рука на поясе; экран смартфона тёмный и пустой, белая плиточная стена, металлический стеллаж, серый рифлёный пол. "+P.CHBR,
+    P.L_KITCHEN, P.C_PORTRAIT) ],
+  veil:"soft",
+  html:`<div class="layer">
+    <p class="kicker" data-fx="gentle">Наши грабли · доступность</p>
+    <div class="cards">
+      <div class="card"><p class="n">01 · КАНАЛ</p><h3>СМС вместо пушей</h3><p>«Пройди обучение» теряется между поздравлением с днём рождения и уведомлением из пункта выдачи.</p></div>
+      <div class="card"><p class="n">02 · СВЯЗЬ</p><h3>Wi-Fi под потолком</h3><p>В части ресторанов сеть ловит, только если встать на цыпочки и поднять телефон над головой.</p></div>
+    </div>
+  </div>`,
+  vo:[
+    {id:"s08_1",text:"Во-первых, доступность. Мы создали крутые треки, но поняли: толку от них немного, если до них не добраться."},
+    {id:"s08_2",text:"Уведомления теряются между «поздравляем с днём рождения» и «ваша посылка уже в пункте выдачи». А в некоторых ресторанах Wi-Fi ловит только на потолке, если встать на цыпочки."}
+  ],
+  sfx:"error"
+},
+{
+  id:"s09", name:"Решения", fx:"cards",
+  shots:[ shot("img/s09_mentor.jpg","Наставник и новичок",
+    "Двое сотрудников у охлаждаемой сборочной линии кухни: опытный наставник стоит вполоборота и показывает раскрытой ладонью на организованные металлические гастроёмкости с ингредиентами, новичок рядом внимательно смотрит и держит руки в прозрачных одноразовых перчатках над рабочей поверхностью; нержавеющая сталь с мягкими отражениями, белая плитка, ровный свет. Оба сотрудника: "+P.CHBR,
+    P.L_KITCHEN, P.C_WIDE) ],
+  veil:"soft",
+  html:`<div class="layer">
+    <p class="kicker" data-fx="gentle">Что делаем</p>
+    <div class="cards">
+      <div class="card ok"><p class="n">УЖЕ РАБОТАЕТ</p><h3>Наставничество</h3><p>Перезапустили формат: опыт передаётся из рук в руки, даже если интернет завис.</p></div>
+      <div class="card ok"><p class="n">УЖЕ РАБОТАЕТ</p><h3>Агенты обучения</h3><p>Люди в ресторанах, которые доводят обучение до конца и отвечают за результат смены.</p></div>
+    </div>
+  </div>`,
+  vo:[{id:"s09_1",text:"Мы спускаемся на землю. Перезапускаем наставничество и внедряем агентов обучения. Чтобы опыт передавался из рук в руки, даже если интернет завис."}],
+  sfx:"whoosh"
+},
+{
+  id:"s10", name:"Источник правды", fx:"flow",
+  shots:[ shot("img/s10_docs.jpg","Порядок в документах",
+    "Один сотрудник офиса раскладывает стопки бумажных документов по секциям светлого деревянного стеллажа, руки на уровне груди держат ровную стопку листов, часть листов уже стоит в вертикальных лотках; чистый рабочий стол, матовая графитовая стена, ни одной читаемой надписи на бумаге — только чистые белые листы.",
+    P.L_OFFICE, P.C_WIDE, P.OFFICE) ],
+  veil:"soft",
+  html:`<div class="layer wide">
+    <p class="kicker" data-fx="gentle">Укрощение хаоса</p>
+    <div class="flow">
+      <div class="docs mess">
+        <p class="doc">Регламент_v1</p><p class="doc">Регламент_v2_final</p>
+        <p class="doc">Регламент_v3_точно_финал</p><p class="doc">Регламент_v3_финал(1)</p>
+      </div>
+      <p class="ar">→</p>
+      <div class="docs neat">
+        <p class="doc">Реестр процессов</p><p class="doc">База знаний · одна версия</p>
+        <p class="doc">Владелец у каждого процесса</p><p class="doc">Дата актуализации</p>
+      </div>
+    </div>
+    <p class="sub" data-fx="gentle">Автоматизированный хаос останется хаосом. Сначала фундамент — потом ракеты.</p>
+  </div>`,
+  vo:[{id:"s10_1",text:"А что с источником правды? Прямо сейчас мы наводим порядок в регламентах: формируем реестр процессов и наполняем базу знаний. Потому что автоматизированный хаос останется хаосом."}],
+  sfx:"build"
+},
+{
+  id:"s11", name:"ИИ у методологов", fx:"chart",
+  shots:[ shot("img/s11_methodist.jpg","Методолог за работой",
+    "Один методолог сидит за светлым деревянным рабочим столом перед открытым ноутбуком, корпус развёрнут к экрану, одна рука на клавиатуре, вторая держит кружку; экран ноутбука однотонный и пустой, без интерфейса и текста; рядом закрытая тетрадь и настольная лампа, за спиной мягко размытая офисная зона с растением.",
+    P.L_OFFICE, P.C_PORTRAIT, P.OFFICE) ],
+  veil:"soft",
+  html:`<div class="layer wide">
+    <p class="kicker" data-fx="gentle">ИИ и автоматизация · что уже приручили</p>
+    <div class="chart">
+      <div class="col"><span class="v">120</span><span class="k">артефактов · 4 трека</span><div class="bar" data-h="30"></div><span class="yr">2023</span></div>
+      <div class="col"><span class="v">300</span><span class="k">артефактов · 4 трека</span><div class="bar" data-h="70"></div><span class="yr">2024</span></div>
+      <div class="col"><span class="v">400</span><span class="k">артефактов · 5 треков</span><div class="bar" data-h="95"></div><span class="yr">2025<span class="langs"><i></i><i></i><i></i><i></i><i></i></span></span></div>
+      <div class="col"><span class="v">~300</span><span class="k">артефактов · 5 треков</span><div class="bar" data-h="70"></div><span class="yr">2026<span class="langs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></span></div>
+    </div>
+  </div>`,
+  vo:[{id:"s11_1",text:"Мы поставили искусственный интеллект на службу методологам. Рутину теперь делает ИИ — это ускоряет работу команды в два раза. Жёлтые точки под годом — языки, на которых говорят наши треки."}],
+  sfx:"tick"
+},
+{
+  id:"s12", name:"Было → стало", fx:"results",
+  shots:[ shot("img/s12_office.jpg","Команда обсуждает результат",
+    "Трое сотрудников офиса стоят у светлой стены переговорной вокруг пустой магнитно-маркерной доски без единой надписи, один указывает раскрытой ладонью на чистую поверхность доски, двое смотрят туда же и спокойно улыбаются; тёплое дерево, матовый графит, живые непостановочные позы.",
+    P.L_OFFICE, P.C_WIDE, P.OFFICE) ],
+  veil:"soft",
+  avatar:"Видео-аватар: Дмитрий Медовый. Не генерировать — вставить готовый ролик.",
+  html:`<div class="layer wide">
+    <p class="kicker" data-fx="gentle">Было → стало</p>
+    <div class="res">
+      <div class="ba"><p class="k">Составить рабочий ИПР</p><p class="was">3 часа</p><p class="now">20 минут</p></div>
+      <div class="ba"><p class="k">Соблюдение процедуры «оценка → обучение → перевод»</p><p class="was">36,75%</p><p class="now">90%</p></div>
+      <div class="ba"><p class="k">Курс на родном языке сотрудника</p><p class="was">20 минут</p><p class="now">3 секунды</p></div>
+      <div class="ba brand"><p class="k">Экономия на производстве контента</p><p class="was">&nbsp;</p><p class="now">2,4 млн ₽</p></div>
+    </div>
+  </div>`,
+  vo:[
+    {id:"s12_1",text:"Уф, как много всего… Мы вообще работать-то успеваем? Или только учимся?"},
+    {id:"s12_2",text:"Конечно, успеваем. ИПР автоматизировали: составить реально работающий план развития теперь занимает минуты, а не часы. Автоматизация процедуры оценка — обучение — перевод подняла соблюдение с тридцати шести процентов до девяноста. И никаких ручных отчётов."},
+    {id:"s12_3",text:"Раньше наставник переводил курс вслух, а директор вручную назначал нужную версию. Теперь сотрудник сам выбирает язык внутри курса за три секунды. Мы заговорили на восьми языках. Потому что Воппер вкусный на любом языке."}
+  ],
+  sfx:"cash"
+},
+{
+  id:"s13", name:"Финал", fx:"final",
+  shots:[
+    shot("img/s13_team.jpg","Команда ресторана",
+      "Групповой портрет шести сотрудников ресторана разного возраста, пола и телосложения: стоят свободной группой у кухонной линии из нержавеющей стали, спокойные искренние улыбки, руки опущены или сложены естественно, разные позы и рост, ни одного повторяющегося лица. Все шестеро: "+P.CHBR,
+      P.L_KITCHEN, P.C_WIDE),
+    shot("img/s13_bite.jpg","Тот же укус",
+      "Тот же гость в том же гостевом зале делает укус большого бургера в бумажной обёртке, глаза чуть прикрыты, лицо выражает спокойное удовольствие, кадр чуть крупнее предыдущего; красная виниловая банкетка, светлая деревянная панель, чёрный поднос с золотистым картофелем.",
+      P.L_HALL, P.C_CLOSE)
+  ],
+  veil:"center",
+  avatar:"Видео-аватар: Наташа С. Не генерировать — вставить готовый ролик.",
+  html:`<div class="layer center">
+    <h2 class="title" data-fx="gentle">Мы создаём развивающую среду для роста талантов</h2>
+    <div class="mosaic" aria-hidden="true"></div>
+    <p class="sub" data-fx="gentle">Чтобы гости получали своё беззаботное удовольствие, а Бургер Кинг оставался самой любимой сетью ресторанов в России.</p>
+  </div>`,
+  vo:[
+    {id:"s13_1",text:"Как-то так… Потому что мы создаём развивающую среду для роста талантов."},
+    {id:"s13_2",text:"Чтобы наши гости получали своё беззаботное удовольствие, а Бургер Кинг оставался самой любимой сетью ресторанов в России."}
+  ],
+  sfx:"chime"
+}
+];
+</script>
+<script>
+(function(){
+"use strict";
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ═══ Serega · разбиение на графемы (общая часть обоих эффектов) ═══ */
+function splitGraphemes(v){
+  if (typeof Intl!=="undefined" && typeof Intl.Segmenter==="function")
+    return Array.from(new Intl.Segmenter(undefined,{granularity:"grapheme"}).segment(v),s=>s.segment);
+  return Array.from(v);
+}
+function splitInto(el, unitClass){
+  const phrase = el.textContent;
+  const frag = document.createDocumentFragment();
+  const units = []; let word=null, afterWs=false;
+  for (const g of splitGraphemes(phrase)){
+    const ws = /^\s+$/u.test(g);
+    if (!word || (!ws && afterWs)){ word=document.createElement("span"); word.className=unitClass+"__word"; frag.append(word); }
+    const u=document.createElement("span");
+    u.className=unitClass+"__unit"; u.setAttribute("aria-hidden","true"); u.textContent=g;
+    word.append(u); units.push(u); afterWs=ws;
+  }
+  el.setAttribute("aria-label", phrase);
+  el.replaceChildren(frag);
+  return units;
+}
+/* Serega Gentle — контракт: 500ms, стагger 15ms, y 15→0, без блюра */
+function seregaGentle(el){
+  el.classList.add("serega-gentle");
+  if (RM) return;
+  const units = splitInto(el,"serega-gentle");
+  units.forEach((u,i)=>{
+    u.style.opacity="0"; u.style.transform="translate3d(0,15px,0)";
+    u.animate([{opacity:0,transform:"translate3d(0,15px,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
+      {delay:i*15,duration:500,easing:"cubic-bezier(0.2, 0.8, 0.2, 1)",fill:"forwards"});
+  });
+}
+/* Serega Emotional — контракт: линейная фаза 180ms + пружина 1Hz/decay 10 до 680ms */
+const EM = (function(){
+  const w = 2*Math.PI*1, T = 0.68, N = 41, frames=[], times=[];
+  for (let i=0;i<N;i++){
+    const t = T*i/(N-1);
+    let p;
+    if (t<=0) p=1;
+    else if (t<0.18) p = 1 - t/0.18;
+    else p = (-1/0.18)*Math.sin((t-0.18)*w)/(Math.exp(10*(t-0.18))*w);
+    frames.push({
+      opacity: Math.min(1,Math.max(0,1-p)),
+      transform:`translate3d(0,${(32*p).toFixed(3)}px,0) scaleY(${(1-0.22*p).toFixed(4)}) rotate(${(12*p).toFixed(3)}deg)`,
+      filter:`blur(${(10*Math.max(p,0)).toFixed(3)}px)`,
+      offset: i/(N-1)
+    });
+    times.push(i/(N-1));
+  }
+  return frames;
+})();
+function seregaEmotional(el){
+  el.classList.add("serega-emotional");
+  if (RM) return;
+  const units = splitInto(el,"serega-emotional");
+  units.forEach((u,i)=>{
+    u.style.opacity="0";
+    u.animate(EM,{delay:25*(i+1),duration:680,easing:"linear",fill:"forwards"});
+  });
+}
+
+/* ═══ Процедурные звуковые акценты (в духе deslop/sound) ═══ */
+const Sound = (function(){
+  let ctx=null, on=true;
+  const R=(a,b)=>a+Math.random()*(b-a);
+  function ac(){ if(!ctx) ctx=new (window.AudioContext||window.webkitAudioContext)(); if(ctx.state==="suspended")ctx.resume(); return ctx; }
+  function noise(dur){
+    const c=ac(), n=Math.floor(c.sampleRate*dur), b=c.createBuffer(1,n,c.sampleRate), d=b.getChannelData(0);
+    for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+    const s=c.createBufferSource(); s.buffer=b; return s;
+  }
+  function env(node,peak,dur,delay){
+    const c=ac(), g=c.createGain(), t=c.currentTime+(delay||0);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(peak,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0008,t+dur);
+    node.connect(g); g.connect(c.destination); return t;
+  }
+  function tone(type,f0,f1,dur,peak,delay){
+    const c=ac(), o=c.createOscillator(); o.type=type;
+    const t=env(o,peak,dur,delay);
+    o.frequency.setValueAtTime(f0,t);
+    if(f1) o.frequency.exponentialRampToValueAtTime(f1,t+dur);
+    o.start(t); o.stop(t+dur+0.02);
+  }
+  function band(dur,f,q,peak,delay){
+    const c=ac(), s=noise(dur), b=c.createBiquadFilter();
+    b.type="bandpass"; b.frequency.value=f; b.Q.value=q; s.connect(b);
+    const t=env(b,peak,dur,delay); s.start(t); s.stop(t+dur+0.02);
+    return b;
+  }
+  const lib={
+    crunch(){ band(0.09,R(900,1400),1.2,.5); band(0.13,R(500,800),1.6,.4,0.10); band(0.07,R(1600,2400),2,.25,0.20); },
+    whoosh(){ const c=ac(),s=noise(.55),f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.setValueAtTime(400,c.currentTime);
+      f.frequency.exponentialRampToValueAtTime(R(2600,3600),c.currentTime+.45); s.connect(f);
+      const t=env(f,.22,.55); s.start(t); s.stop(t+.6); },
+    tick(){ tone("sine",R(1100,1400),null,.05,.16); },
+    drop(){ tone("sine",R(200,240),55,.5,.3); band(.25,300,.8,.12); },
+    chime(){ tone("sine",R(860,900),null,.5,.14); tone("sine",R(1300,1340),null,.6,.1,.06); tone("sine",1760,null,.5,.05,.12); },
+    scratch(){ const c=ac(),o=c.createOscillator(); o.type="sawtooth"; const t=env(o,.2,.34);
+      o.frequency.setValueAtTime(R(700,900),t);
+      o.frequency.linearRampToValueAtTime(120,t+.18); o.frequency.linearRampToValueAtTime(420,t+.26);
+      o.frequency.linearRampToValueAtTime(90,t+.34); o.start(t); o.stop(t+.36); },
+    error(){ tone("square",320,300,.12,.1); tone("square",250,180,.18,.1,.15); },
+    ladder(){ for(let i=0;i<6;i++) tone("sine",520*Math.pow(1.13,i),null,.09,.09,i*0.14); },
+    build(){ for(let i=0;i<3;i++){ band(.11,R(180,260),1.1,.3,i*0.16); tone("sine",R(120,150),70,.2,.14,i*0.16);} },
+    cash(){ tone("sine",1250,null,.16,.13); tone("sine",1720,null,.3,.11,.05); band(.06,3000,2,.1,.02); }
+  };
+  return {
+    play(n){ if(!on||!n||!lib[n]) return; try{ lib[n](); }catch(e){} },
+    set(v){ on=v; if(v) ac(); },
+    warm(){ try{ ac(); }catch(e){} }
+  };
+})();
+
+/* ═══ Озвучка: файл audio/vo/<id>.mp3, иначе синтез в браузере ═══ */
+const Voice = (function(){
+  let onair=null, utter=null, ruVoice=null, enabled=true;
+  function pickVoice(){
+    const vs = speechSynthesis.getVoices?speechSynthesis.getVoices():[];
+    ruVoice = vs.find(v=>/^ru/i.test(v.lang)) || null;
+  }
+  if (window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  function speak(text){
+    return new Promise(res=>{
+      if(!window.speechSynthesis){ setTimeout(res, est(text)); return; }
+      speechSynthesis.cancel();
+      utter = new SpeechSynthesisUtterance(text);
+      utter.lang="ru-RU"; if(ruVoice) utter.voice=ruVoice;
+      utter.rate=1; utter.pitch=1;
+      let done=false; const fin=()=>{ if(!done){done=true;res();} };
+      utter.onend=fin; utter.onerror=fin;
+      const guard=setTimeout(fin, est(text)+4000);
+      speechSynthesis.speak(utter);
+      Promise.resolve().then(()=>{ if(!speechSynthesis.speaking && !speechSynthesis.pending){ clearTimeout(guard); fin(); } });
+    });
+  }
+  function est(t){ return Math.max(1500, t.split(/\s+/).length*380); }
+  function file(id){
+    return new Promise(res=>{
+      const a = new Audio("audio/vo/"+id+".mp3");
+      a.onended=()=>res(true); a.onerror=()=>res(false);
+      a.play().then(()=>{ onair=a; }).catch(()=>res(false));
+    });
+  }
+  return {
+    async play(id, text, signal){
+      if(!enabled) { await new Promise(r=>setTimeout(r, est(text))); return; }
+      this.stop();
+      const ok = await file(id);
+      if (signal && signal.dead) return;
+      if (!ok) await speak(text);
+    },
+    stop(){
+      if(onair){ try{onair.pause();}catch(e){} onair=null; }
+      if(window.speechSynthesis) try{ speechSynthesis.cancel(); }catch(e){}
+    },
+    set(v){ enabled=v; if(!v) this.stop(); },
+    est
+  };
+})();
+
+/* ═══ Плеер сцен ═══ */
+const frame=document.getElementById("frame"), dots=document.getElementById("dots"),
+      pos=document.getElementById("pos"), bNext=document.getElementById("next"),
+      bPrev=document.getElementById("prev"), bAuto=document.getElementById("auto"),
+      bSub=document.getElementById("sub"), bSnd=document.getElementById("snd"), bFs=document.getElementById("fs");
+let idx=-1, started=false, auto=false, token=null, cycle=null;
+
+/* сборка DOM */
+SCENES.forEach((s,i)=>{
+  const art=document.createElement("article");
+  art.className="scene"; art.dataset.id=s.id; art.setAttribute("role","group"); art.setAttribute("aria-label",s.name);
+  const shots=document.createElement("div"); shots.className="shot";
+  s.shots.forEach((sh,j)=>{
+    const fig=document.createElement("figure"); fig.dataset.j=j;
+    const img=document.createElement("img");
+    img.alt=sh.alt; img.loading="lazy"; img.src=sh.file;
+    img.onerror=()=>{
+      img.remove();
+      fig.insertAdjacentHTML("beforeend",
+        '<div class="ph"><p class="k">Стартовый кадр</p><p class="t">'+sh.alt+'</p><p class="f">'+sh.file+' · промт в SCENES['+i+'].shots['+j+']</p></div>');
+    };
+    fig.append(img); shots.append(fig);
+  });
+  art.append(shots);
+  if (s.veil){ const v=document.createElement("div"); v.className="veil "+s.veil; art.append(v); }
+  art.insertAdjacentHTML("beforeend", s.html);
+  if (s.avatar){ const a=document.createElement("div"); a.className="avatar"; a.textContent=s.avatar; art.append(a); }
+  const vo=document.createElement("p"); vo.className="vo"; art.append(vo);
+  frame.append(art);
+
+  const d=document.createElement("button");
+  d.type="button"; d.title=s.name; d.setAttribute("aria-label",s.name);
+  d.onclick=()=>go(i); dots.append(d);
+});
+const arts=Array.from(frame.children);
+/* мозаика финала */
+const mos=frame.querySelector(".mosaic");
+if(mos) for(let i=0;i<48;i++) mos.append(document.createElement("i"));
+
+/* эффекты входа сцены */
+function enter(i){
+  const s=SCENES[i], art=arts[i];
+  art.querySelectorAll('[data-fx="gentle"]').forEach(el=>seregaGentle(el));
+  art.querySelectorAll('[data-fx="emotional"]').forEach(el=>seregaEmotional(el));
+  art.querySelectorAll("[data-count]").forEach(el=>{
+    const end=parseFloat(el.dataset.count), suf=el.dataset.suffix||"";
+    if(RM){ el.textContent=end.toLocaleString("ru-RU")+suf; return; }
+    const t0=performance.now(), dur=1200;
+    (function tick(now){
+      const p=Math.min(1,(now-t0)/dur), v=Math.round(end*(1-Math.pow(1-p,3)));
+      el.textContent=v.toLocaleString("ru-RU")+suf;
+      if(p<1) requestAnimationFrame(tick);
+    })(t0);
+  });
+  art.querySelectorAll(".rung").forEach((r,k)=>{
+    r.classList.remove("lit");
+    setTimeout(()=>{ r.classList.add("lit"); if(k>1) Sound.play("tick"); }, 260+k*380);
+  });
+  art.querySelectorAll(".bar").forEach((b,k)=>{
+    b.style.height="0";
+    setTimeout(()=>{ b.style.height=b.dataset.h+"%"; }, 300+k*160);
+  });
+  /* смена кадров внутри сцены */
+  const figs=art.querySelectorAll(".shot figure");
+  figs.forEach((f,k)=>f.classList.toggle("on",k===0));
+  clearInterval(cycle);
+  if(figs.length>1){
+    let k=0;
+    cycle=setInterval(()=>{
+      figs[k].classList.remove("on"); k=(k+1)%figs.length; figs[k].classList.add("on");
+      Sound.play("tick");
+    }, 2600);
+  }
+  Sound.play(s.sfx);
+}
+
+async function narrate(i, tk){
+  const s=SCENES[i], sub=arts[i].querySelector(".vo");
+  for (const line of s.vo){
+    if(tk.dead) return;
+    sub.textContent=line.text; sub.classList.add("on");
+    await Voice.play(line.id, line.text, tk);
+    if(tk.dead) return;
+  }
+  sub.classList.remove("on");
+  tk.done=true;
+  if (auto && !tk.dead){ setTimeout(()=>{ if(!tk.dead && auto) go(i+1); }, 900); }
+}
+
+function go(i){
+  if(i<0||i>=SCENES.length) return;
+  if(token) token.dead=true;
+  Voice.stop();
+  const prevIdx=idx; idx=i; token={dead:false,done:false};
+  arts.forEach((a,k)=>a.classList.toggle("on",k===i));
+  Array.from(dots.children).forEach((d,k)=>d.setAttribute("aria-current",k===i?"true":"false"));
+  pos.textContent=String(i+1).padStart(2,"0")+" / "+String(SCENES.length).padStart(2,"0");
+  bNext.textContent = i===SCENES.length-1 ? "В начало" : "Дальше →";
+  bPrev.disabled = i===0;
+  if(prevIdx!==i) enter(i);
+  narrate(i, token);
+}
+
+bNext.onclick=()=>{
+  Sound.warm();
+  if(!started){ started=true; go(0); return; }
+  if(idx>=SCENES.length-1){ go(0); return; }
+  go(idx+1);
+};
+bPrev.onclick=()=>{ if(started) go(idx-1); };
+bAuto.onclick=()=>{
+  auto=!auto; bAuto.setAttribute("aria-pressed",String(auto));
+  /* если озвучка сцены уже отзвучала — трогаемся сразу, иначе ждём её конца */
+  if(auto && started && token && !token.dead && token.done) go(idx+1);
+};
+bSub.onclick=()=>{ const v=document.body.classList.toggle("nosub"); bSub.setAttribute("aria-pressed",String(!v)); };
+bSnd.onclick=()=>{ const off=bSnd.getAttribute("aria-pressed")==="false";
+  bSnd.setAttribute("aria-pressed",String(off)); Sound.set(off); Voice.set(off); if(!off) Voice.stop(); };
+bFs.onclick=()=>{
+  if(document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen?.().catch(()=>{});
+};
+document.addEventListener("fullscreenchange",()=>document.body.classList.toggle("full",!!document.fullscreenElement));
+
+addEventListener("keydown",e=>{
+  if(e.target.tagName==="BUTTON" && (e.code==="Space"||e.code==="Enter")) return;
+  if(e.code==="Space"||e.code==="ArrowRight"){ e.preventDefault(); bNext.click(); }
+  if(e.code==="ArrowLeft"){ e.preventDefault(); bPrev.click(); }
+  if(e.key==="f"||e.key==="F"||e.key==="а"||e.key==="А"){ bFs.click(); }
+});
+
+/* стартовая заставка — первая сцена видна сразу, но без озвучки */
+arts[0].classList.add("on");
+Array.from(dots.children)[0].setAttribute("aria-current","true");
+})();
+</script>

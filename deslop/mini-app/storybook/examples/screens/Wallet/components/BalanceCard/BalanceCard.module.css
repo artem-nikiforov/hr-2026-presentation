@@ -1,0 +1,107 @@
+.card {
+  z-index: 1;
+}
+
+.data {
+  position: relative;
+  display: flex;
+  padding: 28px 0 44px;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  align-self: stretch;
+  text-align: center;
+  z-index: 1;
+}
+
+.amount span {
+  font-size: var(--ui-title-52-font-size);
+  line-height: var(--ui-title-52-line-height);
+  font-weight: var(--ui-title-52-font-weight);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.amount span {
+  font-family: var(--ui-font-interface);
+}
+
+.prefix {
+  color: var(--primary-60);
+}
+
+.cardOverlay .amount span {
+  color: var(--white);
+}
+
+.cardDefault .amount span {
+  color: var(--primary);
+}
+
+.actions {
+  position: relative;
+  background-color: transparent !important;
+  display: flex;
+  padding: 0 16px 16px;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  z-index: 1;
+}
+
+.cardOverlay {
+  --primary: var(--white);
+  --primary-60: var(--mini-app-story-subtle);
+  --accent-blue: var(--white);
+  --surface: transparent;
+
+  color: var(--white);
+}
+
+.cardOverlay .label {
+  color: var(--primary-60);
+}
+
+.cardOverlay .prefix {
+  color: var(--primary-60);
+}
+
+:global(body.material) .cardOverlay .data {
+  padding: 92px 0 31px;
+}
+
+.cardDefault {
+  color: var(--primary);
+  background: var(--surface);
+}
+
+:global(body.apple) .cardDefault .label {
+  color: var(--primary);
+}
+
+:global(body.material) .cardDefault .label {
+  color: var(--primary-60);
+}
+
+:global(body.material) .cardDefault {
+  background-color: var(--surface);
+}
+
+:global(body.material) .cardDefault .data {
+  padding: 32px 0 42px;
+}
+
+:global(body.material) .cardDefault .amount {
+  font-size: 44px;
+  font-weight: 500;
+}
+
+.overlayButton {
+  background: var(--primary-5) !important;
+  background-blend-mode: plus-lighter, normal;
+  color: var(--white) !important;
+}
+
+.overlayButton svg,
+.overlayButton path {
+  fill: var(--white) !important;
+}

@@ -1,0 +1,533 @@
+<title>Учебный центр: 100% ролей</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --char:#140E0B;
+  --char-2:#1E1512;
+  --char-3:#2A1E19;
+  --line:#3A2A22;
+  --cream:#F7EFE3;
+  --smoke:#A08D82;
+  --flame:#F5761A;
+  --ember:#D62300;
+  --bun:#F2C879;
+  --leaf:#8CBF3F;
+  --maxw:1120px;
+  --step:clamp(1rem,2.2vw,1.6rem);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--char);
+  color:var(--cream);
+  font-family:"Golos Text","Helvetica Neue",Arial,sans-serif;
+  font-size:clamp(16px,1.05vw,18px);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,.num{font-family:"Unbounded","Golos Text",sans-serif;font-weight:900;line-height:.98;letter-spacing:-.02em;text-wrap:balance;margin:0}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+p{margin:0}
+
+/* ——— каркас сцен ——— */
+.scene{
+  position:relative;
+  padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px);
+  border-top:1px solid var(--line);
+}
+.scene:first-of-type{border-top:0}
+.wrap{max-width:var(--maxw);margin:0 auto;display:flex;flex-direction:column;gap:var(--step)}
+.eyebrow{
+  font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--flame);display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--flame);flex:none}
+.lead{font-size:clamp(1.05rem,1.5vw,1.3rem);color:#E4D6C6;max-width:62ch}
+.vo{
+  border-left:2px solid var(--line);padding-left:18px;color:var(--smoke);
+  font-size:.95rem;max-width:64ch;
+}
+.vo b{color:#CDB9AB;font-weight:600}
+
+/* мягкое «проявление» из видимого состояния */
+.rise{transform:translateY(14px);opacity:.55;transition:transform .7s cubic-bezier(.2,.7,.2,1),opacity .7s}
+.is-on .rise{transform:none;opacity:1}
+.is-on .rise:nth-child(2){transition-delay:.06s}
+.is-on .rise:nth-child(3){transition-delay:.12s}
+.is-on .rise:nth-child(4){transition-delay:.18s}
+
+/* ——— шапка / герой ——— */
+.hero{
+  min-height:88vh;display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(24px,4vw,56px);
+  align-items:center;
+  background:
+    radial-gradient(120% 90% at 78% 40%,rgba(245,118,26,.20),transparent 62%),
+    radial-gradient(80% 70% at 12% 90%,rgba(214,35,0,.16),transparent 60%);
+}
+.mmm{
+  font-family:"Unbounded",sans-serif;font-weight:900;
+  font-size:clamp(3.4rem,11.5vw,10rem);line-height:.85;letter-spacing:-.045em;
+  background:linear-gradient(94deg,var(--bun) 4%,var(--flame) 46%,var(--ember) 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  margin:0 0 .12em;
+}
+.hero h1{font-size:clamp(1.5rem,3.2vw,2.6rem);max-width:16ch}
+.hero .lead{margin-top:.4em}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+.btn{
+  font-family:"Golos Text",sans-serif;font-weight:600;font-size:.94rem;
+  padding:13px 22px;border-radius:999px;border:1px solid var(--flame);
+  background:var(--flame);color:#180E06;cursor:pointer;transition:transform .15s,filter .15s;
+}
+.btn.ghost{background:transparent;color:var(--cream);border-color:var(--line)}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn:focus-visible,a:focus-visible{outline:2px solid var(--bun);outline-offset:3px}
+
+/* бургер */
+.burger{width:min(100%,420px);margin-inline:auto;filter:drop-shadow(0 26px 40px rgba(0,0,0,.5))}
+.burger g{transform-origin:center}
+.lay{animation:drop .9s cubic-bezier(.2,.9,.25,1) both}
+.lay:nth-child(1){animation-delay:.05s}.lay:nth-child(2){animation-delay:.15s}
+.lay:nth-child(3){animation-delay:.25s}.lay:nth-child(4){animation-delay:.35s}
+.lay:nth-child(5){animation-delay:.45s}.lay:nth-child(6){animation-delay:.55s}
+@keyframes drop{from{transform:translateY(-38px);opacity:0}to{transform:none;opacity:1}}
+
+/* ——— крупные цифры ——— */
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:clamp(16px,3vw,40px)}
+.fig .num{font-size:clamp(3rem,7.5vw,6.4rem);color:var(--bun);font-variant-numeric:tabular-nums}
+.fig .cap{color:var(--smoke);font-size:.95rem;margin-top:.3em}
+.hair{height:1px;background:var(--line);border:0;margin:0}
+
+/* ——— лесенка ролей ——— */
+.ladder{display:flex;flex-direction:column;gap:2px;counter-reset:none}
+.rung{
+  display:grid;grid-template-columns:96px 1fr;gap:clamp(14px,3vw,34px);
+  align-items:start;padding:22px 0 22px 0;border-top:1px solid var(--line);
+  opacity:.42;transition:opacity .5s ease;
+}
+.rung.lit{opacity:1}
+.rung .yr{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:1.05rem;color:var(--smoke);padding-top:4px}
+.rung.lit .yr{color:var(--flame)}
+.rung h3{font-size:clamp(1.05rem,1.8vw,1.35rem);margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-size:.85rem;padding:6px 13px;border-radius:999px;
+  border:1px solid var(--line);color:var(--smoke);background:var(--char-2);
+  transition:border-color .4s,color .4s,background .4s;
+}
+.rung.lit .chip{border-color:rgba(245,118,26,.55);color:#FFDCB8;background:rgba(245,118,26,.10)}
+.rung.dead{opacity:.34}
+.rung.dead .yr,.rung.dead h3{color:#6C5B52}
+.rung .note{color:var(--smoke);font-size:.9rem;margin-top:10px}
+
+/* ——— грабли ——— */
+.rakes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(14px,2.4vw,26px)}
+.rake{padding:26px 24px 28px;background:var(--char-2);border-radius:4px;border-top:3px solid var(--ember)}
+.rake .ic{font-family:"JetBrains Mono",monospace;color:var(--ember);font-size:.8rem;letter-spacing:.12em}
+.rake h3{font-size:1.12rem;margin:14px 0 10px}
+.rake p{color:var(--smoke);font-size:.94rem}
+
+/* ——— решения ——— */
+.fixes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:clamp(14px,2.4vw,26px)}
+.fix{padding:26px 24px;border:1px solid var(--line);border-radius:4px}
+.fix h3{font-size:1.1rem;margin-bottom:10px}
+.fix p{color:var(--smoke);font-size:.94rem}
+.tag{
+  display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;
+  text-transform:uppercase;padding:4px 9px;border-radius:3px;margin-bottom:14px;
+}
+.tag.now{background:rgba(140,191,63,.16);color:var(--leaf)}
+.tag.soon{background:rgba(242,200,121,.14);color:var(--bun)}
+
+/* ——— хаос → порядок ——— */
+.chaos{display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(16px,3vw,36px);align-items:center}
+.pile{display:flex;flex-direction:column;gap:8px}
+.doc{
+  font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--smoke);
+  background:var(--char-2);border:1px solid var(--line);padding:11px 14px;border-radius:3px;
+}
+.pile .doc:nth-child(1){transform:rotate(-1.6deg)}
+.pile .doc:nth-child(2){transform:rotate(1.1deg) translateX(12px)}
+.pile .doc:nth-child(3){transform:rotate(-.7deg) translateX(-6px)}
+.pile .doc:nth-child(4){transform:rotate(2deg) translateX(18px)}
+.shelf .doc{transform:none;border-left:3px solid var(--flame);color:#E4D6C6}
+.arrow{color:var(--flame);font-size:1.8rem;text-align:center}
+
+/* ——— график ИИ ——— */
+.chart{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,2vw,26px);align-items:end;min-height:300px}
+.bar-col{display:flex;flex-direction:column;justify-content:flex-end;gap:12px;height:300px}
+.bar{
+  background:linear-gradient(180deg,var(--flame),var(--ember));border-radius:3px 3px 0 0;
+  height:var(--h);transition:height .8s cubic-bezier(.2,.8,.2,1);position:relative;
+}
+.is-on .bar{height:var(--h)}
+.bar-col .v{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(1.1rem,2.2vw,1.7rem)}
+.bar-col .k{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--smoke)}
+.bar-col .yr{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--cream);padding-top:12px;border-top:1px solid var(--line);margin-top:10px}
+.langs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--bun);opacity:.9}
+
+/* ——— результаты ——— */
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:clamp(14px,2.4vw,26px)}
+.res{padding:28px 26px;background:var(--char-2);border-radius:4px;display:flex;flex-direction:column;gap:14px}
+.res .k{font-size:.95rem;color:#E4D6C6;font-weight:600}
+.ba{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.was{font-family:"Unbounded",sans-serif;font-weight:700;font-size:1.5rem;color:var(--smoke);text-decoration:line-through;text-decoration-thickness:2px}
+.now{font-family:"Unbounded",sans-serif;font-weight:900;font-size:clamp(1.9rem,4vw,2.8rem);color:var(--leaf);font-variant-numeric:tabular-nums}
+.res .why{color:var(--smoke);font-size:.9rem}
+
+/* ——— финал ——— */
+.final{
+  text-align:center;
+  background:radial-gradient(90% 70% at 50% 30%,rgba(245,118,26,.2),transparent 65%);
+}
+.final .wrap{align-items:center}
+.final h2{font-size:clamp(1.8rem,5vw,3.6rem);max-width:20ch}
+.mosaic{display:grid;grid-template-columns:repeat(auto-fit,minmax(52px,1fr));gap:6px;max-width:560px;width:100%}
+.tile{aspect-ratio:1;border-radius:3px;background:linear-gradient(140deg,var(--char-3),var(--line))}
+.tile:nth-child(3n){background:linear-gradient(140deg,rgba(245,118,26,.5),rgba(214,35,0,.35))}
+.tile:nth-child(5n){background:linear-gradient(140deg,rgba(242,200,121,.45),rgba(245,118,26,.25))}
+
+/* ——— рельс прогресса + панель показа ——— */
+.rail{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:40;
+  display:flex;flex-direction:column;gap:9px;
+}
+.rail button{
+  width:9px;height:9px;padding:0;border-radius:50%;border:1px solid var(--line);
+  background:var(--char-3);cursor:pointer;transition:background .3s,transform .3s;
+}
+.rail button[aria-current="true"]{background:var(--flame);transform:scale(1.45)}
+.deck{
+  position:fixed;left:18px;bottom:18px;z-index:40;display:flex;gap:8px;align-items:center;
+  background:rgba(20,14,11,.86);backdrop-filter:blur(8px);
+  border:1px solid var(--line);border-radius:999px;padding:7px 8px 7px 14px;
+}
+.deck .lbl{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.1em;color:var(--smoke);text-transform:uppercase}
+.deck button{
+  font-family:"Golos Text",sans-serif;font-size:.82rem;font-weight:600;border-radius:999px;
+  border:1px solid var(--line);background:transparent;color:var(--cream);padding:7px 14px;cursor:pointer;
+}
+.deck button[aria-pressed="true"]{background:var(--flame);color:#180E06;border-color:var(--flame)}
+.bar-top{position:fixed;top:0;left:0;height:2px;background:var(--flame);width:0;z-index:50}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:56px}
+  .burger{width:min(72%,300px)}
+  .chaos{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg)}
+  .rung{grid-template-columns:64px 1fr}
+  .chart{grid-template-columns:repeat(2,1fr);min-height:auto}
+  .rail{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rise{transform:none;opacity:1}
+}
+</style>
+
+<div class="bar-top" id="progress"></div>
+
+<nav class="rail" id="rail" aria-label="Сцены"></nav>
+
+<div class="deck" role="group" aria-label="Режим показа">
+  <span class="lbl">показ</span>
+  <button id="play" aria-pressed="false">Автопрокрутка</button>
+  <button id="slower" aria-label="Медленнее">–</button>
+  <button id="faster" aria-label="Быстрее">+</button>
+</div>
+
+<!-- 1 —————————————————————————— -->
+<section class="scene hero" data-title="М-м-м">
+  <div class="wrap">
+    <p class="eyebrow rise">Учебный центр · HR-конференция 2026</p>
+    <p class="mmm rise">М-м-м</p>
+    <h1 class="rise">Беззаботное удовольствие начинается задолго до первого укуса</h1>
+    <p class="lead rise">Ради этого «м-м-м» здесь всё и вертится. Закупить, довезти, пожарить, улыбнуться. За каждым идеально собранным Воппером стоит человек, который сначала научился делать всё правильно.</p>
+    <div class="cta-row rise">
+      <button class="btn" id="startBtn">Смотреть историю</button>
+      <button class="btn ghost" id="playHero" aria-pressed="false">Включить автопрокрутку</button>
+    </div>
+  </div>
+  <svg class="burger" viewBox="0 0 320 240" role="img" aria-label="Собранный Воппер">
+    <g class="lay"><path d="M32 96C32 52 90 26 160 26s128 26 128 70z" fill="#E0A44B"/><path d="M32 96C32 52 90 26 160 26s128 26 128 70z" fill="url(#sh)" opacity=".35"/>
+      <circle cx="112" cy="60" r="4.5" fill="#FBE8C6"/><circle cx="160" cy="48" r="4.5" fill="#FBE8C6"/><circle cx="206" cy="60" r="4.5" fill="#FBE8C6"/><circle cx="86" cy="80" r="4" fill="#FBE8C6"/><circle cx="232" cy="80" r="4" fill="#FBE8C6"/></g>
+    <g class="lay"><rect x="28" y="96" width="264" height="16" rx="8" fill="#8CBF3F"/><path d="M40 112c14-10 30 6 46-2s26 8 42 0 30 6 46-2 28 8 44 0 26 6 34 4v-4H40z" fill="#A6D45C"/></g>
+    <g class="lay"><rect x="24" y="112" width="272" height="22" rx="10" fill="#5B3220"/><rect x="24" y="112" width="272" height="9" rx="4.5" fill="#6E402A"/></g>
+    <g class="lay"><rect x="34" y="134" width="252" height="14" rx="6" fill="#F0B429"/></g>
+    <g class="lay"><rect x="24" y="148" width="272" height="22" rx="10" fill="#5B3220"/><rect x="24" y="148" width="272" height="9" rx="4.5" fill="#6E402A"/></g>
+    <g class="lay"><path d="M30 170h260c8 0 14 10 14 22 0 16-30 26-144 26S16 208 16 192c0-12 6-22 14-22z" fill="#D8974A"/></g>
+    <defs><linearGradient id="sh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD9A0"/><stop offset="1" stop-color="#B8762E"/></linearGradient></defs>
+  </svg>
+</section>
+
+<!-- 2 —————————————————————————— -->
+<section class="scene" data-title="Масштаб">
+  <div class="wrap">
+    <p class="eyebrow rise">Масштаб</p>
+    <h2 class="rise" style="font-size:clamp(1.6rem,3.4vw,2.6rem);max-width:22ch">Как сделать так, чтобы эта машина работала как единый организм?</h2>
+    <div class="figs rise">
+      <div class="fig"><div class="num" data-count="886">886</div><p class="cap">ресторанов по стране</p></div>
+      <div class="fig"><div class="num" data-count="12328">12 328</div><p class="cap">сотрудников в команде</p></div>
+      <div class="fig"><div class="num">1</div><p class="cap">общий стандарт «как правильно»</p></div>
+    </div>
+    <hr class="hair">
+    <p class="vo rise"><b>Закадровый голос:</b> Мы решили: нужно помочь команде накапливать опыт. Сделать обучение таким же доступным и понятным, как меню в киоске.</p>
+  </div>
+</section>
+
+<!-- 3 —————————————————————————— -->
+<section class="scene" data-title="2023">
+  <div class="wrap">
+    <p class="eyebrow rise">Точка отсчёта · 2023</p>
+    <h2 class="rise" style="font-size:clamp(1.8rem,4.4vw,3.2rem);max-width:18ch">Глобальный бренд ушёл. А вместе с ним — все учебные программы.</h2>
+    <p class="lead rise">Паника? Нет. Мы начали строить самолёт прямо в полёте.</p>
+  </div>
+</section>
+
+<!-- 4 —————————————————————————— -->
+<section class="scene" data-title="Лесенка ролей">
+  <div class="wrap">
+    <p class="eyebrow rise">Лесенка должностей · 2022 → 2026</p>
+    <h2 class="rise" style="font-size:clamp(1.5rem,3.2vw,2.4rem)">Четыре года мы собирали треки заново — роль за ролью</h2>
+    <div class="ladder">
+      <div class="rung" data-rung="0"><div class="yr">2022</div><div><h3>BK Link</h3><div class="chips"><span class="chip">готовые программы бренда</span></div><p class="note">Всё работает. Ничего не предвещает.</p></div></div>
+      <div class="rung dead" data-rung="1"><div class="yr">2023</div><div><h3>Обнуление</h3><div class="chips"><span class="chip">программы недоступны</span></div><p class="note">Лесенка сереет.</p></div></div>
+      <div class="rung" data-rung="2"><div class="yr">2023</div><div><h3>Строим с нуля</h3><div class="chips"><span class="chip">ЧБР</span><span class="chip">МС</span></div><p class="note">4 трека, 120 артефактов.</p></div></div>
+      <div class="rung" data-rung="3"><div class="yr">2024</div><div><h3>Управленческий контур</h3><div class="chips"><span class="chip">ЗД</span><span class="chip">ДР</span></div><p class="note">4 трека, 300 артефактов.</p></div></div>
+      <div class="rung" data-rung="4"><div class="yr">2025</div><div><h3>Кухня и производство</h3><div class="chips"><span class="chip">Повара</span><span class="chip">НУ</span><span class="chip">ТУ</span><span class="chip">ОД</span></div><p class="note">5 треков, 400 артефактов. Треки ЧБР — на 5 языках.</p></div></div>
+      <div class="rung" data-rung="5"><div class="yr">2026</div><div><h3>Закрыли вообще всех</h3><div class="chips"><span class="chip">Кассиры</span><span class="chip">Курьеры</span><span class="chip">Операторы КЦ</span></div><p class="note">5 треков, около 300 артефактов. Треки ЧБР — на 8 языках.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 —————————————————————————— -->
+<section class="scene" data-title="100% ролей">
+  <div class="wrap">
+    <p class="eyebrow rise">Итог четырёх лет</p>
+    <div class="fig rise"><div class="num" data-count="100" data-suffix="%" style="font-size:clamp(4.5rem,16vw,12rem);color:var(--flame)">100%</div><p class="cap" style="font-size:1.15rem">ролей охвачено собственными треками обучения</p></div>
+    <hr class="hair">
+    <h2 class="rise" style="font-size:clamp(2rem,6vw,4rem);color:var(--smoke)">Но…</h2>
+    <p class="lead rise">Миссия ещё не завершена. Дальше — честно про то, где мы наступили на грабли.</p>
+  </div>
+</section>
+
+<!-- 6 —————————————————————————— -->
+<section class="scene" data-title="Грабли">
+  <div class="wrap">
+    <p class="eyebrow rise">Наши грабли · доступность</p>
+    <h2 class="rise" style="font-size:clamp(1.5rem,3.2vw,2.4rem);max-width:24ch">Толку от крутых треков немного, если до них не добраться</h2>
+    <div class="rakes rise">
+      <div class="rake"><p class="ic">01 / ЭКРАН</p><h3>Только веб-версия</h3><p>Мобильного приложения пока нет. LMS на смартфоне приходится разглядывать через лупу.</p></div>
+      <div class="rake"><p class="ic">02 / КАНАЛ</p><h3>СМС вместо пушей</h3><p>«Пройди обучение» теряется между «Поздравляем с днём рождения» и «Ваша посылка в пункте выдачи».</p></div>
+      <div class="rake"><p class="ic">03 / СВЯЗЬ</p><h3>Wi-Fi под потолком</h3><p>В части ресторанов сеть ловит, только если встать на цыпочки и поднять телефон над головой.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 —————————————————————————— -->
+<section class="scene" data-title="Решения">
+  <div class="wrap">
+    <p class="eyebrow rise">Что делаем</p>
+    <h2 class="rise" style="font-size:clamp(1.5rem,3.2vw,2.4rem);max-width:24ch">Пока IT колдует над приложением, мы спускаемся на землю</h2>
+    <div class="fixes rise">
+      <div class="fix"><span class="tag now">уже работает</span><h3>Наставничество</h3><p>Перезапустили формат: опыт передаётся из рук в руки, даже если интернет завис.</p></div>
+      <div class="fix"><span class="tag now">уже работает</span><h3>Агенты обучения</h3><p>Люди в ресторанах, которые доводят обучение до конца и отвечают за результат смены.</p></div>
+      <div class="fix"><span class="tag soon">в разработке</span><h3>Мобильное приложение и пуши</h3><p>Обучение в кармане вместо веб-версии под лупой.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 —————————————————————————— -->
+<section class="scene" data-title="Источник правды">
+  <div class="wrap">
+    <p class="eyebrow rise">Укрощение хаоса</p>
+    <h2 class="rise" style="font-size:clamp(1.5rem,3.2vw,2.4rem);max-width:24ch">Наводим порядок в регламентах: реестр процессов и база знаний</h2>
+    <div class="chaos rise">
+      <div class="pile">
+        <p class="doc">Регламент_v1.docx</p>
+        <p class="doc">Регламент_v2_final.docx</p>
+        <p class="doc">Регламент_v3_точно_финал.docx</p>
+        <p class="doc">Регламент_v3_финал(1).docx</p>
+      </div>
+      <p class="arrow" aria-hidden="true">→</p>
+      <div class="pile shelf">
+        <p class="doc">Реестр процессов</p>
+        <p class="doc">База знаний · единая версия</p>
+        <p class="doc">Владелец процесса у каждого документа</p>
+        <p class="doc">Дата актуализации</p>
+      </div>
+    </div>
+    <p class="vo rise"><b>Почему это ещё в процессе:</b> автоматизированный хаос останется хаосом. Сначала надёжный фундамент — потом новые ракеты.</p>
+  </div>
+</section>
+
+<!-- 9 —————————————————————————— -->
+<section class="scene" data-title="ИИ у методологов">
+  <div class="wrap">
+    <p class="eyebrow rise">ИИ и автоматизация · что уже приручили</p>
+    <h2 class="rise" style="font-size:clamp(1.5rem,3.2vw,2.4rem);max-width:26ch">Рутину забрал ИИ. Методолог занимается тем, ради чего его наняли</h2>
+    <p class="lead rise">Самое долгое в нашей работе — найти ответ на вопрос «как правильно» и добиться, чтобы с ним согласились все стейкхолдеры. Всё остальное теперь делает ИИ-помощник.</p>
+    <div class="chart rise">
+      <div class="bar-col"><span class="v">120</span><span class="k">артефактов · 4 трека</span><div class="bar" style="--h:30%"></div><span class="yr">2023</span></div>
+      <div class="bar-col"><span class="v">300</span><span class="k">артефактов · 4 трека</span><div class="bar" style="--h:70%"></div><span class="yr">2024</span></div>
+      <div class="bar-col"><span class="v">400</span><span class="k">артефактов · 5 треков</span><div class="bar" style="--h:94%"></div><span class="yr">2025<div class="langs"><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div><span class="k">5 языков</span></span></div>
+      <div class="bar-col"><span class="v">~300</span><span class="k">артефактов · 5 треков</span><div class="bar" style="--h:70%"></div><span class="yr">2026<div class="langs"><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div><span class="k">8 языков</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 —————————————————————————— -->
+<section class="scene" data-title="Результат">
+  <div class="wrap">
+    <p class="eyebrow rise">Было → стало</p>
+    <h2 class="rise" style="font-size:clamp(1.5rem,3.2vw,2.4rem)">Мы вообще работать-то успеваем? Или только учимся?</h2>
+    <div class="results rise">
+      <div class="res">
+        <p class="k">Составить рабочий ИПР</p>
+        <div class="ba"><span class="was">3 часа</span><span class="now">20 минут</span></div>
+        <p class="why">Экономия 2 часа 40 минут на каждом плане развития.</p>
+      </div>
+      <div class="res">
+        <p class="k">Соблюдение процедуры «оценка → обучение → перевод»</p>
+        <div class="ba"><span class="was">36,75%</span><span class="now">90%</span></div>
+        <p class="why">И никаких ручных отчётов. Ни одна необученная мышь не проскочит.</p>
+      </div>
+      <div class="res">
+        <p class="k">Курс на родном языке сотрудника</p>
+        <div class="ba"><span class="was">20 минут</span><span class="now">3 секунды</span></div>
+        <p class="why">Раньше наставник переводил курс вслух, директор вручную назначал нужную версию. Теперь язык выбирается внутри курса.</p>
+      </div>
+      <div class="res" style="border-top:3px solid var(--flame)">
+        <p class="k">Экономия на производстве контента</p>
+        <div class="ba"><span class="now" style="color:var(--flame)">2,4 млн ₽</span></div>
+        <p class="why">Работа методологов ускорилась в 2 раза.</p>
+      </div>
+    </div>
+    <p class="vo rise"><b>Вишенка на булке:</b> мы заговорили на 8 языках. Потому что Воппер вкусный на любом языке.</p>
+  </div>
+</section>
+
+<!-- 11 —————————————————————————— -->
+<section class="scene final" data-title="Финал">
+  <div class="wrap">
+    <p class="eyebrow rise" style="justify-content:center">Учебный центр Бургер Кинг</p>
+    <h2 class="rise">Мы создаём развивающую среду для роста талантов</h2>
+    <p class="lead rise" style="text-align:center">Чтобы гости получали своё беззаботное удовольствие, а Бургер Кинг оставался самой любимой сетью ресторанов в России.</p>
+    <div class="mosaic rise" aria-hidden="true"></div>
+    <p class="mmm rise" style="font-size:clamp(2.6rem,9vw,7rem)">М-м-м</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll('.scene'));
+
+  /* мозаика команды */
+  var mos = document.querySelector('.mosaic');
+  if (mos) for (var i=0;i<40;i++){ var t=document.createElement('div'); t.className='tile'; mos.appendChild(t); }
+
+  /* рельс сцен */
+  var rail = document.getElementById('rail');
+  scenes.forEach(function(s,i){
+    var b = document.createElement('button');
+    b.type='button';
+    b.setAttribute('aria-label', s.dataset.title || ('Сцена '+(i+1)));
+    b.title = s.dataset.title || '';
+    b.addEventListener('click', function(){ s.scrollIntoView({behavior: reduce?'auto':'smooth'}); });
+    rail.appendChild(b);
+  });
+  var dots = Array.prototype.slice.call(rail.children);
+
+  /* активация сцен */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) e.target.classList.add('is-on');
+    });
+  }, {threshold:.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  /* лесенка: подсветка по мере прокрутки */
+  var rungs = Array.prototype.slice.call(document.querySelectorAll('.rung'));
+  var ioR = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting) e.target.classList.add('lit'); });
+  }, {threshold:.6, rootMargin:'0px 0px -18% 0px'});
+  rungs.forEach(function(r){ ioR.observe(r); });
+
+  /* счётчики */
+  var counted = new WeakSet();
+  var ioC = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting || counted.has(e.target)) return;
+      counted.add(e.target);
+      if (reduce) return;
+      var end = parseFloat(e.target.dataset.count);
+      var suf = e.target.dataset.suffix || '';
+      var t0 = performance.now(), dur = 1100;
+      (function tick(now){
+        var p = Math.min(1,(now-t0)/dur);
+        var v = Math.round(end * (1 - Math.pow(1-p,3)));
+        e.target.textContent = v.toLocaleString('ru-RU') + suf;
+        if (p<1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }, {threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(function(n){ ioC.observe(n); });
+
+  /* прогресс сверху + текущая точка */
+  var progress = document.getElementById('progress');
+  function onScroll(){
+    var max = document.documentElement.scrollHeight - innerHeight;
+    progress.style.width = (max>0 ? (scrollY/max*100) : 0) + '%';
+    var mid = scrollY + innerHeight*0.4, cur = 0;
+    scenes.forEach(function(s,i){ if (s.offsetTop <= mid) cur = i; });
+    dots.forEach(function(d,i){ d.setAttribute('aria-current', i===cur ? 'true':'false'); });
+  }
+  addEventListener('scroll', onScroll, {passive:true});
+  addEventListener('resize', onScroll);
+  onScroll();
+
+  /* режим показа: плавная автопрокрутка */
+  var playing = false, speed = 42, last = 0, acc = 0;
+  var playBtns = [document.getElementById('play'), document.getElementById('playHero')].filter(Boolean);
+  function setPlaying(v){
+    playing = v;
+    playBtns.forEach(function(b){
+      b.setAttribute('aria-pressed', String(v));
+      if (b.id==='play') b.textContent = v ? 'Пауза' : 'Автопрокрутка';
+      else b.textContent = v ? 'Остановить прокрутку' : 'Включить автопрокрутку';
+    });
+    if (v){ last = performance.now(); requestAnimationFrame(loop); }
+  }
+  function loop(now){
+    if (!playing) return;
+    var dt = Math.min(64, now-last); last = now;
+    acc += speed * dt/1000;
+    var whole = Math.floor(acc); acc -= whole;
+    if (whole) scrollBy(0, whole);
+    if (scrollY + innerHeight >= document.documentElement.scrollHeight - 2) { setPlaying(false); return; }
+    requestAnimationFrame(loop);
+  }
+  playBtns.forEach(function(b){ b.addEventListener('click', function(){ setPlaying(!playing); }); });
+  document.getElementById('faster').addEventListener('click', function(){ speed = Math.min(160, speed+14); });
+  document.getElementById('slower').addEventListener('click', function(){ speed = Math.max(14, speed-14); });
+  document.getElementById('startBtn').addEventListener('click', function(){
+    scenes[1].scrollIntoView({behavior: reduce?'auto':'smooth'});
+  });
+
+  /* клавиатура для сцены: пробел — пауза, стрелки — по сценам */
+  addEventListener('keydown', function(e){
+    if (e.target.tagName === 'BUTTON' && e.code === 'Space') return;
+    var mid = scrollY + innerHeight*0.4, cur = 0;
+    scenes.forEach(function(s,i){ if (s.offsetTop <= mid) cur = i; });
+    if (e.code === 'Space'){ e.preventDefault(); setPlaying(!playing); }
+    if (e.code === 'ArrowDown' || e.code === 'PageDown'){ e.preventDefault(); setPlaying(false); (scenes[cur+1]||scenes[scenes.length-1]).scrollIntoView({behavior:'smooth'}); }
+    if (e.code === 'ArrowUp' || e.code === 'PageUp'){ e.preventDefault(); setPlaying(false); (scenes[cur-1]||scenes[0]).scrollIntoView({behavior:'smooth'}); }
+  });
+})();
+</script>

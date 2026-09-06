@@ -1,0 +1,13 @@
+.section {
+  margin-bottom: 24px;
+}
+
+.canvas {
+  margin: 0 var(--side-padding);
+  border-radius: 20px;
+  background: var(--surface);
+}
+
+.over {
+  background: linear-gradient(120deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+}
