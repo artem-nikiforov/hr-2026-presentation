@@ -13,6 +13,8 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const lerp = (a, b, t) => a + (b - a) * t;
 
+  const startVideo = node => { const started = node.play(); if (started && started.catch) started.catch(() => {}); };
+
   const frame = $("frame"), rail = $("rail"), beatsBar = $("beats"), pos = $("pos");
   const bPlay = $("play"), bPrev = $("prev"), bNext = $("next"), bScene = $("scene-next"),
         bReplay = $("replay"), bAuto = $("auto"), bVoice = $("voice"), bSfx = $("sfx"),
@@ -32,8 +34,19 @@
     shot.className = "shot";
     const cam = document.createElement("div");
     cam.className = "cam";
-    scene.shots.forEach((item, j) => {
+    scene.shots.forEach(item => {
       const figure = document.createElement("figure");
+
+      /* Ролик с тем же именем заменяет фотографию. Нет ролика — остаётся
+         фотография, нет и её — заглушка с названием кадра. */
+      const video = document.createElement("video");
+      video.muted = true;
+      video.playsInline = true;
+      video.setAttribute("playsinline", "");
+      video.preload = "auto";
+      video.hidden = true;
+      video.src = item.file.replace(/\.jpe?g$/i, "") + ".mp4";
+
       const img = document.createElement("img");
       img.alt = item.alt;
       img.src = item.file;
@@ -43,7 +56,15 @@
           `<div class="ph"><p class="k">Стартовый кадр</p><p class="t">${item.alt}</p>
            <p class="f">${item.file} · промт в assets/scenes.js</p></div>`);
       };
-      figure.append(img);
+
+      video.addEventListener("loadeddata", () => {
+        figure.classList.add("has-video");
+        video.hidden = false;
+        img.remove();
+      }, { once: true });
+      video.addEventListener("error", () => video.remove(), { once: true });
+
+      figure.append(video, img);
       cam.append(figure);
     });
     shot.append(cam);
@@ -80,7 +101,7 @@
     dot.addEventListener("click", () => { sound.warm(); timeline.go(index); });
     rail.append(dot);
 
-    return { el, cam, figures: Array.from(cam.children), avatar, subtitle, dot };
+    return { el, cam, figures: Array.from(cam.children), avatar, subtitle, dot, shot: -1 };
   });
 
   /* ── то, что нужно уметь останавливать ──────────────────────────── */
@@ -155,7 +176,18 @@
     /* фотография: берём последнюю назначенную на этой или ранней реплике */
     let target = 0;
     for (let i = 0; i <= beat; i++) if (scene.beats[i].shot !== undefined) target = scene.beats[i].shot;
-    view.figures.forEach((figure, i) => figure.classList.toggle("on", i === target));
+    const changed = view.shot !== target;
+    view.shot = target;
+    view.figures.forEach((figure, i) => {
+      const active = i === target;
+      figure.classList.toggle("on", active);
+      if (!figure.classList.contains("has-video")) return;
+      const video = figure.querySelector("video");
+      if (!active) { try { video.pause(); } catch (e) {} return; }
+      if (calm) return;                       /* спокойный режим: первый кадр без движения */
+      if (changed) video.currentTime = 0;
+      startVideo(video);                      /* автозапуск без звука браузеры разрешают */
+    });
 
     if (view.avatar) view.avatar.classList.toggle("on", scene.avatarAt === beat);
 
@@ -174,7 +206,8 @@
     const [x, y, scale] = SCENES[index].camera;
     const view = views[index];
     if (calm) { view.cam.style.transform = "scale(1.02)"; return; }
-    const p = clamp(progress, 0, 1);
+    const moving = view.figures[Math.max(0, view.shot)]?.classList.contains("has-video");
+    const p = clamp(progress, 0, 1) * (moving ? 0.35 : 1);
     view.cam.style.transform =
       `translate3d(${lerp(0, x, p).toFixed(3)}%, ${lerp(0, y, p).toFixed(3)}%, 0) scale(${lerp(1.015, scale, p).toFixed(4)})`;
   }
@@ -185,6 +218,11 @@
     if (current >= 0 && current !== index) {
       const past = views[current];
       past.el.classList.remove("on", "playing");
+      past.figures.forEach(figure => {
+        const video = figure.querySelector("video");
+        if (video) { try { video.pause(); video.currentTime = 0; } catch (e) {} }
+      });
+      past.shot = -1;
       past.subtitle.classList.remove("on");
       if (past.avatar) past.avatar.classList.remove("on");
       past.el.querySelectorAll("[data-revealed]").forEach(node => delete node.dataset.revealed);
@@ -223,11 +261,20 @@
       const token = tl.token;
       voice.play(beat.id, beat.text).then(() => tl.finishVoice(token));
     }
-    if (type === "pause") { voice.pause(); sound.stop(); }
-    if (type === "resume") voice.resume();
+    if (type === "pause") { voice.pause(); sound.stop(); video(tl.index, "pause"); }
+    if (type === "resume") { voice.resume(); video(tl.index, "play"); }
     if (type === "complete") views[tl.index].subtitle.classList.remove("on");
     paint(tl);
   });
+
+  function video(index, action) {
+    const view = views[index];
+    const figure = view.figures[Math.max(0, view.shot)];
+    if (!figure || !figure.classList.contains("has-video")) return;
+    const node = figure.querySelector("video");
+    if (action === "play" && !calm) startVideo(node);
+    if (action === "pause") { try { node.pause(); } catch (e) {} }
+  }
 
   /* ── такт ───────────────────────────────────────────────────────── */
   let last = performance.now();

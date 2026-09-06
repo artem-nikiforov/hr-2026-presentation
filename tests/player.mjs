@@ -51,6 +51,9 @@ window.AudioContext = class {
 };
 const frames = [];
 window.requestAnimationFrame = fn => { frames.push(fn); return frames.length; };
+/* jsdom не умеет проигрывать медиа — подменяем, иначе шум скрывает настоящие ошибки. */
+window.HTMLMediaElement.prototype.play = function () { this.playCalls = (this.playCalls || 0) + 1; return Promise.resolve(); };
+window.HTMLMediaElement.prototype.pause = function () { this.pauseCalls = (this.pauseCalls || 0) + 1; };
 
 for (const file of ["scenes.js", "story.js", "timeline.js", "reveal.js", "sound.js", "voice.js", "player.js"]) {
   const script = document.createElement("script");
@@ -122,6 +125,20 @@ group("Кадры сцен с аватаром");
 const avatarScene = scenes.find(s => s.querySelector(".avatar"));
 check("аватар скрыт вне своей реплики",
   avatarScene && !avatarScene.querySelector(".avatar").classList.contains("on"));
+
+group("Ролик заменяет фотографию");
+{
+  const figure = scenes[0].querySelector(".cam figure");
+  const video = figure.querySelector("video");
+  check("ищется ролик рядом с фотографией", video.src.endsWith("/img/s01_bite.mp4"), video.src);
+  check("пока ролика нет — видно фотографию", Boolean(figure.querySelector("img")));
+  video.dispatchEvent(new window.Event("loadeddata"));
+  check("после загрузки ролика фотография убирается", !figure.querySelector("img"));
+  check("кадр помечен как видео", figure.classList.contains("has-video"));
+  document.getElementById("rail").children[0].dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  await wait();
+  check("ролик запущен на своей сцене", (video.playCalls || 0) > 0);
+}
 
 group("Прогон всех сцен");
 for (let i = 0; i < 13; i++) { document.getElementById("rail").children[i].dispatchEvent(new window.MouseEvent("click", { bubbles: true })); await wait(); }
