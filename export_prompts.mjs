@@ -1,25 +1,29 @@
-/* Выгружает промты и реплики озвучки из index.html — единственного источника
-   правды — в prompts.json, PROMPTS.md и audio/vo/manifest.json.
+/* Выгружает промты и реплики озвучки из assets/ — источника правды —
+   в prompts.json, PROMPTS.md и audio/vo/manifest.json.
    Запуск:  node export_prompts.mjs                                          */
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 
-const html = readFileSync("index.html", "utf8");
-const block = html.split("<script>")[1].split("</script>")[0];
-const SCENES = new Function(block + "\nreturn SCENES;")();
+const require = createRequire(import.meta.url);
+const SCENES = require("./assets/scenes.js");   /* кадры и промты */
+const STORY = require("./assets/story.js");     /* реплики по сценам */
 
 const shots = [];
-SCENES.forEach((s, i) =>
-  s.shots.forEach((sh, j) =>
+SCENES.forEach((scene, i) =>
+  scene.shots.forEach((shot, j) =>
     shots.push({
-      scene: s.id, scene_name: s.name, order: `${i + 1}.${j + 1}`,
-      file: sh.file, alt: sh.alt, aspect: "16:9",
-      prompt: sh.prompt, negative_prompt: sh.neg
+      scene: scene.id, scene_name: scene.name, order: `${i + 1}.${j + 1}`,
+      file: shot.file, alt: shot.alt, aspect: "16:9",
+      prompt: shot.prompt, negative_prompt: shot.neg
     })));
 
-const vo = SCENES.flatMap(s =>
-  s.vo.map(v => ({ scene: s.id, id: v.id, file: `audio/vo/${v.id}.mp3`, text: v.text })));
+const vo = STORY.flatMap(scene =>
+  scene.beats.map(beat => ({
+    scene: scene.id, id: beat.id, file: `audio/vo/${beat.id}.mp3`,
+    seconds: beat.seconds, text: beat.text
+  })));
 
-const avatars = SCENES.filter(s => s.avatar).map(s => ({ scene: s.id, note: s.avatar }));
+const avatars = SCENES.filter(scene => scene.avatar).map(scene => ({ scene: scene.id, note: scene.avatar }));
 
 writeFileSync("prompts.json", JSON.stringify({ shots, avatars }, null, 2) + "\n");
 writeFileSync("audio/vo/manifest.json", JSON.stringify(vo, null, 2) + "\n");
@@ -27,20 +31,22 @@ writeFileSync("audio/vo/manifest.json", JSON.stringify(vo, null, 2) + "\n");
 const md = [
   "# Стартовые кадры — задание на генерацию",
   "",
-  "Источник правды — `SCENES` в `index.html`. Этот файл собирается командой",
+  "Источник правды — `SCENES` в `assets/scenes.js`. Этот файл собирается командой",
   "`node export_prompts.mjs`, руками его не правят.",
   "",
   "## Правила",
   "",
   "1. Формат — 16:9, готовим как стартовый кадр под будущее видео.",
-  "2. Складывать точно по имени файла из заголовка — страница подхватит их сама.",
+  "2. Складывать точно по имени файла из заголовка — показ подхватит их сам.",
   "3. **В кадре не должно быть читаемого текста.** Весь текст, цифры и инфографика",
-  "   рисуются на странице через SVG/CSS поверх фотографии.",
+  "   рисуются поверх фотографии средствами страницы.",
   "4. Промты собраны по `VISUAL_REF/burger_king_visual_bible.ru.json`:",
   "   база стиля → помещение → роль и полное описание формы → действие →",
   "   оборудование → свет → камера → контроль ошибок → negative prompt.",
   "5. Форму ЧБР и АУП нельзя сокращать до «в форме»: цветная зона поло и",
   "   полосатая нашивка на рубашке должны читаться в кадре.",
+  "6. Кадр берёт движение камеры до 1,07 масштаба — оставлять запас по краям,",
+  "   чтобы руки, телефон и лица не обрезались.",
   "",
   `## Аватары (${avatars.length}) — не генерировать`,
   "",
@@ -49,11 +55,13 @@ const md = [
   `## Кадры (${shots.length})`,
   ""
 ];
-for (const s of shots) {
-  md.push(`### ${s.order} · \`${s.file}\``, "",
-    `**Сцена:** ${s.scene_name} (${s.scene}) · **Что в кадре:** ${s.alt} · **Формат:** ${s.aspect}`, "",
-    "**Промт**", "", "```", s.prompt, "```", "",
-    "**Negative prompt**", "", "```", s.negative_prompt, "```", "");
+for (const shot of shots) {
+  md.push(`### ${shot.order} · \`${shot.file}\``, "",
+    `**Сцена:** ${shot.scene_name} (${shot.scene}) · **Что в кадре:** ${shot.alt} · **Формат:** ${shot.aspect}`, "",
+    "**Промт**", "", "```", shot.prompt, "```", "",
+    "**Negative prompt**", "", "```", shot.negative_prompt, "```", "");
 }
 writeFileSync("PROMPTS.md", md.join("\n"));
-console.log(`ok · кадров: ${shots.length} · реплик: ${vo.length} · аватаров: ${avatars.length}`);
+
+const total = vo.reduce((n, v) => n + v.seconds, 0);
+console.log(`ok · кадров: ${shots.length} · реплик: ${vo.length} · аватаров: ${avatars.length} · хронометраж ${Math.floor(total / 60)}:${String(Math.round(total % 60)).padStart(2, "0")}`);

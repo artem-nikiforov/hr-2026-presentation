@@ -1,0 +1,13 @@
+{
+  "name": "hr-2026-presentation",
+  "private": true,
+  "description": "Показ Учебного центра для HR-конференции 2026",
+  "scripts": {
+    "start": "python3 -m http.server 8777",
+    "test": "node tests/smoke.mjs && node tests/player.mjs",
+    "export": "node export_prompts.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^27.0.0"
+  }
+}
