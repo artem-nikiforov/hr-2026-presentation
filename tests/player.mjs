@@ -73,7 +73,7 @@ window.requestAnimationFrame = fn => { frames.push(fn); return frames.length; };
 window.HTMLMediaElement.prototype.play = function () { this.playCalls = (this.playCalls || 0) + 1; return Promise.resolve(); };
 window.HTMLMediaElement.prototype.pause = function () { this.pauseCalls = (this.pauseCalls || 0) + 1; };
 
-for (const file of ["scenes.js", "durations.js", "story.js", "timeline.js", "reveal.js", "sound.js", "voice.js", "player.js"]) {
+for (const file of ["scenes.js", "durations.js", "story.js", "timeline.js", "reveal.js", "confetti.js", "sound.js", "voice.js", "player.js"]) {
   const script = document.createElement("script");
   script.textContent = readFileSync(join(rootDir, "assets", file), "utf8");
   document.body.append(script);
@@ -146,6 +146,13 @@ group("Музыкальный луп");
   jump(8); await wait();
   check("на «что мы делаем» музыка вернулась", Boolean(playing()));
   check("вернулась та же дорожка, а не новая", playing() === track);
+}
+
+group("Конфетти на «100% ролей»");
+{
+  const party = scenes[5].querySelector("[data-confetti]");
+  check("в сцене есть место под конфетти", Boolean(party));
+  check("конфетти умеет запускаться", typeof window.KUConfetti.burst === "function");
 }
 
 group("Кадры сцен с аватаром");

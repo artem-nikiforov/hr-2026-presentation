@@ -82,7 +82,7 @@
   /* Внутри показанного блока: крупный акцент — emotional, заголовок — gentle. */
   function revealText(scope, calm) {
     const running = [];
-    scope.querySelectorAll(".huge:not([data-count])").forEach(el => running.push(...play(el, "emotional", calm)));
+    scope.querySelectorAll(".huge:not([data-count]):not(.steps)").forEach(el => running.push(...play(el, "emotional", calm)));
     scope.querySelectorAll(".title").forEach(el => running.push(...play(el, "gentle", calm)));
     return running;
   }

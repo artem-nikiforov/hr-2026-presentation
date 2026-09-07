@@ -28,7 +28,7 @@
       camera: [0.4, -0.3, 1.06],
       music: { track: 'bed' },      /* луп заводится с первой сцены */
       html: `<div class="layer hero-copy">
-        ${show(0, '<p class="huge">М-м-м</p>')}
+        ${show(0, '<p class="huge steps">М-м-м</p>')}
         ${show(1, '<p class="stamp">Беззаботное удовольствие</p>')}
       </div>`,
       beats: [
@@ -45,7 +45,7 @@
           .map((word, i) => `<p class="verb" data-verb="${i}">${word}</p>`).join('')}</div>
         ${show(2, '<p class="thesis">За каждым Воппером стоит <em>Человек</em>,<br>который сначала научился делать всё правильно</p>')}
       </div>`,
-      cues: [{ at: 1, sel: '.verb', stagger: 700 }],
+      cues: [{ at: 1, sel: '.verb', stagger: 820, spotlight: true }],
       beats: [
         beat('Чтобы гость получил беззаботное удовольствие, команда БК ежедневно творит магию.', { shot: 0 }),
         beat('Закупает, везёт, жарит, улыбается.', { shot: 1, sound: 'beat' }),
@@ -72,7 +72,7 @@
 
     /* ── s04 · 2023: бренд ушёл ───────────────────────────────────── */
     {
-      camera: [0, 0, 1.035],
+      camera: [.9, .5, 1.16],   /* заметный наезд: кадр «съезжает» на зрителя */
       music: { track: 'epic' },     /* «резкий переход на эпичную музыку», если дорожка есть */
       html: `<div class="layer">
         <div class="ladder-2022">
@@ -125,6 +125,7 @@
           <p class="huge" data-count="100" data-suffix="%">100%</p>
         </div>
         ${show(0, '<p class="stamp">100% ролей охвачено</p>')}
+        <div class="confetti" data-confetti aria-hidden="true"></div>
       </div>`,
       beats: [beat('Звучит эпично. Сто процентов ролей охвачено. Тадам!', { sound: 'tada', hold: 1.4 })]
     },
@@ -146,11 +147,18 @@
         ${kicker('Наши грабли · доступность LMS')}
         <div class="issue-panels">
           <section data-panel="0">
-            <h2 class="title sm">Теряется между<br>днём рождения и посылкой</h2>
-            <div class="notifications">
-              <div class="swipe">Поздравляем с днём рождения!</div>
-              <div class="learning-message">Пройди обучение <span>сейчас</span></div>
-              <div class="swipe">Ваша посылка уже в пункте выдачи</div>
+            <h2 class="title sm">Теряется среди<br>всего остального</h2>
+            <div class="phone" aria-label="Экран сообщений в телефоне сотрудника">
+              <div class="phone-top"><span class="phone-time">9:41</span><span class="phone-icons">●●●</span></div>
+              <p class="phone-title">Сообщения</p>
+              <div class="chats">
+                <div class="chat"><span class="ava" data-a="1">М</span><div><b>Мама</b><p>ты покушал?</p></div><time>9:38</time></div>
+                <div class="chat"><span class="ava" data-a="2">SM</span><div><b>SuperMarket</b><p>−40% на всё до конца недели!</p></div><time>9:21</time></div>
+                <div class="chat target"><span class="ava" data-a="3">БК</span><div><b>Обучение</b><p>Пройди курс «Сборка Воппера» до пятницы</p></div><time>9:07</time></div>
+                <div class="chat"><span class="ava" data-a="4">HR</span><div><b>HR-бот</b><p>Поздравляем с днём рождения! 🎉</p></div><time>8:55</time></div>
+                <div class="chat"><span class="ava" data-a="5">PV</span><div><b>Пункт выдачи</b><p>Ваша посылка уже ждёт вас</p></div><time>8:40</time></div>
+                <div class="chat"><span class="ava" data-a="6">Б</span><div><b>Банк</b><p>Списание 349 ₽. Баланс 2 140 ₽</p></div><time>8:12</time></div>
+              </div>
             </div>
           </section>
           <section data-panel="1">
@@ -294,10 +302,10 @@
         </div>
       </div>`,
       beats: [
-        beat('Успеваем ли мы работать? Конечно. Составить рабочий индивидуальный план развития теперь занимает двадцать минут вместо трёх часов.', { sound: 'cash' }),
+        beat('Успеваем ли мы работать? Конечно. Составить рабочий индивидуальный план развития теперь занимает двадцать минут вместо трёх часов.', { shot: 0, sound: 'cash' }),
         beat('Автоматизация процедуры оценка — обучение — перевод подняла соблюдение с тридцати шести целых семидесяти пяти сотых процента до девяноста. И никаких ручных отчётов.', { sound: 'cash' }),
-        beat('Раньше курс переводил наставник, смотрел его вместе с сотрудником и рассказывал, о чём речь. Потом директор тратил драгоценные минуты на назначение нужного курса.'),
-        beat('Теперь сотрудник сам выбирает язык внутри курса за три секунды. Мы заговорили на восьми языках. Потому что Воппер вкусный на любом языке.', { sound: 'cash', hold: 1.4 })
+        beat('Раньше курс переводил наставник, смотрел его вместе с сотрудником и рассказывал, о чём речь. Потом директор тратил драгоценные минуты на назначение нужного курса.', { shot: 1 }),
+        beat('Теперь сотрудник сам выбирает язык внутри курса за три секунды. Мы заговорили на восьми языках. Потому что Воппер вкусный на любом языке.', { shot: 2, sound: 'cash', hold: 1.4 })
       ]
     },
 

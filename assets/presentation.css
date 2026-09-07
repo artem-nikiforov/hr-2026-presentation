@@ -89,6 +89,9 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .veil.left{background:linear-gradient(90deg,rgba(16,11,7,.9) 0%,rgba(16,11,7,.62) 46%,rgba(16,11,7,.1) 100%)}
 .veil.center{background:radial-gradient(72% 72% at 50% 50%,rgba(16,11,7,.34),rgba(16,11,7,.88))}
 .veil.soft{background:linear-gradient(0deg,rgba(16,11,7,.88) 6%,rgba(16,11,7,.3) 58%,rgba(16,11,7,.44) 100%)}
+/* Сцены, где текст лежит прямо на фотографии: плотнее снизу, чтобы читалось */
+.veil.deep{background:linear-gradient(0deg,rgba(16,11,7,.95) 4%,rgba(16,11,7,.9) 42%,
+  rgba(16,11,7,.66) 72%,rgba(16,11,7,.5) 100%)}
 
 /* ═══ ТЕКСТОВЫЙ СЛОЙ ══════════════════════════════════════════════ */
 .layer{position:absolute;inset:0;padding:7cqh 7cqw;display:flex;flex-direction:column;
@@ -110,6 +113,19 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .huge{font-family:var(--ku-font-display);font-weight:900;font-size:24cqh;line-height:.84;
   background:var(--ku-grad-brand);-webkit-background-clip:text;background-clip:text;color:transparent}
 .huge.plain{background:none;color:var(--ku-text)}
+/* Четыре ступени с задержкой на каждой: буквы «прибавляют» на глазах */
+.huge.steps{transform-origin:50% 60%;animation:mmm-steps 3s linear both}
+@keyframes mmm-steps{
+  0%{transform:scale(.26) rotate(-3deg);opacity:0}
+  5%{transform:scale(.26) rotate(-3deg);opacity:1}
+  20%{transform:scale(.26) rotate(-3deg)}
+  25%{transform:scale(.5) rotate(2deg)}
+  42%{transform:scale(.5) rotate(2deg)}
+  47%{transform:scale(.82) rotate(-1.5deg)}
+  64%{transform:scale(.82) rotate(-1.5deg)}
+  69%{transform:scale(1.18) rotate(0deg)}
+  100%{transform:scale(1.18) rotate(0deg)}
+}
 
 /* ── общий механизм появления ── */
 .reveal{opacity:0;transform:translateY(2.2cqh);transition:opacity .5s var(--ease),transform .5s var(--ease)}
@@ -130,8 +146,8 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .verb{font-family:var(--ku-font-display);font-size:6.4cqh;line-height:1;color:var(--ku-text-muted);
   opacity:0;transform:translateY(1.6cqh) scale(.94);
   transition:opacity .35s var(--ease),transform .35s var(--ease),color .35s}
-.verb.on{opacity:1;transform:none;color:var(--ku-brand)}
-.verb.on~.verb{color:var(--ku-text-muted)}
+.verb.on{opacity:.42;transform:none}
+.verb.on.now{opacity:1;color:var(--ku-brand);transform:scale(1.06)}
 
 /* ═══ s03 · цифры ═════════════════════════════════════════════════ */
 .stats{display:flex;gap:7cqw;flex-wrap:wrap;align-items:flex-end}
@@ -183,7 +199,9 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .coverage .huge{font-size:14cqh;position:relative}
 
 /* ═══ s08 · уведомление тонет, связи нет ══════════════════════════ */
-.issue-layout,.results-layout,.chart-layout,.docs-layout{justify-content:center;gap:2.6cqh}
+.issue-layout,.chart-layout,.docs-layout{justify-content:center;gap:2.6cqh}
+/* Сцена у доски: инфографика опускается в нижнюю половину кадра */
+.results-layout{justify-content:flex-end;gap:2.2cqh;padding-bottom:7cqh}
 .issue-panels,.solution-panels,.result-panels,.finale-copy{position:relative;width:100%}
 .issue-panels section,.solution-panels section,.result-panels section,.finale-copy section{
   display:flex;flex-direction:column;gap:2cqh;
@@ -194,19 +212,36 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .result-panels section:not([data-state="now"]),.finale-copy section:not([data-state="now"]){
   position:absolute;inset:0;pointer-events:none}
 
-.notifications{display:flex;flex-direction:column;gap:1cqh;max-width:54cqw}
-.notifications div{font-size:2.9cqh;color:var(--ku-text-muted);
-  background:color-mix(in srgb,var(--ku-surface) 90%,transparent);
-  border-radius:.7cqw;padding:1.6cqh 1.8cqw}
-.notifications .swipe{opacity:.5}
-/* «свайпает как спам»: соседние уведомления уезжают вбок */
-.scene.playing [data-state="now"] .swipe{animation:swipeout .9s var(--ease) forwards}
-.scene.playing [data-state="now"] .swipe:nth-child(3){animation-delay:.45s}
-@keyframes swipeout{60%{transform:translateX(0);opacity:.5}
-  100%{transform:translateX(42%);opacity:0}}
-.learning-message{color:var(--ku-text)!important;border-left:3px solid var(--ku-brand);
-  display:flex;justify-content:space-between;align-items:center;gap:2cqw}
-.learning-message span{font-size:2.3cqh;color:var(--ku-text-muted)}
+.phone{width:33cqh;border-radius:2.6cqh;background:#0c0906;border:.5cqh solid #241a13;
+  box-shadow:0 2cqh 5cqh rgba(0,0,0,.6);overflow:hidden;display:flex;flex-direction:column;
+  align-self:flex-start}
+.phone-top{display:flex;justify-content:space-between;align-items:center;
+  padding:1.2cqh 2cqh .4cqh;font-size:1.9cqh;color:var(--ku-text-soft)}
+.phone-time{font-weight:700}
+.phone-icons{letter-spacing:.2em;font-size:1.2cqh;opacity:.6}
+.phone-title{font-family:var(--ku-font-display);font-size:3.4cqh;color:var(--ku-text);
+  padding:.6cqh 2cqh 1.2cqh}
+.chats{display:flex;flex-direction:column}
+.chat{display:grid;grid-template-columns:auto 1fr auto;gap:1.4cqh;align-items:center;
+  padding:1.5cqh 2cqh;border-top:1px solid rgba(249,242,231,.07);
+  transition:opacity .6s ease,background .6s ease}
+.chat .ava{width:5.4cqh;height:5.4cqh;border-radius:50%;display:grid;place-items:center;
+  font-size:2cqh;font-weight:700;color:#150f0a;background:var(--ku__cream-300)}
+.chat .ava[data-a="2"]{background:#7fb0d8}
+.chat .ava[data-a="3"]{background:var(--ku-brand)}
+.chat .ava[data-a="4"]{background:#c9a6e0}
+.chat .ava[data-a="5"]{background:#8fc79a}
+.chat .ava[data-a="6"]{background:#e0c07a}
+.chat b{display:block;font-size:2.3cqh;color:var(--ku-text);font-weight:600;line-height:1.2}
+.chat p{font-size:2.1cqh;color:var(--ku-text-muted);line-height:1.25;margin-top:.3cqh;
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.chat time{font-size:1.7cqh;color:var(--ku-text-muted);align-self:flex-start}
+/* Сообщение об обучении сначала теряется в общем потоке, потом его находят */
+.scene.playing [data-state="now"] .chat{animation:chat-dim 1s ease 2.2s both}
+.scene.playing [data-state="now"] .chat.target{animation:chat-find 1s ease 2.2s both}
+@keyframes chat-dim{to{opacity:.24}}
+@keyframes chat-find{to{background:color-mix(in srgb,var(--ku-brand) 18%,transparent)}}
+
 .wifi-signal{width:24cqh;margin-top:1cqh}
 .wifi-signal path{fill:none;stroke:var(--ku-brand);stroke-width:5;stroke-linecap:round;
   stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset .7s var(--ease)}
@@ -270,11 +305,11 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .chart-meta{font-size:2.3cqh;color:var(--ku-text-muted)}
 
 /* ═══ s12 · было → стало ═════════════════════════════════════════ */
-.result-panels{min-height:54cqh}
+.result-panels{min-height:40cqh}
 .result-index{font-family:var(--ku-font-display);font-size:2.6cqh;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ku-brand)}
 .comparison{display:flex;align-items:baseline;gap:2.4cqw;flex-wrap:wrap}
-.comparison .before{font-family:var(--ku-font-display);font-size:5.4cqh;color:var(--ku-text-muted);
+.comparison .before{font-family:var(--ku-font-display);font-size:5.4cqh;color:var(--ku__cream-300);
   text-decoration:line-through;text-decoration-thickness:2px}
 .compare-arrow{font-size:4.6cqh;color:var(--ku-brand)}
 .comparison strong{font-family:var(--ku-font-display);font-weight:900;font-size:11cqh;line-height:1;
@@ -291,8 +326,8 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .scene.playing [data-state="now"] .compliance-track b{transform:scaleX(1)}
 .chain{display:flex;align-items:flex-start;gap:3cqw;flex-wrap:wrap}
 .chain div{display:flex;flex-direction:column;gap:.8cqh;max-width:26ch}
-.chain .old{font-family:var(--ku-font-display);font-size:7cqh;line-height:1;color:var(--ku-text-muted)}
-.chain p{font-size:2.7cqh;color:var(--ku-text-muted);line-height:1.3}
+.chain .old{font-family:var(--ku-font-display);font-size:7cqh;line-height:1;color:var(--ku__cream-300)}
+.chain p{font-size:2.7cqh;color:var(--ku-text-soft);line-height:1.3}
 
 /* ═══ s13 · мозаика команды ══════════════════════════════════════ */
 .finale-copy{min-height:48cqh;align-items:center;text-align:center}
@@ -303,6 +338,10 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .scene.playing .mosaic i{opacity:1;transform:none}
 .mosaic i:nth-child(3n){background:color-mix(in srgb,var(--ku-brand) 45%,var(--ku-surface-2))}
 .mosaic i:nth-child(7n){background:color-mix(in srgb,var(--ku-contrast) 40%,var(--ku-surface-2))}
+
+/* ═══ Конфетти на «100% ролей» ═══════════════════════════════════ */
+.confetti{position:absolute;inset:0;pointer-events:none;z-index:4}
+.confetti canvas,.confetti svg{width:100%;height:100%;display:block}
 
 /* ═══ Видеоаватар ═════════════════════════════════════════════════ */
 .avatar{position:absolute;right:4cqw;top:6cqh;width:24cqh;height:24cqh;border-radius:50%;
@@ -343,7 +382,8 @@ body.full .deck{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);w
 /* ═══ Спокойный режим ═════════════════════════════════════════════ */
 @media (prefers-reduced-motion:reduce){
   .scene,.reveal,.verb,.step,.chart-column,.moving-doc,.cam figure,.veil,.avatar,.mosaic i{transition-duration:.01ms}
-  .swipe{animation:none!important}
+  .huge.steps,.chat,.chat.target{animation:none!important}
+  .huge.steps{transform:none}
   .cam{transform:scale(1.02)!important}
   .ring-fill,.plot-bar::before,.hands span,.time-track i,.compliance-track b,
   .lost-programs i,.wifi-signal path,.wifi-signal circle{transition-duration:.01ms}

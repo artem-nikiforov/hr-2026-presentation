@@ -154,10 +154,15 @@
       nodes.forEach((node, i) => {
         const inRange = i >= from && i <= to;
         if (!inRange) return;
-        if (beat < cue.at) { node.classList.remove(cue.cls || "on"); return; }
+        if (beat < cue.at) { node.classList.remove(cue.cls || "on", "now"); return; }
         const delay = instant || calm ? 0 : (i - from) * (cue.stagger || 0);
-        if (delay) later(() => node.classList.add(cue.cls || "on"), delay);
-        else node.classList.add(cue.cls || "on");
+        const light = () => {
+          node.classList.add(cue.cls || "on");
+          if (!cue.spotlight) return;
+          nodes.forEach(other => other.classList.remove("now"));
+          node.classList.add("now");
+        };
+        if (delay) later(light, delay); else light();
       });
     });
 
@@ -229,6 +234,13 @@
     view.el.classList.remove("playing");
     void view.el.offsetWidth;
     requestAnimationFrame(() => view.el.classList.add("playing"));
+
+    const confetti = root.KUConfetti;
+    if (confetti) {
+      confetti.clear();
+      const party = view.el.querySelector("[data-confetti]");
+      if (party) later(() => confetti.burst(party, calm), 700);
+    }
   }
 
   /* ── реакция таймлайна ──────────────────────────────────────────── */
