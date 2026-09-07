@@ -250,8 +250,10 @@
         tl.finishVoice(token);
       });
     }
-    if (type === "pause") { voice.pause(); sound.stop(); video(tl.index, "pause"); }
-    if (type === "resume") { voice.resume(); video(tl.index, "play"); }
+    if (type === "pause") { voice.pause(); sound.stop(); sound.musicPause(); video(tl.index, "pause"); }
+    if (type === "resume") { voice.resume(); sound.musicResume(); video(tl.index, "play"); }
+    /* Показ кончился — музыка уходит мягко, а не обрывается на полуслове. */
+    if (type === "complete" && tl.index === SCENES.length - 1) sound.music({ stop: true });
     paint(tl);
   });
 
@@ -301,7 +303,7 @@
   bPlay.addEventListener("click", () => {
     sound.warm();
     if (timeline.phase === "ready") { timeline.setAuto(true); return timeline.go(0); }
-    if (timeline.done) return timeline.go(0);
+    if (timeline.done) { sound.musicReset(); return timeline.go(0); }
     timeline.toggle();
   });
   bFull.addEventListener("click", () => {
@@ -318,6 +320,7 @@
     if (key === "Space") { event.preventDefault(); bPlay.click(); }
     else if (key === "ArrowRight") { event.preventDefault(); sound.warm(); timeline.go(timeline.index + 1); }
     else if (key === "ArrowLeft") { event.preventDefault(); sound.warm(); timeline.go(timeline.index - 1); }
+    else if (key === "KeyM") sound.music(root.KUMusic.el && !root.KUMusic.el.paused ? { pause: true } : { resume: true });
     else if (key === "KeyR") { sound.warm(); timeline.replay(); }
     else if (key === "KeyF") bFull.click();
   });

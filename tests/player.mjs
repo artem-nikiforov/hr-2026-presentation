@@ -27,17 +27,28 @@ window.HTMLElement.prototype.animate = function () {
 };
 /* Записанная озвучка есть: файл проигрывается и сам сообщает об окончании. */
 const spoken = [];
+const musicTracks = [];
 window.Audio = class {
   constructor(src) {
     this.src = src;
     this.listeners = {};
-    if (/\/vo\//.test(src)) { spoken.push(src.split("/").pop()); setTimeout(() => this.onended && this.onended(), 5); }
-    else setTimeout(() => (this.listeners.error || []).forEach(fn => fn()), 0);
+    this.volume = 1;
+    this.paused = true;
+    if (/\/vo\//.test(src)) {
+      spoken.push(src.split("/").pop());
+      setTimeout(() => this.onended && this.onended(), 5);
+    } else if (/\/music\/bed\.mp3$/.test(src)) {
+      /* в папке лежит только сквозной луп — остальных дорожек нет */
+      musicTracks.push(this);
+      setTimeout(() => (this.listeners.canplaythrough || []).forEach(fn => fn()), 0);
+    } else {
+      setTimeout(() => (this.listeners.error || []).forEach(fn => fn()), 0);
+    }
   }
   addEventListener(type, fn) { (this.listeners[type] = this.listeners[type] || []).push(fn); }
   cloneNode() { return new window.Audio(this.src); }
-  play() { return Promise.resolve(); }
-  pause() {}
+  play() { this.paused = false; return Promise.resolve(); }
+  pause() { this.paused = true; }
 };
 window.speechSynthesis = {
   speaking: false, paused: false,
@@ -106,6 +117,37 @@ check("показ на паузе", document.getElementById("play").textContent 
 click("play");
 check("показ продолжен", document.getElementById("play").textContent === "Пауза");
 
+group("Музыкальный луп");
+{
+  const playing = () => musicTracks.find(t => !t.paused);
+  check("луп завёлся с первой сцены", Boolean(playing()), `дорожек ${musicTracks.length}`);
+  check("луп зациклен", playing() ? playing().loop === true : false);
+
+  const track = playing();
+  window.dispatchEvent(new window.KeyboardEvent("keydown", { code: "ArrowRight", bubbles: true }));
+  await wait();
+  check("смена сцены не перезапускает луп", playing() === track);
+
+  /* Пауза показа должна останавливать музыку и продолжать её с того же места. */
+  click("play");
+  check("на паузе показа музыка молчит", !playing());
+  click("play");
+  await wait();
+  check("после паузы играет та же дорожка", playing() === track);
+
+  /* Сцена 7 обрывает музыку по сценарию, сцена 9 возвращает. */
+  const jump = to => { while (true) {
+    const at = scenes.findIndex(s => s.classList.contains("on"));
+    if (at >= to) break;
+    window.dispatchEvent(new window.KeyboardEvent("keydown", { code: "ArrowRight", bubbles: true }));
+  } };
+  jump(6); await wait();
+  check("на «НО…» музыка оборвана", !playing());
+  jump(8); await wait();
+  check("на «что мы делаем» музыка вернулась", Boolean(playing()));
+  check("вернулась та же дорожка, а не новая", playing() === track);
+}
+
 group("Кадры сцен с аватаром");
 const avatarScene = scenes.find(s => s.querySelector(".avatar"));
 check("аватар скрыт вне своей реплики",
@@ -113,6 +155,10 @@ check("аватар скрыт вне своей реплики",
 
 group("Ролик заменяет фотографию");
 {
+  /* вернуться к первой сцене: кнопок навигации нет, идём стрелками */
+  for (let i = 0; i < 14; i++)
+    window.dispatchEvent(new window.KeyboardEvent("keydown", { code: "ArrowLeft", bubbles: true }));
+  await wait();
   const figure = scenes[0].querySelector(".cam figure");
   const video = figure.querySelector("video");
   check("ищется ролик рядом с фотографией", video.src.endsWith("/img/s01_bite.mp4"), video.src);

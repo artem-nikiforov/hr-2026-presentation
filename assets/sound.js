@@ -116,47 +116,145 @@
   };
 
   /* ── музыкальная подложка ────────────────────────────────────────
-     Сценарий ведёт музыку через весь показ и обрывает её на «НО…».
-     Файла нет — показ просто идёт без подложки. ─────────────────── */
-  const music = { el: null, name: null, fade: null };
+     Одна сквозная дорожка играет весь показ. Сценарий обрывает её там,
+     где сказано «музыка обрывается», и возвращает потом с того же места.
+     Пауза показа тоже ставит музыку на паузу. Дополнительные дорожки
+     необязательны: если файла нет, продолжает играть основная.
+     ───────────────────────────────────────────────────────────────── */
+  const TRACKS = ["bed", "epic", "confident", "warm"];
+  const LEVEL = { bed: .22, epic: .26, confident: .22, warm: .24 };
+
+  const music = {
+    el: null,          /* что играет сейчас */
+    name: null,
+    fade: null,
+    byScript: false,   /* оборвано режиссурой — само не вернётся */
+    byShow: false,     /* показ на паузе */
+    pending: null,     /* дорожка, которую попросили до того, как она догрузилась */
+    ducked: false,
+    ready: new Set()   /* какие дорожки реально лежат в папке */
+  };
+
+  TRACKS.forEach(name => {
+    const probe = new Audio(`audio/music/${name}.mp3`);
+    probe.preload = "auto";
+    probe.addEventListener("canplaythrough", () => {
+      music.ready.add(name);
+      /* Показ мог начаться раньше, чем дорожка догрузилась — заводим сейчас. */
+      if (music.pending === name && !music.el && !music.byScript) {
+        music.pending = null;
+        start(name, 1.6);
+      }
+    }, { once: true });
+    probe.addEventListener("error", () => { if (music.pending === name) music.pending = null; }, { once: true });
+  });
+
+  function level(name) { return (LEVEL[name] ?? .22) * (music.ducked ? .42 : 1); }
+
   function fadeTo(el, target, seconds, done) {
     clearInterval(music.fade);
-    const step = 40, delta = (target - el.volume) / (seconds * 1000 / step);
+    const step = 40, steps = Math.max(1, seconds * 1000 / step);
+    const delta = (target - el.volume) / steps;
     music.fade = setInterval(() => {
       const next = el.volume + delta;
-      if ((delta > 0 && next >= target) || (delta < 0 && next <= target)) {
-        el.volume = Math.max(0, Math.min(1, target));
-        clearInterval(music.fade);
-        if (done) done();
-      } else el.volume = Math.max(0, Math.min(1, next));
+      const arrived = delta >= 0 ? next >= target : next <= target;
+      el.volume = Math.max(0, Math.min(1, arrived ? target : next));
+      if (arrived) { clearInterval(music.fade); if (done) done(); }
     }, step);
   }
-  function stopMusic(hard) {
-    const el = music.el;
-    if (!el) return;
-    music.el = null; music.name = null;
-    clearInterval(music.fade);
-    if (hard) { try { el.pause(); } catch (e) {} return; }   /* обрыв по сценарию */
-    fadeTo(el, 0, .9, () => { try { el.pause(); } catch (e) {} });
-  }
-  function playMusic(name, level) {
-    if (music.name === name) return;
-    stopMusic(false);
+
+  function start(name, seconds) {
     const el = new Audio(`audio/music/${name}.mp3`);
-    el.loop = true; el.volume = 0;
+    el.loop = true;                       /* сквозной луп на весь показ */
+    el.volume = 0;
     el.addEventListener("error", () => { if (music.el === el) { music.el = null; music.name = null; } }, { once: true });
-    el.play().then(() => fadeTo(el, level ?? .28, 1.4)).catch(() => {});
-    music.el = el; music.name = name;
+    el.play().then(() => fadeTo(el, level(name), seconds)).catch(() => {});
+    music.el = el;
+    music.name = name;
   }
 
+  function swap(name) {
+    const old = music.el;
+    if (old) fadeTo(old, 0, .8, () => { try { old.pause(); } catch (e) {} });
+    clearInterval(music.fade);
+    start(name, 1.2);
+  }
+
+  root.KUMusic = music;
+
   root.KUSound = {
-    /* Музыка сцены: имя — включить, null — оборвать, undefined — не трогать. */
-    music(name, level) {
-      if (!enabled) return;
-      if (name === null) stopMusic(true);
-      else if (name) playMusic(name, level);
+    /* Указание сцены: {track}, {pause}, {resume}, {stop}. Нет поля — не трогаем. */
+    music(cue) {
+      if (!enabled || !cue) return;
+
+      if (cue.pause) {                       /* «музыка обрывается» — резко, без затухания */
+        music.byScript = true;
+        music.pending = null;
+        clearInterval(music.fade);
+        if (music.el) { try { music.el.pause(); } catch (e) {} }
+        return;
+      }
+      if (cue.stop) {                        /* финал — мягкое затухание */
+        music.byScript = true;
+        const el = music.el;
+        if (el) fadeTo(el, 0, 2.2, () => { try { el.pause(); } catch (e) {} });
+        return;
+      }
+      if (cue.resume) {                      /* вернуть с того же места */
+        music.byScript = false;
+        if (!music.el && music.pending) return;   /* дорожка ещё грузится */
+        if (music.el && !music.byShow) {
+          music.el.play().catch(() => {});
+          fadeTo(music.el, level(music.name), 1.2);
+        }
+        return;
+      }
+      if (cue.track) {
+        music.byScript = false;
+        /* Дорожки нет в папке — продолжает играть та, что уже звучит.
+           Если она просто ещё грузится, запомним и заведём по готовности. */
+        if (!music.ready.has(cue.track)) {
+          if (!music.el) music.pending = cue.track;
+          if (music.el && music.el.paused && !music.byShow) {
+            music.el.play().catch(() => {});
+            fadeTo(music.el, level(music.name), 1.2);
+          }
+          return;
+        }
+        if (music.name === cue.track) {
+          if (music.el && music.el.paused && !music.byShow) {
+            music.el.play().catch(() => {});
+            fadeTo(music.el, level(music.name), 1.2);
+          }
+          return;
+        }
+        if (music.el) swap(cue.track); else start(cue.track, 1.6);
+      }
     },
-    duck(on) { if (music.el) fadeTo(music.el, on ? .12 : .28, .5); },
+    /* Под голосом музыка уходит вниз и возвращается, когда диктор замолчал. */
+    duck(on) {
+      music.ducked = on;
+      if (music.el && !music.el.paused) fadeTo(music.el, level(music.name), .5);
+    },
+    /* Пауза показа: музыка замирает и продолжается с того же места. */
+    musicPause() {
+      music.byShow = true;
+      clearInterval(music.fade);
+      if (music.el) { try { music.el.pause(); } catch (e) {} }
+    },
+    musicResume() {
+      music.byShow = false;
+      if (music.el && !music.byScript) {
+        music.el.play().catch(() => {});
+        fadeTo(music.el, level(music.name), .6);
+      }
+    },
+    musicReset() {
+      clearInterval(music.fade);
+      if (music.el) { try { music.el.pause(); } catch (e) {} }
+      music.el = null; music.name = null; music.pending = null;
+      music.byScript = false; music.byShow = false; music.ducked = false;
+    },
     play(name) {
       if (!enabled || !name) return;
       const record = files.get(name);
@@ -177,7 +275,7 @@
       });
       live.clear();
     },
-    set(on) { enabled = on; if (!on) { this.stop(); stopMusic(true); } else this.warm(); },
+    set(on) { enabled = on; if (!on) { this.stop(); this.musicReset(); } else this.warm(); },
     warm() { try { audio(); } catch (e) {} }
   };
 })(typeof globalThis !== "undefined" ? globalThis : this);

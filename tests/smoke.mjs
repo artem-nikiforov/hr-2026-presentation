@@ -77,6 +77,25 @@ for (const scene of STORY) {
   }
 }
 
+group("Музыкальные указания");
+{
+  const cues = STORY.map(scene => scene.music).filter(Boolean);
+  check("луп заводится в первой сцене", STORY[0].music && STORY[0].music.track === "bed",
+    JSON.stringify(STORY[0].music));
+  check("музыка обрывается перед «НО…»", STORY[6].music && STORY[6].music.pause === true,
+    JSON.stringify(STORY[6].music));
+  check("после обрыва музыка возвращается",
+    STORY.slice(7).some(scene => scene.music && scene.music.track));
+  for (const cue of cues) {
+    const keys = Object.keys(cue);
+    check(`указание ${JSON.stringify(cue)} понятно плееру`,
+      keys.length === 1 && ["track", "pause", "resume", "stop"].includes(keys[0]));
+  }
+  const tracks = cues.filter(c => c.track).map(c => c.track);
+  check("все дорожки известны звуку",
+    tracks.every(t => ["bed", "epic", "confident", "warm"].includes(t)), tracks.join(", "));
+}
+
 group("Шкала графика соответствует данным");
 const heights = [...STORY[10].html.matchAll(/height:([\d.]+)%/g)].map(m => Number(m[1]));
 const values = [...STORY[10].html.matchAll(/data-count="(\d+)"/g)].map(m => Number(m[1]));
