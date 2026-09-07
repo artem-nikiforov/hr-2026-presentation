@@ -39,7 +39,7 @@
     tick(dt){
       if(!this.playing)return;
       this.elapsed+=dt;this.beatElapsed+=dt;
-      if(!this.voiceDone||this.beatElapsed<this.current.seconds||this.beatElapsed-this.voiceEndedAt<.65)return;
+      if(!this.voiceDone||this.beatElapsed<this.current.seconds||this.beatElapsed-this.voiceEndedAt<.15)return;
       if(!this.auto){
         if(this.beat===this.scene.beats.length-1){this.phase='complete';this.emit('complete');}
         else if(!this.readySent){this.readySent=true;this.emit('ready');}

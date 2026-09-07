@@ -20,7 +20,7 @@ SCENES.forEach((scene, i) =>
 const vo = STORY.flatMap(scene =>
   scene.beats.map(beat => ({
     scene: scene.id, id: beat.id, file: `audio/vo/${beat.id}.mp3`,
-    seconds: beat.seconds, text: beat.text
+    spoken: beat.spoken, on_screen: beat.seconds, text: beat.text
   })));
 
 const avatars = SCENES.filter(scene => scene.avatar).map(scene => ({ scene: scene.id, note: scene.avatar }));
@@ -63,5 +63,5 @@ for (const shot of shots) {
 }
 writeFileSync("PROMPTS.md", md.join("\n"));
 
-const total = vo.reduce((n, v) => n + v.seconds, 0);
+const total = vo.reduce((n, v) => n + v.on_screen, 0);
 console.log(`ok · кадров: ${shots.length} · реплик: ${vo.length} · аватаров: ${avatars.length} · хронометраж ${Math.floor(total / 60)}:${String(Math.round(total % 60)).padStart(2, "0")}`);

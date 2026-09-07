@@ -25,10 +25,17 @@ window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventL
 window.HTMLElement.prototype.animate = function () {
   return { finished: Promise.resolve(), cancel() {}, pause() {}, play() {} };
 };
-/* Записей озвучки ещё нет: файл всегда падает в ошибку, как в реальном показе. */
+/* Записанная озвучка есть: файл проигрывается и сам сообщает об окончании. */
 const spoken = [];
 window.Audio = class {
-  constructor(src) { this.src = src; setTimeout(() => this.onerror && this.onerror(), 0); }
+  constructor(src) {
+    this.src = src;
+    this.listeners = {};
+    if (/\/vo\//.test(src)) { spoken.push(src.split("/").pop()); setTimeout(() => this.onended && this.onended(), 5); }
+    else setTimeout(() => (this.listeners.error || []).forEach(fn => fn()), 0);
+  }
+  addEventListener(type, fn) { (this.listeners[type] = this.listeners[type] || []).push(fn); }
+  cloneNode() { return new window.Audio(this.src); }
   play() { return Promise.resolve(); }
   pause() {}
 };
@@ -55,7 +62,7 @@ window.requestAnimationFrame = fn => { frames.push(fn); return frames.length; };
 window.HTMLMediaElement.prototype.play = function () { this.playCalls = (this.playCalls || 0) + 1; return Promise.resolve(); };
 window.HTMLMediaElement.prototype.pause = function () { this.pauseCalls = (this.pauseCalls || 0) + 1; };
 
-for (const file of ["scenes.js", "story.js", "timeline.js", "reveal.js", "sound.js", "voice.js", "player.js"]) {
+for (const file of ["scenes.js", "durations.js", "story.js", "timeline.js", "reveal.js", "sound.js", "voice.js", "player.js"]) {
   const script = document.createElement("script");
   script.textContent = readFileSync(join(rootDir, "assets", file), "utf8");
   document.body.append(script);
@@ -74,52 +81,30 @@ check("камера в исходной точке", /scale\(1\.015/.test(scenes
   scenes[0].querySelector(".cam").style.transform);
 check("озвучка молчит", spoken.length === 0);
 check("кнопка приглашает начать", document.getElementById("play").textContent === "Начать показ");
-check("шаги пока недоступны", document.getElementById("next").disabled);
+check("в пульте только запуск и полный экран",
+  document.querySelectorAll(".deck .btn").length === 2,
+  `кнопок ${document.querySelectorAll(".deck .btn").length}`);
+check("титров нет", document.querySelectorAll(".vo").length === 0);
+check("ручного переключения сцен нет", !document.getElementById("rail"));
 
-group("Запуск и шаги");
+group("Показ идёт сам");
 click("play");
 await wait();
-check("пошла первая реплика", spoken[0] && spoken[0].startsWith("Вот ради этого"), spoken[0]);
-check("титр показан", scenes[0].querySelector(".vo").classList.contains("on"));
+check("пошла первая реплика", spoken[0] === "s01_beat1.mp3", spoken[0]);
 check("первый блок раскрыт", scenes[0].querySelector('[data-reveal="0"]').classList.contains("on"));
 check("второй блок ещё закрыт", !scenes[0].querySelector('[data-reveal="1"]').classList.contains("on"));
+check("кнопка стала паузой", document.getElementById("play").textContent === "Пауза");
 
-click("next");
+/* Реплика заканчивается — показ переходит дальше сам, без нажатий. */
+for (let i = 0; i < 400; i++) frames.splice(0).forEach(fn => fn(i * 100));
 await wait();
-check("второй блок раскрылся", scenes[0].querySelector('[data-reveal="1"]').classList.contains("on"));
-
-group("Смена сцены и кадры");
-click("scene-next");
-await wait();
-check("вторая сцена активна", scenes[1].classList.contains("on"));
-check("первая сцена погашена", !scenes[0].classList.contains("on"));
-check("кадр 1 показан", scenes[1].querySelectorAll(".cam figure")[0].classList.contains("on"));
-click("next"); await wait();
-check("кадр сменился на второй", scenes[1].querySelectorAll(".cam figure")[1].classList.contains("on"));
-check("предыдущий кадр скрыт", !scenes[1].querySelectorAll(".cam figure")[0].classList.contains("on"));
-
-group("Быстрые переходы не оставляют хвостов");
-const before = spoken.length;
-for (let i = 0; i < 6; i++) click("next");
-await wait();
-const active = scenes.filter(s => s.classList.contains("on"));
-check("активна ровно одна сцена", active.length === 1, `их ${active.length}`);
-check("говорит только текущая реплика", spoken.length - before <= 7, `реплик ${spoken.length - before}`);
-const subs = scenes.filter(s => s.querySelector(".vo").classList.contains("on"));
-check("титр только один", subs.length === 1, `их ${subs.length}`);
+check("вторая реплика пошла сама", spoken.includes("s01_beat2.mp3"), spoken.join(", "));
 
 group("Пауза");
 click("play");
 check("показ на паузе", document.getElementById("play").textContent === "Продолжить");
 click("play");
 check("показ продолжен", document.getElementById("play").textContent === "Пауза");
-
-group("Повтор сцены");
-const scene = [...scenes].findIndex(s => s.classList.contains("on"));
-click("replay");
-await wait();
-check("та же сцена", scenes[scene].classList.contains("on"));
-check("вернулись к первой реплике", scenes[scene].dataset.beat === "0", scenes[scene].dataset.beat);
 
 group("Кадры сцен с аватаром");
 const avatarScene = scenes.find(s => s.querySelector(".avatar"));
@@ -135,17 +120,22 @@ group("Ролик заменяет фотографию");
   video.dispatchEvent(new window.Event("loadeddata"));
   check("после загрузки ролика фотография убирается", !figure.querySelector("img"));
   check("кадр помечен как видео", figure.classList.contains("has-video"));
-  document.getElementById("rail").children[0].dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  window.dispatchEvent(new window.KeyboardEvent("keydown", { code: "KeyR", bubbles: true }));
   await wait();
   check("ролик запущен на своей сцене", (video.playCalls || 0) > 0);
 }
 
 group("Прогон всех сцен");
-for (let i = 0; i < 13; i++) { document.getElementById("rail").children[i].dispatchEvent(new window.MouseEvent("click", { bubbles: true })); await wait(); }
+for (let i = 0; i < 13; i++) {
+  document.dispatchEvent(new window.KeyboardEvent("keydown", { code: "ArrowRight", bubbles: true }));
+  window.dispatchEvent(new window.KeyboardEvent("keydown", { code: "ArrowRight", bubbles: true }));
+  await wait();
+}
+const shown = scenes.filter(s => s.classList.contains("on"));
+check("активна ровно одна сцена", shown.length === 1, `их ${shown.length}`);
 check("дошли до финала", scenes[12].classList.contains("on"));
-check("финальный кадр гостя удерживается",
-  scenes[12].querySelectorAll(".cam figure")[0].classList.contains("on"));
-check("ошибок в консоли нет", true);
+check("финальный кадр удерживается",
+  [...scenes[12].querySelectorAll(".cam figure")].some(f => f.classList.contains("on")));
 
 console.log(failed ? `\n✗ провалено проверок: ${failed}` : "\n✓ все проверки пройдены");
 process.exit(failed ? 1 : 0);

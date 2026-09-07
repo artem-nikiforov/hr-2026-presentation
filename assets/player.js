@@ -15,16 +15,15 @@
 
   const startVideo = node => { const started = node.play(); if (started && started.catch) started.catch(() => {}); };
 
-  const frame = $("frame"), rail = $("rail"), beatsBar = $("beats"), pos = $("pos");
-  const bPlay = $("play"), bPrev = $("prev"), bNext = $("next"), bScene = $("scene-next"),
-        bReplay = $("replay"), bAuto = $("auto"), bVoice = $("voice"), bSfx = $("sfx"),
-        bSubs = $("subs"), bFull = $("full");
+  const frame = $("frame"), pos = $("pos"), deck = $("deck");
+  const progress = $("progress").firstElementChild;
+  const bPlay = $("play"), bFull = $("full");
 
   const voice = new root.KUVoice();
   const sound = root.KUSound;
 
   /* ── сборка сцен ────────────────────────────────────────────────── */
-  const views = SCENES.map((scene, index) => {
+  const views = SCENES.map(scene => {
     const el = document.createElement("article");
     el.className = "scene";
     el.dataset.id = scene.id;
@@ -89,19 +88,8 @@
       avatar.textContent = scene.avatar;
       el.append(avatar);
     }
-    const subtitle = document.createElement("p");
-    subtitle.className = "vo";
-    el.append(subtitle);
     frame.append(el);
-
-    const dot = document.createElement("button");
-    dot.type = "button";
-    dot.title = `${index + 1}. ${scene.name}`;
-    dot.setAttribute("aria-label", dot.title);
-    dot.addEventListener("click", () => { sound.warm(); timeline.go(index); });
-    rail.append(dot);
-
-    return { el, cam, figures: Array.from(cam.children), avatar, subtitle, dot, shot: -1 };
+    return { el, cam, figures: Array.from(cam.children), avatar, shot: -1 };
   });
 
   /* ── то, что нужно уметь останавливать ──────────────────────────── */
@@ -223,7 +211,6 @@
         if (video) { try { video.pause(); video.currentTime = 0; } catch (e) {} }
       });
       past.shot = -1;
-      past.subtitle.classList.remove("on");
       if (past.avatar) past.avatar.classList.remove("on");
       past.el.querySelectorAll("[data-revealed]").forEach(node => delete node.dataset.revealed);
       past.el.querySelectorAll("[data-counted]").forEach(node => delete node.dataset.counted);
@@ -234,6 +221,8 @@
     }
     current = index;
     const view = views[index];
+    /* Музыка меняется только там, где это указано в сценарии. */
+    if (SCENES[index].music !== undefined) sound.music(SCENES[index].music);
     view.el.classList.add("on");
     camera(index, 0);
     /* .playing включает одноразовые эффекты сцены; перед повтором снимаем */
@@ -254,16 +243,15 @@
 
       if (beat.sound) later(() => sound.play(beat.sound), (beat.lead || 0) * 1000);
 
-      const view = views[tl.index];
-      view.subtitle.textContent = beat.text;
-      view.subtitle.classList.add("on");
-
       const token = tl.token;
-      voice.play(beat.id, beat.text).then(() => tl.finishVoice(token));
+      sound.duck(true);
+      voice.play(beat.id, beat.text).then(() => {
+        sound.duck(false);
+        tl.finishVoice(token);
+      });
     }
     if (type === "pause") { voice.pause(); sound.stop(); video(tl.index, "pause"); }
     if (type === "resume") { voice.resume(); video(tl.index, "play"); }
-    if (type === "complete") views[tl.index].subtitle.classList.remove("on");
     paint(tl);
   });
 
@@ -290,62 +278,31 @@
         const p = c.t / c.span;
         c.render(c.target * (1 - Math.pow(1 - p, 3)));
       });
-      if (current >= 0) camera(current, timeline.elapsed / Math.max(1, SCENES[current].seconds));
+      if (current >= 0) {
+        camera(current, timeline.elapsed / Math.max(1, SCENES[current].seconds));
+        progress.style.width = clamp((BEFORE[current] + timeline.elapsed) / TOTAL, 0, 1) * 100 + "%";
+      }
     }
     requestAnimationFrame(loop);
   }
 
   /* ── пульт ──────────────────────────────────────────────────────── */
+  const TOTAL = SCENES.reduce((n, scene) => n + scene.seconds, 0);
+  const BEFORE = SCENES.map((_, i) => SCENES.slice(0, i).reduce((n, scene) => n + scene.seconds, 0));
+
   function paint(tl) {
-    const scene = tl.scene;
-    pos.textContent =
-      `${String(tl.index + 1).padStart(2, "0")} / ${SCENES.length}  ·  реплика ${tl.beat + 1} из ${scene.beats.length}`;
-    views.forEach((view, i) => {
-      view.dot.setAttribute("aria-current", i === tl.index ? "true" : "false");
-      view.dot.dataset.state = i < tl.index ? "past" : i === tl.index ? "now" : "next";
-    });
-    beatsBar.replaceChildren(...scene.beats.map((_, i) => {
-      const mark = document.createElement("i");
-      mark.className = i < tl.beat ? "past" : i === tl.beat ? "now" : "";
-      return mark;
-    }));
     const ready = tl.phase === "ready";
-    bPlay.textContent = ready ? "Начать показ" : tl.playing ? "Пауза" : tl.done ? "Дальше" : "Продолжить";
-    bPrev.disabled = ready;
-    bNext.disabled = ready;
-    bReplay.disabled = ready;
-    bScene.disabled = ready || tl.index === SCENES.length - 1;
+    pos.textContent = ready
+      ? `${SCENES.length} сцен · ${Math.floor(TOTAL / 60)}:${String(Math.round(TOTAL % 60)).padStart(2, "0")}`
+      : `${String(tl.index + 1).padStart(2, "0")} / ${SCENES.length} · ${tl.scene.name}`;
+    bPlay.textContent = ready ? "Начать показ" : tl.playing ? "Пауза" : tl.done ? "Заново" : "Продолжить";
   }
 
   bPlay.addEventListener("click", () => {
     sound.warm();
-    if (timeline.phase === "ready") return timeline.go(0);
-    if (timeline.done) return timeline.next();
+    if (timeline.phase === "ready") { timeline.setAuto(true); return timeline.go(0); }
+    if (timeline.done) return timeline.go(0);
     timeline.toggle();
-  });
-  bNext.addEventListener("click", () => { sound.warm(); timeline.next(); });
-  bPrev.addEventListener("click", () => { sound.warm(); timeline.previous(); });
-  bScene.addEventListener("click", () => { sound.warm(); timeline.go(timeline.index + 1); });
-  bReplay.addEventListener("click", () => { sound.warm(); timeline.replay(); });
-  bAuto.addEventListener("click", () => {
-    const on = bAuto.getAttribute("aria-pressed") !== "true";
-    bAuto.setAttribute("aria-pressed", String(on));
-    timeline.setAuto(on);
-  });
-  bVoice.addEventListener("click", () => {
-    const on = bVoice.getAttribute("aria-pressed") !== "true";
-    bVoice.setAttribute("aria-pressed", String(on));
-    voice.set(on);
-  });
-  bSfx.addEventListener("click", () => {
-    const on = bSfx.getAttribute("aria-pressed") !== "true";
-    bSfx.setAttribute("aria-pressed", String(on));
-    sound.set(on);
-  });
-  bSubs.addEventListener("click", () => {
-    const on = bSubs.getAttribute("aria-pressed") !== "true";
-    bSubs.setAttribute("aria-pressed", String(on));
-    document.body.classList.toggle("nosub", !on);
   });
   bFull.addEventListener("click", () => {
     if (document.fullscreenElement) document.exitFullscreen();
@@ -357,13 +314,12 @@
   addEventListener("keydown", event => {
     if (event.target.tagName === "BUTTON" && (event.code === "Space" || event.code === "Enter")) return;
     const key = event.code;
+    /* Показ идёт сам. Клавиши нужны только на репетиции — кнопок для них нет. */
     if (key === "Space") { event.preventDefault(); bPlay.click(); }
-    else if (key === "ArrowRight" || key === "PageDown") { event.preventDefault(); bNext.click(); }
-    else if (key === "ArrowLeft" || key === "PageUp") { event.preventDefault(); bPrev.click(); }
-    else if (key === "KeyN") bScene.click();
-    else if (key === "KeyR") bReplay.click();
+    else if (key === "ArrowRight") { event.preventDefault(); sound.warm(); timeline.go(timeline.index + 1); }
+    else if (key === "ArrowLeft") { event.preventDefault(); sound.warm(); timeline.go(timeline.index - 1); }
+    else if (key === "KeyR") { sound.warm(); timeline.replay(); }
     else if (key === "KeyF") bFull.click();
-    else if (key === "KeyS") bSubs.click();
   });
 
   /* Уход со вкладки останавливает показ, чтобы он не «убежал» без зрителя. */
@@ -371,10 +327,24 @@
     if (document.hidden && timeline.playing) timeline.pause();
   });
 
+  /* Во время показа пульт уходит; возвращается от движения мыши. */
+  let idleTimer = null;
+  function wake() {
+    document.body.classList.remove("idle");
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      if (timeline.playing) document.body.classList.add("idle");
+    }, 2500);
+  }
+  addEventListener("mousemove", wake);
+  addEventListener("keydown", wake);
+  deck.addEventListener("mouseenter", () => { clearTimeout(idleTimer); document.body.classList.remove("idle"); });
+
   /* ── исходное состояние: первый кадр виден, звук и таймлайн молчат ── */
   views[0].el.classList.add("on");
   views[0].figures[0].classList.add("on");
   camera(0, 0);
   paint(timeline);
+  wake();
   requestAnimationFrame(loop);
 })(typeof globalThis !== "undefined" ? globalThis : this);

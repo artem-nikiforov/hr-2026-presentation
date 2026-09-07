@@ -8,29 +8,19 @@
 </head>
 <body>
 
-<main class="frame" id="frame" aria-label="Показ презентации"></main>
+<main class="frame" id="frame" aria-label="Показ презентации">
+  <div class="progress" id="progress" aria-hidden="true"><i></i></div>
+</main>
 
-<div class="deck" role="group" aria-label="Управление показом">
-  <button class="btn icon" id="prev" title="Шаг назад (←)" aria-label="Шаг назад">←</button>
+<div class="deck" id="deck" role="group" aria-label="Управление показом">
   <button class="btn primary" id="play">Начать показ</button>
-  <button class="btn icon" id="next" title="Шаг вперёд (→ или пробел)" aria-label="Шаг вперёд">→</button>
-  <button class="btn" id="scene-next" title="Следующая сцена (N)">Сцена</button>
-  <button class="btn" id="replay" title="Повторить сцену (R)">Повтор</button>
-  <button class="btn" id="auto" aria-pressed="false" title="Реплики и сцены идут сами">Авто</button>
-
-  <span class="spacer"></span>
   <span class="pos" id="pos"></span>
-  <div class="rail" id="rail" role="tablist" aria-label="Сцены"></div>
-  <div class="beats" id="beats" aria-hidden="true"></div>
   <span class="spacer"></span>
-
-  <button class="btn" id="voice" aria-pressed="true" title="Закадровый голос">Голос</button>
-  <button class="btn" id="sfx" aria-pressed="true" title="Звуковые акценты">Звук</button>
-  <button class="btn" id="subs" aria-pressed="true" title="Титры реплик (S)">Титры</button>
   <button class="btn icon" id="full" title="Во весь экран (F)" aria-label="Во весь экран">⤢</button>
 </div>
 
 <script src="assets/scenes.js"></script>
+<script src="assets/durations.js"></script>
 <script src="assets/story.js"></script>
 <script src="assets/timeline.js"></script>
 <script src="assets/reveal.js"></script>

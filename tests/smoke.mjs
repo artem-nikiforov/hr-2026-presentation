@@ -10,6 +10,7 @@ const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SCENES = require("../assets/scenes.js");
 const STORY = require("../assets/story.js");
 const Timeline = require("../assets/timeline.js");
+const DURATIONS = require("../assets/durations.js");
 
 let failed = 0;
 const check = (name, condition, detail = "") => {
@@ -40,6 +41,17 @@ for (const scene of STORY) {
   check(`${scene.id}: первая реплика назначает кадр`, scene.beats[0].shot !== undefined);
 }
 
+group("Озвучка");
+for (const scene of STORY)
+  for (const beat of scene.beats) {
+    check(`есть запись ${beat.id}`, existsSync(join(rootDir, "audio/vo", beat.id + ".mp3")));
+    check(`есть длительность ${beat.id}`, DURATIONS[beat.id] > 0);
+    check(`${beat.id}: показ не короче записи`, beat.seconds >= beat.spoken);
+  }
+check("реплик столько же, сколько записей",
+  STORY.reduce((n, s) => n + s.beats.length, 0) === Object.keys(DURATIONS).length,
+  `реплик ${STORY.reduce((n, s) => n + s.beats.length, 0)}, записей ${Object.keys(DURATIONS).length}`);
+
 group("Файлы кадров");
 for (const scene of SCENES)
   for (const shot of scene.shots)
@@ -48,7 +60,9 @@ for (const scene of SCENES)
 group("Разметка привязана к репликам");
 for (const scene of STORY) {
   const last = scene.beats.length - 1;
-  for (const key of ["reveal", "panel", "milestone", "step"])
+  /* reveal/panel/step — номера реплик; verb/doc/column — порядок элементов,
+     их раскрывают cues, поэтому здесь они не сверяются с числом реплик. */
+  for (const key of ["reveal", "panel", "step"])
     for (const value of attrs(scene.html, key))
       check(`${scene.id}: data-${key}="${value}" в пределах реплик`, value <= last, `реплик ${scene.beats.length}`);
   for (const cue of scene.cues) {
