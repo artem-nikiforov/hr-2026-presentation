@@ -122,10 +122,13 @@
      необязательны: если файла нет, продолжает играть основная.
      ───────────────────────────────────────────────────────────────── */
   const TRACKS = ["bed", "epic", "confident", "warm"];
-  /* Громкость подложки. Крутить здесь: LEVEL — сколько музыки в зале,
-     DUCK — во сколько раз она уходит вниз под закадровым голосом. */
+  /* Громкость подложки. LEVEL — базовый баланс дорожек между собой,
+     DUCK — во сколько раз музыка уходит вниз под закадровым голосом.
+     Общий уровень в зале крутится прямо на показе клавишами [ и ],
+     без правки кода: множитель хранится в браузере. */
   const LEVEL = { bed: .40, epic: .44, confident: .40, warm: .42 };
   const DUCK = .38;
+  const GAIN_KEY = "ku-music-gain";
 
   const music = {
     el: null,          /* что играет сейчас */
@@ -152,7 +155,17 @@
     probe.addEventListener("error", () => { if (music.pending === name) music.pending = null; }, { once: true });
   });
 
-  function level(name) { return (LEVEL[name] ?? .40) * (music.ducked ? DUCK : 1); }
+  function readGain() {
+    try {
+      const saved = parseFloat(localStorage.getItem(GAIN_KEY));
+      return Number.isFinite(saved) ? Math.min(2.5, Math.max(.1, saved)) : 1;
+    } catch (e) { return 1; }
+  }
+  let gain = readGain();
+
+  function level(name) {
+    return Math.min(1, (LEVEL[name] ?? .40) * gain * (music.ducked ? DUCK : 1));
+  }
 
   function fadeTo(el, target, seconds, done) {
     clearInterval(music.fade);
@@ -252,6 +265,14 @@
         fadeTo(music.el, level(music.name), .6);
       }
     },
+    /* Подстройка громкости в зале: возвращает новый уровень в процентах. */
+    nudgeMusic(step) {
+      gain = Math.min(2.5, Math.max(.1, Math.round((gain + step) * 20) / 20));
+      try { localStorage.setItem(GAIN_KEY, String(gain)); } catch (e) {}
+      if (music.el && !music.el.paused) fadeTo(music.el, level(music.name), .25);
+      return Math.round(gain * 100);
+    },
+    musicGain() { return Math.round(gain * 100); },
     musicReset() {
       clearInterval(music.fade);
       if (music.el) { try { music.el.pause(); } catch (e) {} }

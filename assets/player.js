@@ -17,7 +17,15 @@
 
   const frame = $("frame"), pos = $("pos"), deck = $("deck");
   const progress = $("progress").firstElementChild;
-  const bPlay = $("play"), bFull = $("full");
+  const bPlay = $("play"), bFull = $("full"), toast = $("toast");
+
+  let toastTimer = null;
+  function say(text) {
+    toast.textContent = text;
+    toast.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("on"), 1600);
+  }
 
   const voice = new root.KUVoice();
   const sound = root.KUSound;
@@ -340,7 +348,14 @@
     if (key === "Space") { event.preventDefault(); bPlay.click(); }
     else if (key === "ArrowRight") { event.preventDefault(); sound.warm(); timeline.go(timeline.index + 1); }
     else if (key === "ArrowLeft") { event.preventDefault(); sound.warm(); timeline.go(timeline.index - 1); }
-    else if (key === "KeyM") sound.music(root.KUMusic.el && !root.KUMusic.el.paused ? { pause: true } : { resume: true });
+    else if (key === "KeyM") {
+      const playing = root.KUMusic.el && !root.KUMusic.el.paused;
+      sound.music(playing ? { pause: true } : { resume: true });
+      say(playing ? "Музыка выключена" : "Музыка включена");
+    }
+    /* Громкость музыки подбирается прямо в зале и запоминается браузером. */
+    else if (key === "BracketRight" || key === "Equal") { sound.warm(); say("Музыка " + sound.nudgeMusic(.1) + "%"); }
+    else if (key === "BracketLeft" || key === "Minus") { sound.warm(); say("Музыка " + sound.nudgeMusic(-.1) + "%"); }
     else if (key === "KeyR") { sound.warm(); timeline.replay(); }
     else if (key === "KeyF") bFull.click();
   });

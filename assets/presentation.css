@@ -396,6 +396,13 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
   letter-spacing:.16em;text-transform:uppercase;color:var(--ku-text-muted);opacity:0;transition:opacity .5s}
 .scene.on .chapter{opacity:.85}
 
+/* ═══ Подсказка при подстройке ═══════════════════════════════════ */
+.toast{position:absolute;right:3cqw;bottom:5cqh;z-index:6;margin:0;
+  font-family:var(--ku-font-display);font-size:2.4cqh;color:var(--ku-text);
+  background:rgba(16,11,7,.86);border:1px solid var(--ku-border);border-radius:999px;
+  padding:1cqh 2cqw;opacity:0;transition:opacity .25s ease;pointer-events:none}
+.toast.on{opacity:1}
+
 /* ═══ Полоса хронометража ════════════════════════════════════════ */
 .progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.08);z-index:5}
 .progress i{display:block;height:100%;width:0;background:var(--ku-brand)}

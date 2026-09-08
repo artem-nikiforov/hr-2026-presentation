@@ -148,6 +148,17 @@ group("Музыкальный луп");
   check("вернулась та же дорожка, а не новая", playing() === track);
 }
 
+group("Громкость музыки крутится на показе");
+{
+  const before = window.KUSound.musicGain();
+  const louder = window.KUSound.nudgeMusic(.2);
+  check("прибавляется", louder > before, `${before}% → ${louder}%`);
+  const quieter = window.KUSound.nudgeMusic(-.4);
+  check("убавляется", quieter < louder, `${louder}% → ${quieter}%`);
+  check("значение запоминается", window.localStorage.getItem("ku-music-gain") !== null);
+  window.KUSound.nudgeMusic(.2);   /* вернуть как было */
+}
+
 group("Подложка вместо фотографии");
 {
   const scene = scenes.find(s => s.querySelector(".backdrop"));
