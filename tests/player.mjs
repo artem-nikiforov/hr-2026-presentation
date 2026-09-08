@@ -148,6 +148,19 @@ group("Музыкальный луп");
   check("вернулась та же дорожка, а не новая", playing() === track);
 }
 
+group("Подложка вместо фотографии");
+{
+  const scene = scenes.find(s => s.querySelector(".backdrop"));
+  check("подложка создана", Boolean(scene));
+  const backdrop = scene.querySelector(".backdrop");
+  check("это градиент", backdrop.classList.contains("gradient"));
+  const at = Number(backdrop.dataset.at), beat = Number(scene.dataset.beat);
+  check("включена ровно на своей реплике",
+    backdrop.classList.contains("on") === (beat === at), `реплика ${beat}, ждали ${at}`);
+  check("телефон стоит рядом с текстом", Boolean(scene.querySelector("section.split .phone")));
+  check("дуги Wi-Fi разделены", scene.querySelectorAll(".wifi-signal .arc").length === 3);
+}
+
 group("Конфетти на «100% ролей»");
 {
   const party = scenes[5].querySelector("[data-confetti]");

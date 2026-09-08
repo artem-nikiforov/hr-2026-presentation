@@ -74,6 +74,12 @@
       veil.className = "veil " + scene.veil;
       el.append(veil);
     }
+    if (scene.backdrop) {
+      const backdrop = document.createElement("div");
+      backdrop.className = "backdrop " + scene.backdrop.kind;
+      backdrop.dataset.at = String(scene.backdrop.at);
+      el.append(backdrop);
+    }
     const chapter = document.createElement("p");
     chapter.className = "chapter";
     chapter.textContent = scene.chapter;
@@ -143,6 +149,8 @@
 
     el.querySelectorAll("[data-reveal]").forEach(node =>
       node.classList.toggle("on", beat >= Number(node.dataset.reveal)));
+    const backdrop = el.querySelector(".backdrop");
+    if (backdrop) backdrop.classList.toggle("on", beat === Number(backdrop.dataset.at));
     ["panel", "milestone", "step"].forEach(key =>
       el.querySelectorAll(`[data-${key}]`).forEach(node =>
         node.dataset.state = stateOf(Number(node.dataset[key]), beat)));

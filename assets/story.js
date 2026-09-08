@@ -143,11 +143,15 @@
     /* ── s08 · Наши грабли ────────────────────────────────────────── */
     {
       camera: [0, 0, 1.025],
+      backdrop: { kind: 'gradient', at: 0 },   /* на реплике про СМС фотографию сменяет градиент */
       html: `<div class="layer issue-layout">
         ${kicker('Наши грабли · доступность LMS')}
         <div class="issue-panels">
-          <section data-panel="0">
-            <h2 class="title sm">Теряется среди<br>всего остального</h2>
+          <section class="split" data-panel="0">
+            <div class="split-copy">
+              <h2 class="title sm">Теряется среди<br>всего остального</h2>
+              <p class="thesis">Обучение приходит туда же,<br>куда скидки и посылки</p>
+            </div>
             <div class="phone" aria-label="Экран сообщений в телефоне сотрудника">
               <div class="phone-top"><span class="phone-time">9:41</span><span class="phone-icons">●●●</span></div>
               <p class="phone-title">Сообщения</p>
@@ -164,9 +168,11 @@
           <section data-panel="1">
             <h2 class="title sm">Wi-Fi ловит<br>только на потолке</h2>
             <p class="thesis">Если встать на цыпочки</p>
-            <svg class="wifi-signal" viewBox="0 0 100 70" aria-hidden="true">
-              <path d="M12 24Q50 -8 88 24M25 38Q50 16 75 38M39 52Q50 42 61 52"/>
-              <circle cx="50" cy="63" r="3"/>
+            <svg class="wifi-signal" viewBox="0 0 100 74" aria-hidden="true">
+              <path class="arc" style="--i:2" d="M12 24Q50 -8 88 24"/>
+              <path class="arc" style="--i:1" d="M25 38Q50 16 75 38"/>
+              <path class="arc" style="--i:0" d="M39 52Q50 42 61 52"/>
+              <circle cx="50" cy="64" r="3.4"/>
             </svg>
           </section>
         </div>
@@ -316,7 +322,7 @@
       avatarAt: 0,
       html: `<div class="layer finale-copy">
         <section data-panel="0">
-          <h2 class="title">Мы создаём развивающую среду<br>для роста талантов</h2>
+          <h2 class="title finale-line">Мы создаём развивающую среду<br>для роста талантов</h2>
           <div class="mosaic" aria-hidden="true"></div>
         </section>
         <section data-panel="1">

@@ -93,6 +93,23 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .veil.deep{background:linear-gradient(0deg,rgba(16,11,7,.95) 4%,rgba(16,11,7,.9) 42%,
   rgba(16,11,7,.66) 72%,rgba(16,11,7,.5) 100%)}
 
+/* ═══ Подложка вместо фотографии ═════════════════════════════════ */
+.backdrop{position:absolute;inset:0;opacity:0;transition:opacity .7s ease;pointer-events:none}
+.backdrop.on{opacity:1}
+.backdrop.gradient{
+  background:
+    radial-gradient(60% 70% at 18% 30%,color-mix(in srgb,var(--ku-brand) 42%,transparent),transparent 62%),
+    radial-gradient(55% 65% at 82% 72%,color-mix(in srgb,var(--ku-contrast) 40%,transparent),transparent 60%),
+    radial-gradient(70% 80% at 55% 15%,color-mix(in srgb,var(--ku__amber-400) 22%,transparent),transparent 65%),
+    linear-gradient(150deg,var(--ku__night-950),var(--ku__night-800) 55%,var(--ku__night-900));
+  background-size:180% 180%,170% 170%,200% 200%,100% 100%;
+  animation:drift 26s ease-in-out infinite alternate}
+@keyframes drift{
+  0%{background-position:0% 40%,100% 60%,50% 0%,0 0}
+  50%{background-position:40% 70%,60% 20%,20% 60%,0 0}
+  100%{background-position:80% 20%,20% 90%,70% 40%,0 0}
+}
+
 /* ═══ ТЕКСТОВЫЙ СЛОЙ ══════════════════════════════════════════════ */
 .layer{position:absolute;inset:0;padding:7cqh 7cqw;display:flex;flex-direction:column;
   justify-content:center;gap:2.6cqh}
@@ -202,6 +219,15 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .issue-layout,.chart-layout,.docs-layout{justify-content:center;gap:2.6cqh}
 /* Сцена у доски: инфографика опускается в нижнюю половину кадра */
 .results-layout{justify-content:flex-end;gap:2.2cqh;padding-bottom:7cqh}
+/* На реплике про выбор языка кадр важнее текста: и блок, и затемнение мельче */
+.scene[data-beat="3"] .veil.deep{
+  background:linear-gradient(0deg,rgba(16,11,7,.9) 2%,rgba(16,11,7,.62) 26%,
+    rgba(16,11,7,.18) 55%,rgba(16,11,7,.1) 100%)}
+.scene[data-beat="3"] .results-layout{padding-bottom:5cqh}
+.scene[data-beat="3"] .result-panels{min-height:28cqh}
+.scene[data-beat="3"] .results-layout .thesis{font-size:3.4cqh}
+.scene[data-beat="3"] .results-layout .punch{font-size:2.9cqh}
+.scene[data-beat="3"] .results-layout .result-index{font-size:2.2cqh}
 .issue-panels,.solution-panels,.result-panels,.finale-copy{position:relative;width:100%}
 .issue-panels section,.solution-panels section,.result-panels section,.finale-copy section{
   display:flex;flex-direction:column;gap:2cqh;
@@ -212,9 +238,11 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .result-panels section:not([data-state="now"]),.finale-copy section:not([data-state="now"]){
   position:absolute;inset:0;pointer-events:none}
 
+section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:center}
+.split-copy{display:flex;flex-direction:column;gap:2.4cqh}
 .phone{width:33cqh;border-radius:2.6cqh;background:#0c0906;border:.5cqh solid #241a13;
   box-shadow:0 2cqh 5cqh rgba(0,0,0,.6);overflow:hidden;display:flex;flex-direction:column;
-  align-self:flex-start}
+  align-self:center;justify-self:end}
 .phone-top{display:flex;justify-content:space-between;align-items:center;
   padding:1.2cqh 2cqh .4cqh;font-size:1.9cqh;color:var(--ku-text-soft)}
 .phone-time{font-weight:700}
@@ -242,12 +270,21 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 @keyframes chat-dim{to{opacity:.24}}
 @keyframes chat-find{to{background:color-mix(in srgb,var(--ku-brand) 18%,transparent)}}
 
-.wifi-signal{width:24cqh;margin-top:1cqh}
-.wifi-signal path{fill:none;stroke:var(--ku-brand);stroke-width:5;stroke-linecap:round;
-  stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset .7s var(--ease)}
-.wifi-signal circle{fill:var(--ku-brand);opacity:0;transition:opacity .4s ease .5s}
-.scene.playing [data-state="now"] .wifi-signal path{stroke-dashoffset:24}
-.scene.playing [data-state="now"] .wifi-signal circle{opacity:1}
+.wifi-signal{width:30cqh;margin-top:1cqh}
+.wifi-signal .arc{fill:none;stroke:var(--ku-brand);stroke-width:5;stroke-linecap:round;opacity:.14}
+.wifi-signal circle{fill:var(--ku-brand);opacity:.14}
+/* Ловит-не ловит: дуги набегают снизу вверх и гаснут — и так до конца реплики */
+.scene.playing [data-state="now"] .wifi-signal circle{animation:wifi-pulse 2.4s linear infinite}
+.scene.playing [data-state="now"] .wifi-signal .arc{
+  animation:wifi-pulse 2.4s linear infinite;
+  animation-delay:calc((var(--i) + 1) * .4s)}
+@keyframes wifi-pulse{
+  0%{opacity:.14}
+  12%{opacity:1}
+  46%{opacity:1}
+  62%{opacity:.14}
+  100%{opacity:.14}
+}
 
 /* ═══ s09 · из рук в руки ═════════════════════════════════════════ */
 .hands{display:flex;align-items:center;gap:1cqw;margin-bottom:.6cqh}
@@ -309,12 +346,13 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .result-index{font-family:var(--ku-font-display);font-size:2.6cqh;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ku-brand)}
 .comparison{display:flex;align-items:baseline;gap:2.4cqw;flex-wrap:wrap}
-.comparison .before{font-family:var(--ku-font-display);font-size:5.4cqh;color:var(--ku__cream-300);
-  text-decoration:line-through;text-decoration-thickness:2px}
+.comparison .before{font-family:var(--ku-font-display);font-weight:900;font-size:11cqh;line-height:1;
+  color:var(--ku__cream-300);font-variant-numeric:tabular-nums;
+  text-decoration:line-through;text-decoration-thickness:.6cqh}
 .compare-arrow{font-size:4.6cqh;color:var(--ku-brand)}
 .comparison strong{font-family:var(--ku-font-display);font-weight:900;font-size:11cqh;line-height:1;
   color:var(--ku-success);font-variant-numeric:tabular-nums}
-.comparison strong.huge-now{font-size:14cqh;color:var(--ku-brand)}
+.comparison strong.huge-now{font-size:8.6cqh;color:var(--ku-brand)}
 .time-track,.compliance-track{position:relative;height:2.6cqh;border-radius:999px;
   background:var(--ku-surface-2);overflow:hidden;max-width:66cqw}
 .time-track i{position:absolute;inset:0;background:var(--ku-brand);border-radius:inherit;
@@ -331,7 +369,8 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 
 /* ═══ s13 · мозаика команды ══════════════════════════════════════ */
 .finale-copy{min-height:48cqh;align-items:center;text-align:center}
-.finale-copy section{align-items:center}
+.finale-copy section{align-items:center;text-align:center}
+.finale-line{font-size:11.4cqh;line-height:1.02;max-width:26ch;margin-inline:auto;text-align:center}
 .mosaic{display:grid;grid-template-columns:repeat(12,1fr);gap:.4cqw;width:52cqw;margin-top:1cqh}
 .mosaic i{aspect-ratio:1;border-radius:.2cqw;background:var(--ku-surface-2);
   opacity:0;transform:scale(.7);transition:opacity .5s var(--ease),transform .5s var(--ease)}
@@ -382,8 +421,10 @@ body.full .deck{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);w
 /* ═══ Спокойный режим ═════════════════════════════════════════════ */
 @media (prefers-reduced-motion:reduce){
   .scene,.reveal,.verb,.step,.chart-column,.moving-doc,.cam figure,.veil,.avatar,.mosaic i{transition-duration:.01ms}
-  .huge.steps,.chat,.chat.target{animation:none!important}
+  .huge.steps,.chat,.chat.target,.backdrop.gradient,
+  .wifi-signal .arc,.wifi-signal circle{animation:none!important}
   .huge.steps{transform:none}
+  .wifi-signal .arc,.wifi-signal circle{opacity:1}
   .cam{transform:scale(1.02)!important}
   .ring-fill,.plot-bar::before,.hands span,.time-track i,.compliance-track b,
   .lost-programs i,.wifi-signal path,.wifi-signal circle{transition-duration:.01ms}
