@@ -122,7 +122,10 @@
      необязательны: если файла нет, продолжает играть основная.
      ───────────────────────────────────────────────────────────────── */
   const TRACKS = ["bed", "epic", "confident", "warm"];
-  const LEVEL = { bed: .22, epic: .26, confident: .22, warm: .24 };
+  /* Громкость подложки. Крутить здесь: LEVEL — сколько музыки в зале,
+     DUCK — во сколько раз она уходит вниз под закадровым голосом. */
+  const LEVEL = { bed: .40, epic: .44, confident: .40, warm: .42 };
+  const DUCK = .38;
 
   const music = {
     el: null,          /* что играет сейчас */
@@ -149,7 +152,7 @@
     probe.addEventListener("error", () => { if (music.pending === name) music.pending = null; }, { once: true });
   });
 
-  function level(name) { return (LEVEL[name] ?? .22) * (music.ducked ? .42 : 1); }
+  function level(name) { return (LEVEL[name] ?? .40) * (music.ducked ? DUCK : 1); }
 
   function fadeTo(el, target, seconds, done) {
     clearInterval(music.fade);
