@@ -55,11 +55,11 @@
 
     /* ── s03 · Муравейник ─────────────────────────────────────────── */
     {
-      camera: [-.7, .15, 1.065],
+      camera: [-1.6, .5, 1.14],   /* усиленный проход по залу */
       html: `<div class="layer">
         <div class="stats">
-          ${show(0, '<div class="stat"><div class="v" data-count="886">886</div><p class="c">ресторанов</p></div>')}
-          ${show(1, '<div class="stat"><div class="v" data-count="12328">12 328</div><p class="c">сотрудников</p></div>')}
+          ${show(0, '<div class="stat"><span class="pre">более</span><div class="v" data-count="900">900</div><p class="c">ресторанов</p></div>')}
+          ${show(1, '<div class="stat"><span class="pre">более</span><div class="v" data-count="24000">24 000</div><p class="c">человек</p></div>')}
         </div>
         ${show(2, '<p class="question">Как заставить этот муравейник<br>работать как часы?</p>')}
       </div>`,
@@ -72,7 +72,7 @@
 
     /* ── s04 · 2023: бренд ушёл ───────────────────────────────────── */
     {
-      camera: [.9, .5, 1.16],   /* заметный наезд: кадр «съезжает» на зрителя */
+      camera: [1.5, .9, 1.24],   /* заметный наезд: кадр «съезжает» на зрителя */
       music: { track: 'epic' },     /* «резкий переход на эпичную музыку», если дорожка есть */
       html: `<div class="layer">
         <div class="ladder-2022">
@@ -97,12 +97,12 @@
           ['2023', 'ЧБР · МС', '4 трека · 120 артефактов'],
           ['2024', 'ЗД · ДР', '4 трека · 300 артефактов'],
           ['2025', 'Повара · НУ · ТУ · ОД', '5 треков · 400 артефактов · 5 языков'],
-          ['2026', 'Кассиры · Курьеры · Операторы КЦ', '5 треков · ~300 артефактов · 8 языков']
+          ['2026', 'Кассиры · Курьеры · Операторы КЦ', 'Охватили всех']
         ].map(([year, roles, meta], i) => `
           <div class="step" data-step="${i}" style="--h:${(i + 1) * 22}%">
             <span class="step-year">${year}</span>
             <span class="step-roles">${roles}</span>
-            <span class="step-meta">${meta}</span>
+            <span class="step-meta${i === 3 ? ' all' : ''}">${meta}</span>
           </div>`).join('')}</div>
       </div>`,
       beats: [
@@ -150,7 +150,7 @@
           <section class="split" data-panel="0">
             <div class="split-copy">
               <h2 class="title sm">Теряется среди<br>всего остального</h2>
-              <p class="thesis">Обучение приходит туда же,<br>куда скидки и посылки</p>
+              <p class="thesis">Мы создали крутые треки, но поняли:<br>толку от них немного,<br>если до них не добраться</p>
             </div>
             <div class="phone" aria-label="Экран сообщений в телефоне сотрудника">
               <div class="phone-top"><span class="phone-time">9:41</span><span class="phone-icons">●●●</span></div>
@@ -197,13 +197,13 @@
           </section>
           <section data-panel="1">
             <h2 class="title sm">Агенты обучения</h2>
-            <p class="thesis">Доводят обучение до результата<br>прямо в ресторане</p>
+            <p class="thesis">Профи из ресторанов. Знают, как сделать<br>правдивое и практичное обучение,<br>и передают опыт из рук в руки</p>
           </section>
         </div>
       </div>`,
       beats: [
-        beat('Мы спускаемся на землю. Перезапускаем наставничество, чтобы опыт передавался из рук в руки, даже если интернет завис.', { sound: 'handoff' }),
-        beat('И внедряем агентов обучения — людей в ресторанах, которые доводят обучение до результата.', { sound: 'handoff' })
+        beat('Мы спускаемся на землю. Перезапускаем наставничество, чтобы опыт передавался из рук в руки, даже если интернет завис.', { shot: 0, sound: 'handoff' }),
+        beat('И внедряем агентов обучения — людей в ресторанах, которые доводят обучение до результата.', { shot: 1, sound: 'handoff' })
       ]
     },
 
@@ -243,16 +243,16 @@
         ${kicker('ИИ и автоматизация · что уже работает')}
         ${show(0, `<div class="ai-gain">
           <p class="gain-main">Методологи работают <em>вдвое быстрее</em></p>
-          <p class="gain-side">и сэкономили <strong data-decimal="2.4">2,4</strong> млн ₽ на производстве контента</p>
+          <p class="gain-side">и сэкономили более <strong data-count="10">10</strong> млн ₽ на производстве контента</p>
         </div>`)}
-        <div class="honest-chart" role="img" aria-label="Артефакты по годам: 2023 — 120, 2024 — 300, 2025 — 400 и 5 языков, 2026 — около 300 и 8 языков.">
+        <div class="honest-chart" role="img" aria-label="Артефакты по годам: 2023 — 4 трека, 120 артефактов; 2024 — 4 трека, 300 артефактов; 2025 — 5 треков, 400 артефактов, треки ЧБР на 5 языках; 2026 — 5 треков, около 300 артефактов, треки ЧБР на 8 языках.">
           ${[120, 300, 400, 300].map((value, i) => `
           <div class="chart-column" data-column="${i}">
             <div class="plot"><div class="plot-bar" style="height:${value / 4}%">
               <span data-count="${value}"${i === 3 ? ' data-prefix="~"' : ''}>${i === 3 ? '~' : ''}${value}</span>
             </div></div>
             <span class="chart-year">${2023 + i}</span>
-            <span class="chart-meta">${i < 2 ? '4 трека' : '5 треков'}${i === 2 ? ' · 5 языков' : i === 3 ? ' · 8 языков' : ''}</span>
+            <span class="chart-meta">${i < 2 ? '4 трека' : '5 треков'}${i === 2 ? ' · ЧБР на 5 языках' : i === 3 ? ' · ЧБР на 8 языках' : ''}</span>
           </div>`).join('')}
         </div>
       </div>`,
@@ -279,10 +279,10 @@
               <span class="before">3 часа</span><span class="compare-arrow">→</span><strong>20 минут</strong>
             </div>
             <div class="time-track" aria-hidden="true"><i></i></div>
-            <p class="punch">Экономия 2,5 часа на каждом плане</p>
+            <p class="punch big">Экономия 2,5 часа!</p>
           </section>
           <section data-panel="1">
-            <p class="result-index">Оценка → обучение → перевод</p>
+            <p class="result-index">Перевод на новую должность · оценка → обучение → перевод</p>
             <div class="comparison">
               <span class="before">36,75%</span><span class="compare-arrow">→</span><strong>90%</strong>
             </div>
@@ -292,17 +292,21 @@
           <section data-panel="2">
             <p class="result-index">Курс на родном языке · как было</p>
             <div class="chain">
-              <div><strong class="old">20 минут</strong><p>наставник переводил курс вслух</p></div>
+              <div><strong class="old">20 минут</strong><p>наставник переводил курс вслух<br>и смотрел его вместе с сотрудником</p></div>
               <span class="compare-arrow">+</span>
-              <div><strong class="old">5 минут</strong><p>директор назначал нужный курс</p></div>
+              <div><strong class="old">5 минут</strong><p>директор тратил драгоценные минуты<br>на назначение нужного курса</p></div>
             </div>
           </section>
           <section data-panel="3">
             <p class="result-index">Курс на родном языке · как стало</p>
-            <div class="comparison">
-              <strong class="huge-now">3 секунды</strong>
+            <div class="chain final">
+              <div><strong class="old">20 минут</strong><p>перевод</p></div>
+              <span class="compare-arrow">→</span>
+              <div><strong class="old">5 минут</strong><p>директор</p></div>
+              <span class="compare-arrow">→</span>
+              <div><strong class="huge-now">3 секунды</strong><p>сотрудник выбирает сам</p></div>
             </div>
-            <p class="thesis">Сотрудник сам выбирает язык внутри курса.<br>Мы заговорили на <em>8 языках</em></p>
+            <p class="thesis">Мы заговорили на <em>8 языках</em></p>
             <p class="punch">Потому что Воппер вкусный на любом языке</p>
           </section>
         </div>

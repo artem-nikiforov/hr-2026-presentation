@@ -12,14 +12,35 @@
       ? Array.from(new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(value), s => s.segment)
       : Array.from(value);
 
+  /* Текст элемента вместе с переносами: <br> обязан стать \n, иначе слова
+     по краям переноса склеятся — «Теряется среди» + «всего» дадут
+     «средивсего». textContent такой перенос теряет. */
+  function textOf(el) {
+    let out = "";
+    for (const node of el.childNodes) {
+      if (node.nodeType === 3) out += node.data;
+      else if (node.nodeName === "BR") out += "\n";
+      else if (node.nodeType === 1) out += textOf(node);
+    }
+    return out;
+  }
+
   /* Разбиение на буквы с сохранением слов: перенос строки только между слов. */
   function split(el, name) {
-    const phrase = el.textContent;
+    const phrase = textOf(el);
     const frag = el.ownerDocument.createDocumentFragment();
     const units = [];
     let word = null, afterSpace = false;
 
     for (const g of graphemes(phrase)) {
+      if (g === "\n" || g === "\r" || g === "\r\n") {
+        const lineBreak = el.ownerDocument.createElement("br");
+        lineBreak.setAttribute("aria-hidden", "true");
+        frag.append(lineBreak);
+        word = null;
+        afterSpace = false;
+        continue;
+      }
       const space = /^\s+$/u.test(g);
       if (!word || (!space && afterSpace)) {
         word = el.ownerDocument.createElement("span");
@@ -34,7 +55,7 @@
       units.push(unit);
       afterSpace = space;
     }
-    el.setAttribute("aria-label", phrase);   /* фраза целиком остаётся доступной */
+    el.setAttribute("aria-label", phrase.replace(/\n/g, " "));   /* фраза целиком остаётся доступной */
     el.replaceChildren(frag);
     return units;
   }

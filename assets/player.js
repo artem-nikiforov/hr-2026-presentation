@@ -31,6 +31,17 @@
   const sound = root.KUSound;
 
   /* ── сборка сцен ────────────────────────────────────────────────── */
+  /* Сколько секунд кадр держится на экране: по нему решаем, зацикливать
+     короткий ролик или замереть на последнем кадре. */
+  function shotSeconds(scene, index) {
+    let current = 0, total = 0;
+    for (const beat of scene.beats) {
+      if (beat.shot !== undefined) current = beat.shot;
+      if (current === index) total += beat.seconds;
+    }
+    return total;
+  }
+
   const views = SCENES.map(scene => {
     const el = document.createElement("article");
     el.className = "scene";
@@ -41,7 +52,7 @@
     shot.className = "shot";
     const cam = document.createElement("div");
     cam.className = "cam";
-    scene.shots.forEach(item => {
+    scene.shots.forEach((item, index) => {
       const figure = document.createElement("figure");
 
       /* Ролик с тем же именем заменяет фотографию. Нет ролика — остаётся
@@ -64,6 +75,12 @@
            <p class="f">${item.file} · промт в assets/scenes.js</p></div>`);
       };
 
+      video.addEventListener("loadedmetadata", () => {
+        /* Ролик заметно короче своего места в показе — пускаем по кругу,
+           иначе он один раз проигрывается и замирает на последнем кадре. */
+        const shown = shotSeconds(scene, index);
+        video.loop = video.duration > 0 && shown > 0 && video.duration < shown * 0.7;
+      }, { once: true });
       video.addEventListener("loadeddata", () => {
         figure.classList.add("has-video");
         video.hidden = false;

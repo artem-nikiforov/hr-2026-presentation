@@ -86,6 +86,34 @@ for (const scene of STORY) {
   }
 }
 
+group("Текст на экране");
+{
+  /* Проверяем каждый текстовый кусок отдельно: между тегами слова
+     не склеиваются, а «<em>Человек</em>,» — это не пробел перед запятой. */
+  const chunks = html => html
+    .replace(/\$\{[^}]*\}/g, "\u0000")
+    .split(/<[^>]+>/)
+    .map(part => part.replace(/&[a-z]+;/g, " ").trim())
+    .filter(part => part && !part.includes("\u0000"));
+
+  for (const scene of STORY)
+    for (const text of chunks(scene.html)) {
+      const glued = text.match(/[а-яё][А-ЯЁ]/g);
+      check(`${scene.id}: слова не слиплись`, !glued, `${glued && glued.join(", ")} в «${text}»`);
+      const noSpace = text.match(/[а-яёa-z][.,;:!?][а-яёА-ЯЁa-zA-Z]/g);
+      check(`${scene.id}: после знака есть пробел`, !noSpace, `${noSpace && noSpace.join(", ")} в «${text}»`);
+      const spaceBefore = text.match(/\s[.,;:!?]/g);
+      check(`${scene.id}: нет пробела перед знаком`, !spaceBefore, `в «${text}»`);
+      check(`${scene.id}: нет двойных пробелов`, !/ {2}/.test(text), `в «${text}»`);
+    }
+
+  for (const scene of STORY)
+    for (const beat of scene.beats) {
+      check(`${beat.id}: реплика без двойных пробелов`, !/ {2}/.test(beat.text));
+      check(`${beat.id}: реплика без пробела перед знаком`, !/\s[.,;:!?]/.test(beat.text));
+    }
+}
+
 group("Музыкальные указания");
 {
   const cues = STORY.map(scene => scene.music).filter(Boolean);
@@ -106,8 +134,10 @@ group("Музыкальные указания");
 }
 
 group("Шкала графика соответствует данным");
-const heights = [...STORY[10].html.matchAll(/height:([\d.]+)%/g)].map(m => Number(m[1]));
-const values = [...STORY[10].html.matchAll(/data-count="(\d+)"/g)].map(m => Number(m[1]));
+/* берём только столбцы графика: на сцене есть и другие счётчики */
+const chart = STORY[10].html.slice(STORY[10].html.indexOf("honest-chart"));
+const heights = [...chart.matchAll(/height:([\d.]+)%/g)].map(m => Number(m[1]));
+const values = [...chart.matchAll(/data-count="(\d+)"/g)].map(m => Number(m[1]));
 check("четыре столбца", heights.length === 4, `их ${heights.length}`);
 const max = Math.max(...values);
 values.forEach((value, i) =>

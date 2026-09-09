@@ -79,6 +79,7 @@ for (const file of ["scenes.js", "durations.js", "story.js", "timeline.js", "rev
   document.body.append(script);
 }
 
+const SCENE_HTML = window.KU_STORY.map(scene => scene.html);
 const frame = document.getElementById("frame");
 const scenes = [...frame.querySelectorAll(".scene")];
 const wait = () => new Promise(r => setTimeout(r, 30));
@@ -157,6 +158,37 @@ group("Громкость музыки крутится на показе");
   check("убавляется", quieter < louder, `${louder}% → ${quieter}%`);
   check("значение запоминается", window.localStorage.getItem("ku-music-gain") !== null);
   window.KUSound.nudgeMusic(.2);   /* вернуть как было */
+}
+
+group("Заголовки с переносом не слипаются");
+{
+  /* <br> обязан оставаться переносом после разбиения текста на буквы,
+     иначе «Теряется среди<br>всего» даст «средивсего». */
+  const probe = document.createElement("h2");
+  probe.innerHTML = "Теряется среди<br>всего остального";
+  document.body.append(probe);
+  window.KUReveal.play(probe, "gentle", false);
+  check("перенос сохранён в доступном имени",
+    probe.getAttribute("aria-label") === "Теряется среди всего остального",
+    JSON.stringify(probe.getAttribute("aria-label")));
+  check("в разметке остался перенос строки", probe.querySelectorAll("br").length === 1);
+  /* собираем как увидит зритель: <br> — это перенос, а не пустое место */
+  const letters = [...probe.querySelectorAll(".serega-gentle__unit, br")]
+    .map(node => (node.nodeName === "BR" ? " " : node.textContent)).join("");
+  check("буквы не склеились", !/[а-яё][А-ЯЁ]/.test(letters) && !letters.includes("средивсего"), letters);
+  probe.remove();
+
+  /* та же проверка на настоящих заголовках всех сцен */
+  const glued = [];
+  for (const scene of SCENE_HTML)
+    for (const [, inner] of scene.matchAll(/<h2[^>]*>(.*?)<\/h2>/g)) {
+      const el = document.createElement("h2");
+      el.innerHTML = inner;
+      window.KUReveal.play(el, "gentle", false);
+      const label = el.getAttribute("aria-label") || "";
+      if (/[а-яё][А-ЯЁ]/.test(label) || / {2}/.test(label)) glued.push(label);
+    }
+  check("во всех сценах заголовки читаются", glued.length === 0, glued.join(" | "));
 }
 
 group("Подложка вместо фотографии");

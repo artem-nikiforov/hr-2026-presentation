@@ -157,6 +157,8 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .question{font-family:var(--ku-font-display);font-size:6.4cqh;line-height:1.08;
   color:var(--ku-text);max-width:20ch}
 .punch{font-size:3.4cqh;color:var(--ku-brand);font-style:italic;max-width:38ch}
+.punch.big{font-family:var(--ku-font-display);font-style:normal;font-size:6.4cqh;
+  line-height:1.05;max-width:22ch}
 
 /* ═══ s02 · глаголы вспыхивают в такт ═════════════════════════════ */
 .verbs{display:flex;gap:2.6cqw;flex-wrap:wrap;margin-bottom:1cqh}
@@ -168,19 +170,20 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 
 /* ═══ s03 · цифры ═════════════════════════════════════════════════ */
 .stats{display:flex;gap:7cqw;flex-wrap:wrap;align-items:flex-end}
+.stat .pre{display:block;font-size:2.8cqh;color:var(--ku-text-soft);letter-spacing:.04em;
+  margin-bottom:.2cqh}
 .stat .v{font-family:var(--ku-font-display);font-weight:900;font-size:15cqh;line-height:.88;
   color:var(--ku-brand);font-variant-numeric:tabular-nums}
 .stat .c{font-size:3.2cqh;color:var(--ku-text-soft);margin-top:.6cqh}
 
 /* ═══ s04 · BK Link гаснет, бренд уходит ══════════════════════════ */
 .ladder-2022{display:flex;flex-direction:column;gap:1.2cqh;margin-bottom:1cqh}
-.rung-label{font-family:var(--ku-font-display);font-size:2.8cqh;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--ku-text-muted);transition:color .8s}
+.rung-label{font-family:var(--ku-font-display);font-size:3.8cqh;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ku-text)}
 .lost-programs{display:flex;gap:1.2cqw}
 .lost-programs i{width:8cqw;height:1.8cqh;border-radius:.2cqw;background:var(--ku-brand);
   transition:background 1s ease,opacity 1s ease}
 .scene[data-beat] .lost-programs i{background:var(--ku-surface-2);opacity:.4}
-.scene[data-beat] .rung-label{color:color-mix(in srgb,var(--ku-text-muted) 60%,transparent)}
 .lost-programs i:nth-child(2){transition-delay:.15s}
 .lost-programs i:nth-child(3){transition-delay:.3s}
 .lost-programs i:nth-child(4){transition-delay:.45s}
@@ -205,6 +208,7 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .step[data-state="past"] .step-year{color:var(--ku-text-soft)}
 .step-roles{font-size:2.7cqh;color:var(--ku-text);line-height:1.25}
 .step-meta{font-size:2.2cqh;color:var(--ku-text-muted);margin-top:auto}
+.step-meta.all{font-family:var(--ku-font-display);font-size:2.9cqh;color:var(--ku-brand)}
 
 /* ═══ s06 · кольцо охвата ═════════════════════════════════════════ */
 .coverage-ring{position:relative;width:44cqh;height:44cqh;display:grid;place-items:center}
@@ -216,7 +220,9 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .coverage .huge{font-size:14cqh;position:relative}
 
 /* ═══ s08 · уведомление тонет, связи нет ══════════════════════════ */
-.issue-layout,.chart-layout,.docs-layout{justify-content:center;gap:2.6cqh}
+.issue-layout{justify-content:center;gap:2.6cqh}
+/* Хаос: композиция опущена вниз, чтобы было видно, что происходит в кадре */
+.docs-layout{justify-content:flex-end;gap:2.4cqh;padding-bottom:6cqh;padding-top:26cqh}
 /* Сцена у доски: инфографика опускается в нижнюю половину кадра */
 .results-layout{justify-content:flex-end;gap:2.2cqh;padding-bottom:7cqh}
 /* На реплике про выбор языка кадр важнее текста: и блок, и затемнение мельче */
@@ -240,35 +246,35 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 
 section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:center}
 .split-copy{display:flex;flex-direction:column;gap:2.4cqh}
-.phone{width:33cqh;border-radius:2.6cqh;background:#0c0906;border:.5cqh solid #241a13;
+.phone{width:50cqh;border-radius:2.6cqh;background:#0c0906;border:.5cqh solid #241a13;
   box-shadow:0 2cqh 5cqh rgba(0,0,0,.6);overflow:hidden;display:flex;flex-direction:column;
   align-self:center;justify-self:end}
 .phone-top{display:flex;justify-content:space-between;align-items:center;
   padding:1.2cqh 2cqh .4cqh;font-size:1.9cqh;color:var(--ku-text-soft)}
 .phone-time{font-weight:700}
 .phone-icons{letter-spacing:.2em;font-size:1.2cqh;opacity:.6}
-.phone-title{font-family:var(--ku-font-display);font-size:3.4cqh;color:var(--ku-text);
+.phone-title{font-family:var(--ku-font-display);font-size:4cqh;color:var(--ku-text);
   padding:.6cqh 2cqh 1.2cqh}
 .chats{display:flex;flex-direction:column}
 .chat{display:grid;grid-template-columns:auto 1fr auto;gap:1.4cqh;align-items:center;
   padding:1.5cqh 2cqh;border-top:1px solid rgba(249,242,231,.07);
   transition:opacity .6s ease,background .6s ease}
-.chat .ava{width:5.4cqh;height:5.4cqh;border-radius:50%;display:grid;place-items:center;
+.chat .ava{width:6.2cqh;height:6.2cqh;border-radius:50%;display:grid;place-items:center;
   font-size:2cqh;font-weight:700;color:#150f0a;background:var(--ku__cream-300)}
 .chat .ava[data-a="2"]{background:#7fb0d8}
 .chat .ava[data-a="3"]{background:var(--ku-brand)}
 .chat .ava[data-a="4"]{background:#c9a6e0}
 .chat .ava[data-a="5"]{background:#8fc79a}
 .chat .ava[data-a="6"]{background:#e0c07a}
-.chat b{display:block;font-size:2.3cqh;color:var(--ku-text);font-weight:600;line-height:1.2}
-.chat p{font-size:2.1cqh;color:var(--ku-text-muted);line-height:1.25;margin-top:.3cqh;
+.chat b{display:block;font-size:2.7cqh;color:var(--ku-text);font-weight:600;line-height:1.2}
+.chat p{font-size:2.5cqh;color:var(--ku-text-muted);line-height:1.25;margin-top:.3cqh;
   overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.chat time{font-size:1.7cqh;color:var(--ku-text-muted);align-self:flex-start}
+.chat time{font-size:2cqh;color:var(--ku-text-muted);align-self:flex-start}
 /* Сообщение об обучении сначала теряется в общем потоке, потом его находят */
 .scene.playing [data-state="now"] .chat{animation:chat-dim 1s ease 2.2s both}
 .scene.playing [data-state="now"] .chat.target{animation:chat-find 1s ease 2.2s both}
-@keyframes chat-dim{to{opacity:.24}}
-@keyframes chat-find{to{background:color-mix(in srgb,var(--ku-brand) 18%,transparent)}}
+@keyframes chat-dim{to{opacity:.12}}
+@keyframes chat-find{to{background:color-mix(in srgb,var(--ku-brand) 26%,transparent);opacity:1}}
 
 .wifi-signal{width:30cqh;margin-top:1cqh}
 .wifi-signal .arc{fill:none;stroke:var(--ku-brand);stroke-width:5;stroke-linecap:round;opacity:.14}
@@ -294,27 +300,39 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 
 /* ═══ s10 · документы уезжают в реестр ════════════════════════════ */
 .document-machine{display:grid;grid-template-columns:1fr 1fr;gap:4cqw;align-items:center;width:100%}
-.document-stack{display:flex;flex-direction:column;gap:1cqh}
-.moving-doc{display:flex;align-items:center;gap:1.2cqw;font-size:2.9cqh;color:var(--ku-text-muted);
-  background:color-mix(in srgb,var(--ku-surface) 92%,transparent);border:1px solid var(--ku-border-soft);
-  padding:1.3cqh 1.6cqw;border-radius:.4cqw;
+.document-stack{display:flex;flex-direction:column;align-items:flex-start;gap:1.1cqh}
+.moving-doc{display:inline-flex;align-items:center;gap:1cqw;width:auto;white-space:nowrap;
+  font-size:3.6cqh;color:var(--ku-text-soft);
+  background:color-mix(in srgb,var(--ku-surface) 94%,transparent);border:1px solid var(--ku-border-soft);
+  padding:1.5cqh 1.8cqw;border-radius:.5cqw;
   transition:transform .8s var(--ease),color .8s,border-color .8s}
+/* Хаос накапливается: плашки одна за другой падают сверху */
+.scene.playing .moving-doc{animation:doc-drop .55s cubic-bezier(.3,1.5,.5,1) backwards}
+.scene.playing .moving-doc[data-doc="0"]{animation-delay:.25s}
+.scene.playing .moving-doc[data-doc="1"]{animation-delay:.65s}
+.scene.playing .moving-doc[data-doc="2"]{animation-delay:1.05s}
+.scene.playing .moving-doc[data-doc="3"]{animation-delay:1.45s}
+@keyframes doc-drop{from{opacity:0;transform:translateY(-26cqh) rotate(-6deg)}}
 .moving-doc[data-doc="0"]{transform:rotate(-2deg) translateX(-1.4cqw)}
 .moving-doc[data-doc="1"]{transform:rotate(1.6deg) translateX(2.4cqw)}
 .moving-doc[data-doc="2"]{transform:rotate(-1deg) translateX(-.6cqw)}
 .moving-doc[data-doc="3"]{transform:rotate(2.4deg) translateX(3cqw)}
 .moving-doc.filed{transform:none;color:var(--ku-text-soft);border-color:var(--ku-brand-ring)}
-.paper-icon{width:1.9cqh;height:2.5cqh;border-radius:.15cqw;background:var(--ku-text-muted);
+.paper-icon{width:2.3cqh;height:3cqh;border-radius:.15cqw;background:var(--ku-text-muted);
   clip-path:polygon(0 0,72% 0,100% 26%,100% 100%,0 100%);flex:none;transition:background .8s}
 .moving-doc.filed .paper-icon{background:var(--ku-brand)}
 .registry{background:color-mix(in srgb,var(--ku-surface) 92%,transparent);border-radius:.8cqw;
   padding:3.4cqh 2.4cqw;display:flex;flex-direction:column;gap:1cqh;border-left:4px solid var(--ku-brand)}
 .registry-mark{font-family:var(--ku-font-display);font-size:4cqh;color:var(--ku-brand);line-height:1}
-.registry h3{font-size:4.4cqh}
-.registry>p{font-size:2.9cqh;color:var(--ku-text-muted)}
+.registry h3{font-size:5cqh}
+.registry>p{font-size:3.2cqh;color:var(--ku-text-muted)}
 .registry-properties{display:flex;flex-direction:column;gap:.8cqh;margin-top:.8cqh}
-.registry-properties span{font-size:2.6cqh;color:var(--ku-text-soft);
+.registry-properties span{font-size:3cqh;color:var(--ku-text-soft);
   border-top:1px solid var(--ku-border-soft);padding-top:.8cqh;display:block}
+
+/* Методологи: инфографика сверху, текстовый блок прижат к левому низу */
+.chart-layout{justify-content:flex-end;align-items:flex-start;gap:2.4cqh;padding-bottom:7cqh}
+.chart-layout .honest-chart{order:-1;margin-bottom:1.6cqh}
 
 /* ═══ s11 · выигрыш и честная шкала ══════════════════════════════ */
 .ai-gain{display:flex;flex-direction:column;gap:.6cqh}
@@ -363,6 +381,12 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
   transform-origin:0 50%;transform:scaleX(0);transition:transform 1.3s var(--ease)}
 .scene.playing [data-state="now"] .compliance-track b{transform:scaleX(1)}
 .chain{display:flex;align-items:flex-start;gap:3cqw;flex-wrap:wrap}
+.chain.final{align-items:baseline;gap:2.2cqw}
+.chain.final div{max-width:none;gap:.4cqh}
+.chain.final .old{font-size:5cqh;color:var(--ku-text-muted)}
+.chain.final .huge-now{font-family:var(--ku-font-display);font-weight:900;font-size:11cqh;
+  line-height:1;color:var(--ku-brand);white-space:nowrap}
+.chain.final p{font-size:2.4cqh}
 .chain div{display:flex;flex-direction:column;gap:.8cqh;max-width:26ch}
 .chain .old{font-family:var(--ku-font-display);font-size:7cqh;line-height:1;color:var(--ku__cream-300)}
 .chain p{font-size:2.7cqh;color:var(--ku-text-soft);line-height:1.3}
@@ -428,7 +452,7 @@ body.full .deck{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);w
 /* ═══ Спокойный режим ═════════════════════════════════════════════ */
 @media (prefers-reduced-motion:reduce){
   .scene,.reveal,.verb,.step,.chart-column,.moving-doc,.cam figure,.veil,.avatar,.mosaic i{transition-duration:.01ms}
-  .huge.steps,.chat,.chat.target,.backdrop.gradient,
+  .huge.steps,.chat,.chat.target,.backdrop.gradient,.moving-doc,
   .wifi-signal .arc,.wifi-signal circle{animation:none!important}
   .huge.steps{transform:none}
   .wifi-signal .arc,.wifi-signal circle{opacity:1}
