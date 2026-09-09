@@ -399,6 +399,10 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 .compliance-track b{position:absolute;inset:0;width:90%;background:var(--ku-success);border-radius:inherit;
   transform-origin:0 50%;transform:scaleX(0);transition:transform 1.3s var(--ease)}
 .scene.playing [data-state="now"] .compliance-track b{transform:scaleX(1)}
+/* Одна крупная цифра с подписью: «20 минут» не переносится */
+.single-figure{font-family:var(--ku-font-display);font-weight:900;font-size:17cqh;
+  line-height:1;color:var(--ku-brand);white-space:nowrap;letter-spacing:-.02em}
+
 .chain{display:flex;align-items:flex-start;gap:3cqw;flex-wrap:wrap}
 .chain.final{align-items:baseline;gap:2.2cqw}
 .chain.final div{max-width:none;gap:.4cqh}

@@ -317,11 +317,8 @@
           </section>
           <section data-panel="2">
             <p class="result-index">Курс на родном языке · как было</p>
-            <div class="chain">
-              <div><strong class="old">20 минут</strong><p>наставник переводил курс вслух<br>и смотрел его вместе с сотрудником</p></div>
-              <span class="compare-arrow">+</span>
-              <div><strong class="old">5 минут</strong><p>директор тратил драгоценные минуты<br>на назначение нужного курса</p></div>
-            </div>
+            <p class="single-figure">20 минут</p>
+            <p class="thesis">Наставник переводил курс вслух<br>и смотрел его вместе с сотрудником</p>
           </section>
           <section data-panel="3">
             <p class="result-index">Курс на родном языке · как стало</p>
