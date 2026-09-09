@@ -211,10 +211,10 @@ group("Конфетти на «100% ролей»");
   check("конфетти умеет запускаться", typeof window.KUConfetti.burst === "function");
 }
 
-group("Кадры сцен с аватаром");
-const avatarScene = scenes.find(s => s.querySelector(".avatar"));
-check("аватар скрыт вне своей реплики",
-  avatarScene && !avatarScene.querySelector(".avatar").classList.contains("on"));
+group("Заглушки видеоаватаров сняты");
+{
+  check("кружков «видео-аватар» нет", document.querySelectorAll(".avatar").length === 0);
+}
 
 group("Ролик заменяет фотографию");
 {

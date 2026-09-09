@@ -61,7 +61,7 @@
           ${show(0, '<div class="stat"><span class="pre">более</span><div class="v" data-count="900">900</div><p class="c">ресторанов</p></div>')}
           ${show(1, '<div class="stat"><span class="pre">более</span><div class="v" data-count="24000">24 000</div><p class="c">человек</p></div>')}
         </div>
-        ${show(2, '<p class="question">Как заставить этот муравейник<br>работать как часы?</p>')}
+        ${show(2, '<p class="question">Как сделать так, чтобы эта огромная машина<br>работала как единый организм?</p>')}
       </div>`,
       beats: [
         beat('Более восьмисот восьмидесяти ресторанов.', { sound: 'tick' }),

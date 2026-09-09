@@ -30,7 +30,7 @@
     play(id, text) {
       this.cancel();
       if (!this.enabled) return this.wait(this.estimate(text));
-      return this.file(id).then(ok => ok ? undefined : this.speak(text));
+      return this.file(id, text).then(ok => ok ? undefined : this.speak(text));
     }
 
     wait(ms) {
@@ -40,7 +40,7 @@
       });
     }
 
-    file(id) {
+    file(id, text) {
       return new Promise(resolve => {
         const audio = new Audio("audio/vo/" + id + ".mp3");
         this.element = audio;                       /* регистрируем сразу, до play() */
@@ -55,8 +55,18 @@
         };
         audio.onended = () => finish(true);
         audio.onerror = () => finish(false);
-        this.settle = () => { try { audio.pause(); } catch (e) {} finish(true); };
-        audio.play().catch(() => finish(false));
+        /* Страховка: если запись подвиснет и не пришлёт ended, показ всё
+           равно двинется дальше — зависнуть на реплике он не должен. */
+        let guard = setTimeout(() => finish(true), this.estimate(text) + 6000);
+        audio.addEventListener("loadedmetadata", () => {
+          clearTimeout(guard);
+          guard = setTimeout(() => finish(true), (audio.duration || 0) * 1000 + 2500);
+        }, { once: true });
+        const close = finishOk => { clearTimeout(guard); finish(finishOk); };
+        this.settle = () => { try { audio.pause(); } catch (e) {} close(true); };
+        audio.onended = () => close(true);
+        audio.onerror = () => close(false);
+        audio.play().catch(() => close(false));
       });
     }
 

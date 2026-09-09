@@ -79,12 +79,16 @@
         /* Ролик заметно короче своего места в показе — пускаем по кругу,
            иначе он один раз проигрывается и замирает на последнем кадре. */
         const shown = shotSeconds(scene, index);
-        video.loop = video.duration > 0 && shown > 0 && video.duration < shown * 0.7;
+        video.loop = video.duration > 0 && shown > 0 && video.duration < shown * 0.6;
       }, { once: true });
       video.addEventListener("loadeddata", () => {
         figure.classList.add("has-video");
         video.hidden = false;
         img.remove();
+        /* Картинки могло не быть — тогда на её месте стоит заглушка,
+           и она перекрыла бы ролик. */
+        const stub = figure.querySelector(".ph");
+        if (stub) stub.remove();
       }, { once: true });
       video.addEventListener("error", () => video.remove(), { once: true });
 
@@ -112,13 +116,7 @@
 
     el.insertAdjacentHTML("beforeend", scene.html);
 
-    let avatar = null;
-    if (scene.avatar) {
-      avatar = document.createElement("div");
-      avatar.className = "avatar";
-      avatar.textContent = scene.avatar;
-      el.append(avatar);
-    }
+    const avatar = null;   /* заглушки видеоаватаров сняты с показа */
     frame.append(el);
     return { el, cam, figures: Array.from(cam.children), avatar, shot: -1 };
   });
@@ -345,9 +343,29 @@
     bPlay.textContent = ready ? "Начать показ" : tl.playing ? "Пауза" : tl.done ? "Заново" : "Продолжить";
   }
 
+  /* Первая сцена начинается с ролика: он проигрывается целиком и замирает,
+     и только потом появляется «М-м-м» и включается озвучка. */
+  function prologue() {
+    const view = views[0];
+    const figure = view.figures[0];
+    const video = figure.querySelector("video");
+    const start = () => { timeline.setAuto(true); timeline.go(0); };
+    if (!figure.classList.contains("has-video") || calm) return start();
+
+    view.shot = 0;                       /* чтобы старт не перемотал ролик */
+    figure.classList.add("on");
+    video.currentTime = 0;
+    startVideo(video);
+    const wait = Math.max(0, (video.duration || 0) - 0.15) * 1000;
+    let done = false;
+    const go = () => { if (!done) { done = true; start(); } };
+    video.addEventListener("ended", go, { once: true });
+    later(go, wait || 1200);
+  }
+
   bPlay.addEventListener("click", () => {
     sound.warm();
-    if (timeline.phase === "ready") { timeline.setAuto(true); return timeline.go(0); }
+    if (timeline.phase === "ready") return prologue();
     if (timeline.done) { sound.musicReset(); return timeline.go(0); }
     timeline.toggle();
   });
