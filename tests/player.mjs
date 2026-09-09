@@ -206,6 +206,19 @@ group("Подложка вместо фотографии");
   check("дуги Wi-Fi разделены", scene.querySelectorAll(".wifi-signal .arc").length === 3);
 }
 
+group("Гендиректор перед результатами");
+{
+  const scene = frame.querySelector('[data-id="s12"]');
+  const ceo = scene.querySelector(".medovy");
+  check("персонаж в сцене есть", Boolean(ceo));
+  check("выходит на нулевой реплике", ceo.dataset.at === "0");
+  check("его реплика первая", window.KU_STORY[11].beats[0].id === "s12_medovy");
+  check("следующая реплика — про ИПР", window.KU_STORY[11].beats[1].id === "s12_beat1");
+  check("панель гендиректора отдельная", Boolean(scene.querySelector(".ceo-line")));
+  const panels = [...scene.querySelectorAll("[data-panel]")].map(p => p.dataset.panel).join("");
+  check("панели пронумерованы подряд", panels === "01234", panels);
+}
+
 group("Портреты команды");
 {
   const host = frame.querySelector("[data-team]");

@@ -33,6 +33,7 @@
   s12_beat2: 15.73,
   s12_beat3: 12.83,
   s12_beat4: 9.25,
+  s12_medovy: 5.05,
   s13_beat1: 5.41,
   s13_beat2: 7.97,
   s13_kitchen: 16.12,

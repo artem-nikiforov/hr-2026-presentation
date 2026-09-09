@@ -176,7 +176,7 @@
 
     el.querySelectorAll("[data-reveal]").forEach(node =>
       node.classList.toggle("on", beat >= Number(node.dataset.reveal)));
-    el.querySelectorAll(".backdrop").forEach(node =>
+    el.querySelectorAll(".backdrop,[data-at]").forEach(node =>
       node.classList.toggle("on", beat === Number(node.dataset.at)));
     ["panel", "milestone", "step"].forEach(key =>
       el.querySelectorAll(`[data-${key}]`).forEach(node =>

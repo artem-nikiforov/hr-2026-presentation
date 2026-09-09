@@ -273,8 +273,13 @@
       camera: [-.4, .2, 1.045],
       avatarAt: 0,
       html: `<div class="layer results-layout">
+        <img class="medovy" data-at="0" src="img/medovy.webp" alt="Генеральный директор">
         <div class="result-panels">
-          <section data-panel="0">
+          <section class="ceo-line" data-panel="0">
+            <p class="result-index">Генеральный директор</p>
+            <h2 class="title sm">Мы вообще работать-то успеваем?<br>Или только учимся?</h2>
+          </section>
+          <section data-panel="1">
             <p class="result-index">ИПР · индивидуальный план развития</p>
             <div class="comparison">
               <span class="before">3 часа</span><span class="compare-arrow">→</span><strong>20 минут</strong>
@@ -282,7 +287,7 @@
             <div class="time-track" aria-hidden="true"><i></i></div>
             <p class="punch big">Экономия 2,5 часа!</p>
           </section>
-          <section data-panel="1">
+          <section data-panel="2">
             <p class="result-index">Перевод на новую должность · оценка → обучение → перевод</p>
             <div class="comparison">
               <span class="before">36,75%</span><span class="compare-arrow">→</span><strong>90%</strong>
@@ -315,12 +320,12 @@
               <span class="snap-flash"></span>
             </div>
           </section>
-          <section data-panel="2">
+          <section data-panel="3">
             <p class="result-index">Курс на родном языке · как было</p>
             <p class="single-figure">20 минут</p>
             <p class="thesis">Наставник переводил курс вслух<br>и смотрел его вместе с сотрудником</p>
           </section>
-          <section data-panel="3">
+          <section data-panel="4">
             <p class="result-index">Курс на родном языке · как стало</p>
             <div class="chain final">
               <div><strong class="old">20 минут</strong><p>перевод</p></div>
@@ -335,11 +340,16 @@
         </div>
       </div>`,
       beats: [
-        beat('Успеваем ли мы работать? Конечно. Составить рабочий индивидуальный план развития теперь занимает двадцать минут вместо трёх часов.', { shot: 0, sound: 'cash' }),
+        beat('Уф, как много всего… Мы вообще работать-то успеваем? Или только учимся?',
+          { id: 's12_medovy', shot: 0, sound: 'tick', hold: 0.5 }),
+        beat('Успеваем ли мы работать? Конечно. Составить рабочий индивидуальный план развития теперь занимает двадцать минут вместо трёх часов.',
+          { id: 's12_beat1', shot: 0, sound: 'cash' }),
         beat('Автоматизация процедуры оценка — обучение — перевод подняла соблюдение с тридцати шести целых семидесяти пяти сотых процента до девяноста. И никаких ручных отчётов.',
-          { sound: 'cash', also: [{ sound: 'snap', at: 14 }] }),
-        beat('Раньше курс переводил наставник, смотрел его вместе с сотрудником и рассказывал, о чём речь. Потом директор тратил драгоценные минуты на назначение нужного курса.', { shot: 1 }),
-        beat('Теперь сотрудник сам выбирает язык внутри курса за три секунды. Мы заговорили на восьми языках. Потому что Воппер вкусный на любом языке.', { shot: 2, sound: 'cash', hold: 1.4 })
+          { id: 's12_beat2', sound: 'cash', also: [{ sound: 'snap', at: 14 }] }),
+        beat('Раньше курс переводил наставник, смотрел его вместе с сотрудником и рассказывал, о чём речь. Потом директор тратил драгоценные минуты на назначение нужного курса.',
+          { id: 's12_beat3', shot: 1 }),
+        beat('Теперь сотрудник сам выбирает язык внутри курса за три секунды. Мы заговорили на восьми языках. Потому что Воппер вкусный на любом языке.',
+          { id: 's12_beat4', shot: 2, sound: 'cash', hold: 1.4 })
       ]
     },
 
