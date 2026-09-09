@@ -143,6 +143,7 @@
     /* ── s08 · Наши грабли ────────────────────────────────────────── */
     {
       camera: [0, 0, 1.025],
+      music: { resume: true },                 /* после обрыва на «НО…» музыка возвращается здесь */
       backdrop: { kind: 'gradient', at: 0 },   /* на реплике про СМС фотографию сменяет градиент */
       html: `<div class="layer issue-layout">
         ${kicker('Наши грабли · доступность LMS')}
@@ -288,6 +289,21 @@
             </div>
             <div class="compliance-track" aria-hidden="true"><i></i><b></b></div>
             <p class="punch">Ни одна необученная мышь не проскочит</p>
+            <div class="mouse-run" aria-hidden="true">
+              <svg class="mouse" viewBox="0 0 60 32">
+                <ellipse cx="26" cy="20" rx="17" ry="10"/>
+                <circle cx="43" cy="16" r="8"/>
+                <circle cx="41" cy="8" r="4.5" class="ear"/>
+                <circle cx="47" cy="17" r="1.6" class="eye"/>
+                <path class="tail" d="M9 20Q0 18 3 10"/>
+                <path class="paw" d="M20 29v3M31 29v3"/>
+              </svg>
+              <svg class="trap" viewBox="0 0 70 40">
+                <rect class="base" x="4" y="26" width="62" height="10" rx="2"/>
+                <circle class="bait" cx="46" cy="22" r="3.4"/>
+                <path class="bar" d="M10 26 L10 4 L58 4"/>
+              </svg>
+            </div>
           </section>
           <section data-panel="2">
             <p class="result-index">Курс на родном языке · как было</p>

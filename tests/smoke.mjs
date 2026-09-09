@@ -121,13 +121,14 @@ group("Музыкальные указания");
     JSON.stringify(STORY[0].music));
   check("музыка обрывается перед «НО…»", STORY[6].music && STORY[6].music.pause === true,
     JSON.stringify(STORY[6].music));
-  check("после обрыва музыка возвращается",
-    STORY.slice(7).some(scene => scene.music && scene.music.track));
+  check("музыка возвращается сразу на следующей сцене",
+    STORY[7].music && STORY[7].music.resume === true, JSON.stringify(STORY[7].music));
   for (const cue of cues) {
     const keys = Object.keys(cue);
     check(`указание ${JSON.stringify(cue)} понятно плееру`,
       keys.length === 1 && ["track", "pause", "resume", "stop"].includes(keys[0]));
   }
+  check("мышеловка на месте", STORY[11].html.includes("mouse-run") && STORY[11].html.includes("trap"));
   const tracks = cues.filter(c => c.track).map(c => c.track);
   check("все дорожки известны звуку",
     tracks.every(t => ["bed", "epic", "confident", "warm"].includes(t)), tracks.join(", "));

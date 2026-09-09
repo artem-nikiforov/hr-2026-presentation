@@ -110,6 +110,10 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
   100%{background-position:80% 20%,20% 90%,70% 40%,0 0}
 }
 
+/* Пока идёт вступительный ролик — чистый кадр: ни затемнения, ни текста */
+.scene.prologue .veil,.scene.prologue .layer{opacity:0}
+.scene.prologue .veil{transition:opacity .5s ease}
+
 /* ═══ ТЕКСТОВЫЙ СЛОЙ ══════════════════════════════════════════════ */
 .layer{position:absolute;inset:0;padding:7cqh 7cqw;display:flex;flex-direction:column;
   justify-content:center;gap:2.6cqh}
@@ -130,8 +134,21 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
 .huge{font-family:var(--ku-font-display);font-weight:900;font-size:24cqh;line-height:.84;
   background:var(--ku-grad-brand);-webkit-background-clip:text;background-clip:text;color:transparent}
 .huge.plain{background:none;color:var(--ku-text)}
-/* Четыре ступени с задержкой на каждой: буквы «прибавляют» на глазах */
-.huge.steps{transform-origin:50% 60%;animation:mmm-steps 3s linear both}
+/* Крупные вспышки перед речью, затем надпись остаётся на экране */
+.huge.steps{transform-origin:50% 60%}
+.huge.steps.flash{animation:mmm-flash 1.5s steps(1,end) both}
+@keyframes mmm-flash{
+  0%{opacity:0;transform:scale(1.16)}
+  8%{opacity:1}
+  20%{opacity:0}
+  32%{opacity:1}
+  44%{opacity:0}
+  56%{opacity:1}
+  68%{opacity:0}
+  80%{opacity:1;transform:scale(1.16)}
+  100%{opacity:1;transform:scale(1.18)}
+}
+.huge.steps:not(.flash){animation:mmm-steps 3s linear both}
 @keyframes mmm-steps{
   0%{transform:scale(.26) rotate(-3deg);opacity:0}
   5%{transform:scale(.26) rotate(-3deg);opacity:1}
@@ -182,12 +199,13 @@ body.full .frame{width:min(100vw,calc(100vh * 16 / 9))}
   text-transform:uppercase;color:var(--ku-text)}
 .lost-programs{display:flex;gap:1.2cqw}
 .lost-programs i{width:8cqw;height:1.8cqh;border-radius:.2cqw;background:var(--ku-brand);
-  transition:background 1s ease,opacity 1s ease}
-.scene[data-beat] .lost-programs i{background:var(--ku-surface-2);opacity:.4}
-.lost-programs i:nth-child(2){transition-delay:.15s}
-.lost-programs i:nth-child(3){transition-delay:.3s}
-.lost-programs i:nth-child(4){transition-delay:.45s}
-.lost-programs i:nth-child(5){transition-delay:.6s}
+  transition:background 2.6s ease,opacity 2.6s ease}
+.scene[data-beat] .lost-programs i{background:var(--ku-surface-2);opacity:.35}
+.lost-programs i:nth-child(1){transition-delay:1.6s}
+.lost-programs i:nth-child(2){transition-delay:2.4s}
+.lost-programs i:nth-child(3){transition-delay:3.2s}
+.lost-programs i:nth-child(4){transition-delay:4s}
+.lost-programs i:nth-child(5){transition-delay:4.8s}
 .title.gone{color:var(--ku-text)}
 
 /* ═══ s05 · лесенка должностей ════════════════════════════════════ */
@@ -391,6 +409,32 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 .chain .old{font-family:var(--ku-font-display);font-size:7cqh;line-height:1;color:var(--ku__cream-300)}
 .chain p{font-size:2.7cqh;color:var(--ku-text-soft);line-height:1.3}
 
+/* ═══ Мышь бежит по низу кадра, мышеловка захлопывается ══════════ */
+.mouse-run{position:absolute;left:0;right:0;bottom:0;height:12cqh;pointer-events:none}
+.mouse-run .mouse{position:absolute;bottom:2.4cqh;left:-14cqh;width:11cqh;
+  fill:var(--ku__cream-300)}
+.mouse-run .mouse .ear{fill:var(--ku__flame-300)}
+.mouse-run .mouse .eye{fill:var(--ku__night-950)}
+.mouse-run .mouse .tail,.mouse-run .mouse .paw{fill:none;stroke:var(--ku__cream-300);
+  stroke-width:2.4;stroke-linecap:round}
+.mouse-run .trap{position:absolute;bottom:1.4cqh;right:16cqw;width:15cqh}
+.mouse-run .trap .base{fill:var(--ku__ink-500)}
+.mouse-run .trap .bait{fill:var(--ku-warning)}
+.mouse-run .trap .bar{fill:none;stroke:var(--ku__cream-300);stroke-width:4;
+  stroke-linecap:round;stroke-linejoin:round;transform-origin:10px 26px}
+
+.scene.playing [data-state="now"] .mouse-run .mouse{animation:mouse-run 3.4s cubic-bezier(.4,0,.7,1) 1.2s both}
+.scene.playing [data-state="now"] .mouse-run .trap .bar{animation:trap-snap .35s cubic-bezier(.5,-.4,.6,1.6) 4.35s both}
+@keyframes mouse-run{
+  0%{left:-14cqh;opacity:1}
+  85%{left:calc(100% - 32cqw);opacity:1}
+  100%{left:calc(100% - 32cqw);opacity:0}
+}
+@keyframes trap-snap{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(96deg)}
+}
+
 /* ═══ s13 · мозаика команды ══════════════════════════════════════ */
 .finale-copy{min-height:48cqh;align-items:center;text-align:center}
 .finale-copy section{align-items:center;text-align:center}
@@ -451,7 +495,8 @@ body.full .deck{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);w
 /* ═══ Спокойный режим ═════════════════════════════════════════════ */
 @media (prefers-reduced-motion:reduce){
   .scene,.reveal,.verb,.step,.chart-column,.moving-doc,.cam figure,.veil,.avatar,.mosaic i{transition-duration:.01ms}
-  .huge.steps,.chat,.chat.target,.backdrop.gradient,.moving-doc,
+  .huge.steps,.huge.steps.flash,.chat,.chat.target,.backdrop.gradient,.moving-doc,
+  .mouse-run .mouse,.mouse-run .trap .bar,
   .wifi-signal .arc,.wifi-signal circle{animation:none!important}
   .huge.steps{transform:none}
   .wifi-signal .arc,.wifi-signal circle{opacity:1}

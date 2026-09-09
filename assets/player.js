@@ -350,17 +350,32 @@
     const figure = view.figures[0];
     const video = figure.querySelector("video");
     const start = () => { timeline.setAuto(true); timeline.go(0); };
+
+    /* Музыка заводится вместе с роликом, не дожидаясь первой реплики. */
+    if (SCENES[0].music) sound.music(SCENES[0].music);
     if (!figure.classList.contains("has-video") || calm) return start();
 
     view.shot = 0;                       /* чтобы старт не перемотал ролик */
     figure.classList.add("on");
+    /* Пока идёт ролик — без затемнения и без надписей: только кадр. */
+    view.el.classList.add("prologue");
     video.currentTime = 0;
     startVideo(video);
-    const wait = Math.max(0, (video.duration || 0) - 0.15) * 1000;
+
     let done = false;
-    const go = () => { if (!done) { done = true; start(); } };
-    video.addEventListener("ended", go, { once: true });
-    later(go, wait || 1200);
+    const flash = () => {
+      if (done) return;
+      done = true;
+      view.el.classList.remove("prologue");
+      /* «М-м-м» несколько раз вспыхивает и остаётся — потом идёт речь. */
+      const title = view.el.querySelector('[data-reveal="0"]');
+      if (title) title.classList.add("on");
+      const huge = view.el.querySelector(".huge.steps");
+      if (huge) huge.classList.add("flash");
+      later(start, 1500);
+    };
+    video.addEventListener("ended", flash, { once: true });
+    later(flash, Math.max(600, ((video.duration || 1.4) - 0.12) * 1000));
   }
 
   bPlay.addEventListener("click", () => {
