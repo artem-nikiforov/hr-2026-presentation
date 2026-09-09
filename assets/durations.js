@@ -35,7 +35,8 @@
   s12_beat4: 9.25,
   s13_beat1: 5.41,
   s13_beat2: 7.97,
-  s13_kitchen: 16.12
+  s13_kitchen: 16.12,
+  s13_qr: 3.87
 };
   root.KU_DURATIONS = DURATIONS;
   if (typeof module !== "undefined") module.exports = DURATIONS;

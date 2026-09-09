@@ -211,10 +211,13 @@ group("Портреты команды");
   const host = frame.querySelector("[data-team]");
   check("контейнер портретов есть", Boolean(host));
   window.KUTeam.build(host);
-  check("собрано 30 кружков", host.children.length === 30, `их ${host.children.length}`);
-  check("портреты берутся из img/team", /img\/team\/01\.webp/.test(host.children[0].style.backgroundImage));
+  check("собрано 30 кружков", host.querySelectorAll(".face").length === 30,
+    `их ${host.querySelectorAll(".face").length}`);
+  check("руководитель отдельным крупным кружком", Boolean(host.querySelector(".lead-face")));
+  check("портреты берутся из img/team", /img\/team\/01\.webp/.test(host.querySelector(".face").style.backgroundImage));
+  check("фото руководителя подключено", /lead\.webp/.test(host.querySelector(".lead-face").style.backgroundImage));
   window.KUTeam.play(host, false);
-  check("кружки расставлены", Boolean(host.children[0].style.transform));
+  check("кружки расставлены", Boolean(host.querySelector(".face").style.transform));
   check("движению задан easing", Boolean(host.children[0].style.transitionTimingFunction));
   const finale = window.KU_STORY[12];
   check("под портретами белый фон",

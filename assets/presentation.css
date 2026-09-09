@@ -492,8 +492,16 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 .team-heart.heart .face{width:9cqh;height:9cqh;
   border-color:var(--ku-brand);
   box-shadow:0 0 1.8cqh color-mix(in srgb,var(--ku-brand) 45%,transparent)}
-.team-heart.settled .face{width:13cqh;height:13cqh;border-color:rgba(255,255,255,.95);
+.team-heart.settled .face{width:11.5cqh;height:11.5cqh;border-color:rgba(255,255,255,.95);
   box-shadow:0 .8cqh 2.2cqh rgba(80,35,20,.22)}
+/* Руководитель — крупным планом слева от сетки */
+.lead-face{position:absolute;left:2cqw;top:50%;width:30cqh;height:30cqh;border-radius:50%;
+  background-size:cover;background-position:center;
+  border:.5cqh solid var(--ku-brand);
+  box-shadow:0 1.4cqh 3.4cqh rgba(80,35,20,.3);
+  transform:translate(-6cqw,-50%) scale(.82);opacity:0;
+  transition:transform 1s cubic-bezier(.3,1.2,.4,1),opacity .8s ease}
+.team-heart.settled .lead-face{opacity:1;transform:translate(0,-50%) scale(1)}
 @keyframes face-blink{from{opacity:.35}to{opacity:1}}
 
 /* Пока портреты на белом — текст сцены переключается на тёмный */
@@ -566,7 +574,7 @@ body.full .deck{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);w
 @media (prefers-reduced-motion:reduce){
   .scene,.reveal,.verb,.step,.chart-column,.moving-doc,.cam figure,.veil,.avatar,.mosaic i{transition-duration:.01ms}
   .huge.steps,.huge.steps.flash,.chat,.chat.target,.backdrop.gradient,.moving-doc,
-  .team-heart .face,
+  .team-heart,.team-heart .face,.lead-face,
   .mouse-run .mouse,.mouse-run .trap,.mouse-run .trap .bar,.mouse-run .mouse .body,
   .mouse-run .mouse .head,.mouse-run .mouse .tail,.mouse-run .snap-flash,
   .wifi-signal .arc,.wifi-signal circle{animation:none!important}

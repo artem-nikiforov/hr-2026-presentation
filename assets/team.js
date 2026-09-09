@@ -8,6 +8,7 @@
 
   const COUNT = 30;
   const FILE = i => `img/team/${String(i + 1).padStart(2, "0")}.webp`;
+  const LEAD = "img/team/lead.webp";
 
   /* Классическая параметрическая кривая сердца, приведённая к долям контейнера. */
   function heartPoints(count) {
@@ -54,27 +55,34 @@
         face.style.backgroundImage = `url("${FILE(i)}")`;
         fragment.append(face);
       }
+      /* Руководитель стоит рядом с сеткой и появляется, когда она выстроилась */
+      const lead = document.createElement("i");
+      lead.className = "lead-face";
+      lead.style.backgroundImage = `url("${LEAD}")`;
+      fragment.append(lead);
       host.replaceChildren(fragment);
     },
 
     play(host, calm) {
       this.build(host);
       clear();
-      const faces = Array.from(host.children);
+      const faces = Array.from(host.querySelectorAll(".face"));
       const grid = gridPoints(faces.length, 6);
       const heart = heartPoints(faces.length);
 
-      const place = (points, spread, easing) => faces.forEach((face, i) => {
+      /* offset сдвигает всю группу вбок: в финале сетка уступает место
+         портрету руководителя слева. */
+      const place = (points, spread, easing, offset = 0) => faces.forEach((face, i) => {
         const point = points[i];
         if (easing) face.style.transitionTimingFunction = easing;
         face.style.transform =
-          `translate(-50%,-50%) translate(${(point.x * spread).toFixed(2)}cqw, ${(point.y * spread * 0.44).toFixed(2)}cqw)`;
+          `translate(-50%,-50%) translate(${(point.x * spread + offset).toFixed(2)}cqw, ${(point.y * spread * 0.44).toFixed(2)}cqw)`;
       });
 
       /* Спокойный режим: сразу ровная сетка, без мельтешения. */
       if (calm) {
         host.classList.add("shown", "settled");
-        place(grid, 30);
+        place(grid, 26, null, 11);
         return;
       }
 
@@ -98,7 +106,7 @@
       later(() => {
         host.classList.remove("heart");
         host.classList.add("settled");                                     /* и встают ровно */
-        place(grid, 30, "cubic-bezier(.35,.9,.3,1)");
+        place(grid, 26, "cubic-bezier(.35,.9,.3,1)", 11);
       }, 7400);
     },
 
