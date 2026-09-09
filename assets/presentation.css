@@ -471,6 +471,28 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
   100%{opacity:0;transform:scale(2.4)}
 }
 
+/* ═══ s13 · портреты команды складываются в сердце ═══════════════ */
+.team-heart{position:relative;width:100%;height:54cqh}
+.team-heart .face{position:absolute;left:50%;top:50%;width:9cqh;height:9cqh;border-radius:50%;
+  background-size:cover;background-position:center;opacity:0;
+  border:.35cqh solid color-mix(in srgb,var(--ku__cream-100) 45%,transparent);
+  box-shadow:0 .6cqh 1.6cqh rgba(0,0,0,.45);
+  transform:translate(-50%,-50%);
+  transition:transform 1.1s cubic-bezier(.3,.9,.3,1),opacity .5s ease,
+    width .9s var(--ease),height .9s var(--ease),border-color .9s ease}
+.team-heart.shown .face{opacity:1}
+.team-heart.blink .face{animation:face-blink 1.1s ease-in-out infinite alternate}
+.team-heart .face:nth-child(3n){animation-delay:.18s}
+.team-heart .face:nth-child(3n+1){animation-delay:.36s}
+.team-heart.heart .face{width:6.6cqh;height:6.6cqh;
+  border-color:color-mix(in srgb,var(--ku-brand) 70%,transparent);
+  box-shadow:0 0 1.4cqh color-mix(in srgb,var(--ku-brand) 35%,transparent)}
+@keyframes face-blink{from{opacity:.35}to{opacity:1}}
+
+/* QR прототипа: белое поле обязательно, иначе камера не прочитает */
+.qr{width:34cqh;height:34cqh;background:#fff;border-radius:1.4cqh;padding:1.6cqh;
+  box-shadow:0 1.6cqh 4cqh rgba(0,0,0,.5)}
+
 /* ═══ s13 · мозаика команды ══════════════════════════════════════ */
 .finale-copy{min-height:48cqh;align-items:center;text-align:center}
 .finale-copy section{align-items:center;text-align:center}
@@ -532,6 +554,7 @@ body.full .deck{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);w
 @media (prefers-reduced-motion:reduce){
   .scene,.reveal,.verb,.step,.chart-column,.moving-doc,.cam figure,.veil,.avatar,.mosaic i{transition-duration:.01ms}
   .huge.steps,.huge.steps.flash,.chat,.chat.target,.backdrop.gradient,.moving-doc,
+  .team-heart .face,
   .mouse-run .mouse,.mouse-run .trap,.mouse-run .trap .bar,.mouse-run .mouse .body,
   .mouse-run .mouse .head,.mouse-run .mouse .tail,.mouse-run .snap-flash,
   .wifi-signal .arc,.wifi-signal circle{animation:none!important}

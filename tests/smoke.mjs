@@ -42,15 +42,27 @@ for (const scene of STORY) {
 }
 
 group("Озвучка");
-for (const scene of STORY)
-  for (const beat of scene.beats) {
-    check(`есть запись ${beat.id}`, existsSync(join(rootDir, "audio/vo", beat.id + ".mp3")));
-    check(`есть длительность ${beat.id}`, DURATIONS[beat.id] > 0);
-    check(`${beat.id}: показ не короче записи`, beat.seconds >= beat.spoken);
-  }
-check("реплик столько же, сколько записей",
-  STORY.reduce((n, s) => n + s.beats.length, 0) === Object.keys(DURATIONS).length,
-  `реплик ${STORY.reduce((n, s) => n + s.beats.length, 0)}, записей ${Object.keys(DURATIONS).length}`);
+{
+  /* Реплики без записи звучат синтезом — это рабочее состояние, пока
+     студия не прислала файл. Но список должен быть на виду. */
+  const waiting = [];
+  for (const scene of STORY)
+    for (const beat of scene.beats) {
+      const has = existsSync(join(rootDir, "audio/vo", beat.id + ".mp3"));
+      if (!has) { waiting.push(`${beat.id} — «${beat.text.slice(0, 48)}…»`); continue; }
+      check(`есть длительность ${beat.id}`, DURATIONS[beat.id] > 0);
+      check(`${beat.id}: показ не короче записи`, beat.seconds >= beat.spoken);
+    }
+  if (waiting.length) {
+    console.log(`  ждут записи (${waiting.length}), пока звучит синтез:`);
+    waiting.forEach(item => console.log(`    · ${item}`));
+  } else console.log("  вся озвучка на месте");
+
+  const ids = STORY.flatMap(scene => scene.beats.map(beat => beat.id));
+  check("идентификаторы реплик уникальны", new Set(ids).size === ids.length);
+  for (const id of Object.keys(DURATIONS))
+    check(`запись ${id} используется в показе`, ids.includes(id));
+}
 
 group("Файлы кадров");
 {

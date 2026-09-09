@@ -73,7 +73,7 @@ window.requestAnimationFrame = fn => { frames.push(fn); return frames.length; };
 window.HTMLMediaElement.prototype.play = function () { this.playCalls = (this.playCalls || 0) + 1; return Promise.resolve(); };
 window.HTMLMediaElement.prototype.pause = function () { this.pauseCalls = (this.pauseCalls || 0) + 1; };
 
-for (const file of ["scenes.js", "durations.js", "story.js", "timeline.js", "reveal.js", "confetti.js", "sound.js", "voice.js", "player.js"]) {
+for (const file of ["scenes.js", "durations.js", "story.js", "timeline.js", "reveal.js", "team.js", "confetti.js", "sound.js", "voice.js", "player.js"]) {
   const script = document.createElement("script");
   script.textContent = readFileSync(join(rootDir, "assets", file), "utf8");
   document.body.append(script);
@@ -202,6 +202,18 @@ group("Подложка вместо фотографии");
     backdrop.classList.contains("on") === (beat === at), `реплика ${beat}, ждали ${at}`);
   check("телефон стоит рядом с текстом", Boolean(scene.querySelector("section.split .phone")));
   check("дуги Wi-Fi разделены", scene.querySelectorAll(".wifi-signal .arc").length === 3);
+}
+
+group("Портреты команды");
+{
+  const host = frame.querySelector("[data-team]");
+  check("контейнер портретов есть", Boolean(host));
+  window.KUTeam.build(host);
+  check("собрано 30 кружков", host.children.length === 30, `их ${host.children.length}`);
+  check("портреты берутся из img/team", /img\/team\/01\.webp/.test(host.children[0].style.backgroundImage));
+  window.KUTeam.play(host, false);
+  check("кружки расставлены", Boolean(host.children[0].style.transform));
+  check("QR на месте", Boolean(frame.querySelector(".qr")));
 }
 
 group("Конфетти на «100% ролей»");

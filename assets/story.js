@@ -346,24 +346,39 @@
       ]
     },
 
-    /* ── s13 · Финал ──────────────────────────────────────────────── */
+    /* ── s13 · Кухня, команда, гости и прототип ───────────────────── */
     {
       camera: [.2, -.1, 1.04],
-      music: { track: 'warm' },     /* «более тёплая, вдохновляющая, но с драйвом» */
-      avatarAt: 0,
+      music: { track: 'warm' },         /* «более тёплая, вдохновляющая, но с драйвом» */
+      backdrop: { kind: 'gradient', at: 3 },
       html: `<div class="layer finale-copy">
         <section data-panel="0">
-          <h2 class="title finale-line">Мы создаём развивающую среду<br>для роста талантов</h2>
-          <div class="mosaic" aria-hidden="true"></div>
+          <p class="kicker">Наша кухня</p>
+          <h2 class="title sm">Платформа для пилотов</h2>
+          <p class="thesis">С помощью ИИ, без миллионных бюджетов<br>проверяем механики обучения:<br><em>тренажёры, игры, чат-боты</em></p>
         </section>
         <section data-panel="1">
+          <div class="team-heart" data-team></div>
+        </section>
+        <section data-panel="2">
           <p class="huge">М-м-м</p>
           <p class="thesis">Чтобы гости получали<br>своё беззаботное удовольствие</p>
         </section>
+        <section data-panel="3">
+          <h2 class="title sm">Попробуйте наш прототип</h2>
+          <img class="qr" src="img/qr.png" alt="QR-код на прототип">
+          <p class="thesis">Наведите камеру телефона</p>
+        </section>
       </div>`,
       beats: [
-        beat('Как-то так… Потому что мы создаём развивающую среду для роста талантов.', { shot: 0, sound: 'mosaic' }),
-        beat('Чтобы наши гости получали своё беззаботное удовольствие, а Бургер Кинг оставался самой любимой сетью ресторанов в России.', { shot: 1, sound: 'warm', hold: 2.5 })
+        beat('А теперь идёмте, покажу вам, как работает наша кухня! Мы создали платформу для тестирования и пилотирования новых идей. С помощью ИИ, без миллионных бюджетов мы запускаем и проверяем разные механики обучения — тренажёры, игры, чат-боты.',
+          { id: 's13_kitchen', plan: 7, shot: 0, sound: 'sparkle', hold: 0 }),
+        beat('Как-то так… Потому что мы создаём развивающую среду для роста талантов.',
+          { id: 's13_beat1', shot: 1, sound: 'mosaic', hold: 1.6 }),
+        beat('Чтобы наши гости получали своё беззаботное удовольствие, а Бургер Кинг оставался самой любимой сетью ресторанов в России.',
+          { id: 's13_beat2', shot: 2, sound: 'warm', hold: 1.4 }),
+        beat('Попробовать один из наших прототипов вы можете по QR-коду.',
+          { id: 's13_qr', plan: 5, sound: 'tada', hold: 4 })
       ]
     }
   ];
@@ -371,9 +386,10 @@
   const scenes = source.map((s, i) => {
     const item = { ...s, ...stories[i], chapter: chapters[i], cues: stories[i].cues || [] };
     item.beats = item.beats.map((b, j) => {
-      const id = `${s.id}_beat${j + 1}`;
-      /* Реплика идёт столько, сколько звучит запись, плюс пауза на чтение. */
-      const spoken = durations[id] || 3;
+      const id = b.id || `${s.id}_beat${j + 1}`;
+      /* Реплика идёт столько, сколько звучит запись; пока записи нет —
+         столько, сколько заложено в plan, плюс пауза на чтение. */
+      const spoken = durations[id] || b.plan || 3;
       return { ...b, id, spoken, seconds: spoken + (b.hold || 0) };
     });
     if (item.beats[0].shot === undefined) item.beats[0].shot = 0;

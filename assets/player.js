@@ -213,7 +213,15 @@
       startVideo(video);                      /* автозапуск без звука браузеры разрешают */
     });
 
-    if (view.avatar) view.avatar.classList.toggle("on", scene.avatarAt === beat);
+    const teamHost = el.querySelector("[data-team]");
+    if (teamHost && root.KUTeam) {
+      const active = shown(teamHost, el);
+      if (active && teamHost.dataset.playing !== "1") {
+        teamHost.dataset.playing = "1";
+        later(() => root.KUTeam.play(teamHost, calm), instant ? 0 : 260);
+      }
+      if (!active) { teamHost.dataset.playing = "0"; root.KUTeam.stop(); }
+    }
 
     /* текст и счётчики — только внутри того, что уже показано */
     const wait = instant || calm ? 0 : 140;
@@ -265,6 +273,10 @@
     view.el.classList.remove("playing");
     void view.el.offsetWidth;
     requestAnimationFrame(() => view.el.classList.add("playing"));
+
+    /* Портреты команды: секвенция стартует, когда доходит до своей реплики. */
+    const team = view.el.querySelector("[data-team]");
+    if (team && root.KUTeam) root.KUTeam.build(team);
 
     const confetti = root.KUConfetti;
     if (confetti) {
