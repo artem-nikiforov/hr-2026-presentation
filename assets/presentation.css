@@ -410,29 +410,65 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 .chain p{font-size:2.7cqh;color:var(--ku-text-soft);line-height:1.3}
 
 /* ═══ Мышь бежит по низу кадра, мышеловка захлопывается ══════════ */
-.mouse-run{position:absolute;left:0;right:0;bottom:0;height:12cqh;pointer-events:none}
-.mouse-run .mouse{position:absolute;bottom:2.4cqh;left:-14cqh;width:11cqh;
-  fill:var(--ku__cream-300)}
-.mouse-run .mouse .ear{fill:var(--ku__flame-300)}
-.mouse-run .mouse .eye{fill:var(--ku__night-950)}
-.mouse-run .mouse .tail,.mouse-run .mouse .paw{fill:none;stroke:var(--ku__cream-300);
-  stroke-width:2.4;stroke-linecap:round}
-.mouse-run .trap{position:absolute;bottom:1.4cqh;right:16cqw;width:15cqh}
-.mouse-run .trap .base{fill:var(--ku__ink-500)}
-.mouse-run .trap .bait{fill:var(--ku-warning)}
-.mouse-run .trap .bar{fill:none;stroke:var(--ku__cream-300);stroke-width:4;
-  stroke-linecap:round;stroke-linejoin:round;transform-origin:10px 26px}
+.mouse-run{position:absolute;left:0;right:0;bottom:0;height:14cqh;pointer-events:none;overflow:hidden}
 
-.scene.playing [data-state="now"] .mouse-run .mouse{animation:mouse-run 3.4s cubic-bezier(.4,0,.7,1) 1.2s both}
-.scene.playing [data-state="now"] .mouse-run .trap .bar{animation:trap-snap .35s cubic-bezier(.5,-.4,.6,1.6) 4.35s both}
+.mouse-run .mouse{position:absolute;bottom:3cqh;left:-16cqh;width:13cqh}
+.mouse-run .mouse .body,.mouse-run .mouse .head{fill:var(--ku__cream-300)}
+.mouse-run .mouse .ear{fill:var(--ku__cream-200)}
+.mouse-run .mouse .ear-in{fill:var(--ku__flame-300)}
+.mouse-run .mouse .eye{fill:var(--ku__night-950)}
+.mouse-run .mouse .nose{fill:var(--ku__flame-400)}
+.mouse-run .mouse .tail{fill:none;stroke:var(--ku__cream-300);stroke-width:3.2;stroke-linecap:round;
+  transform-origin:16px 28px}
+.mouse-run .mouse .whisker{fill:none;stroke:var(--ku__cream-300);stroke-width:1.2;
+  stroke-linecap:round;opacity:.75}
+.mouse-run .mouse .paw{fill:none;stroke:var(--ku__cream-300);stroke-width:3;stroke-linecap:round}
+
+.mouse-run .trap{position:absolute;bottom:2cqh;right:15cqw;width:18cqh}
+.mouse-run .trap .base{fill:var(--ku__ink-500)}
+.mouse-run .trap .grain{fill:none;stroke:var(--ku__ink-400);stroke-width:1.2;
+  stroke-linecap:round;opacity:.6}
+.mouse-run .trap .spring{fill:none;stroke:var(--ku__cream-300);stroke-width:2.6;opacity:.85}
+.mouse-run .trap .bar{fill:none;stroke:var(--ku__cream-300);stroke-width:4.4;
+  stroke-linecap:round;stroke-linejoin:round;transform-origin:14px 36px}
+.mouse-run .trap .cheese path{fill:var(--ku-warning)}
+.mouse-run .trap .cheese .hole{fill:var(--ku__ink-600);opacity:.5}
+
+/* вспышка в момент удара */
+.mouse-run .snap-flash{position:absolute;bottom:5cqh;right:20cqw;width:6cqh;height:6cqh;
+  border-radius:50%;background:var(--ku__cream-50);opacity:0}
+
+.scene.playing [data-state="now"] .mouse-run .mouse{
+  animation:mouse-run 3.2s cubic-bezier(.35,0,.75,1) 1.2s both}
+.scene.playing [data-state="now"] .mouse-run .mouse .body,
+.scene.playing [data-state="now"] .mouse-run .mouse .head{
+  animation:mouse-bob .22s ease-in-out 1.2s 14 alternate}
+.scene.playing [data-state="now"] .mouse-run .mouse .tail{
+  animation:tail-wag .3s ease-in-out 1.2s 11 alternate}
+.scene.playing [data-state="now"] .mouse-run .trap .bar{
+  animation:trap-snap .28s cubic-bezier(.6,-.5,.5,1.7) 4.35s both}
+.scene.playing [data-state="now"] .mouse-run .trap{
+  animation:trap-shake .3s ease-out 4.35s both}
+.scene.playing [data-state="now"] .mouse-run .snap-flash{
+  animation:snap-flash .3s ease-out 4.35s both}
+
 @keyframes mouse-run{
-  0%{left:-14cqh;opacity:1}
-  85%{left:calc(100% - 32cqw);opacity:1}
-  100%{left:calc(100% - 32cqw);opacity:0}
+  0%{left:-16cqh;opacity:1}
+  96%{left:calc(100% - 30cqw);opacity:1}
+  100%{left:calc(100% - 30cqw);opacity:0}
 }
-@keyframes trap-snap{
-  0%{transform:rotate(0deg)}
-  100%{transform:rotate(96deg)}
+@keyframes mouse-bob{to{transform:translateY(-1.6px)}}
+@keyframes tail-wag{from{transform:rotate(-12deg)}to{transform:rotate(10deg)}}
+@keyframes trap-snap{from{transform:rotate(0deg)}to{transform:rotate(104deg)}}
+@keyframes trap-shake{
+  0%{transform:translateY(0)}
+  35%{transform:translateY(1.2cqh) rotate(-1.5deg)}
+  70%{transform:translateY(0) rotate(.6deg)}
+  100%{transform:none}
+}
+@keyframes snap-flash{
+  0%{opacity:.85;transform:scale(.4)}
+  100%{opacity:0;transform:scale(2.4)}
 }
 
 /* ═══ s13 · мозаика команды ══════════════════════════════════════ */
@@ -496,7 +532,8 @@ body.full .deck{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);w
 @media (prefers-reduced-motion:reduce){
   .scene,.reveal,.verb,.step,.chart-column,.moving-doc,.cam figure,.veil,.avatar,.mosaic i{transition-duration:.01ms}
   .huge.steps,.huge.steps.flash,.chat,.chat.target,.backdrop.gradient,.moving-doc,
-  .mouse-run .mouse,.mouse-run .trap .bar,
+  .mouse-run .mouse,.mouse-run .trap,.mouse-run .trap .bar,.mouse-run .mouse .body,
+  .mouse-run .mouse .head,.mouse-run .mouse .tail,.mouse-run .snap-flash,
   .wifi-signal .arc,.wifi-signal circle{animation:none!important}
   .huge.steps{transform:none}
   .wifi-signal .arc,.wifi-signal circle{opacity:1}

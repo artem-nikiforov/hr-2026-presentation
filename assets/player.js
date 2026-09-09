@@ -285,6 +285,8 @@
       applyBeat(tl.index, tl.beat, false);
 
       if (beat.sound) later(() => sound.play(beat.sound), (beat.lead || 0) * 1000);
+      /* Звуки, попадающие в середину реплики: щелчок мышеловки и подобное. */
+      if (beat.also) beat.also.forEach(cue => later(() => sound.play(cue.sound), cue.at * 1000));
 
       const token = tl.token;
       sound.duck(true);

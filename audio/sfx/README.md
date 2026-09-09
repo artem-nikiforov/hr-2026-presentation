@@ -17,8 +17,11 @@
 
 ## Что уже звучит синтезом
 
-`tick`, `step`, `scratch`, `swipe`, `nosignal`, `handoff`, `cash`,
+`tick`, `step`, `scratch`, `swipe`, `nosignal`, `handoff`, `cash`, `snap`,
 `sparkle`, `liftoff`, `rocket`, `beat`, `mosaic`, `warm`.
+
+`snap` — щелчок мышеловки. Если синтезированный покажется слабым, сюда
+хорошо ляжет запись «mousetrap snap» или «wood snap».
 
 Любой можно заменить: положить файл с тем же именем и расширением `.mp3`.
 

@@ -9,10 +9,11 @@
 
   const NAMES = ["crunch", "rewind", "beat", "tick", "cricket", "liftoff", "step", "tada",
                  "scratch", "swipe", "nosignal", "handoff", "bricks", "rocket", "sparkle",
-                 "cash", "mosaic", "warm"];
+                 "cash", "mosaic", "warm", "snap"];
   const VOLUME = { crunch: .9, rewind: .5, beat: .35, tick: .3, cricket: .45, liftoff: .5,
                    step: .4, tada: .7, scratch: .6, swipe: .4, nosignal: .45, handoff: .4,
-                   bricks: .5, rocket: .5, sparkle: .45, cash: .6, mosaic: .5, warm: .55 };
+                   bricks: .5, rocket: .5, sparkle: .45, cash: .6, mosaic: .5, warm: .55,
+                   snap: .8 };
 
   let ctx = null, enabled = true;
   const files = new Map();                      /* имя → готовый Audio, если запись нашлась */

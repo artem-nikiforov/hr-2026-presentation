@@ -290,19 +290,29 @@
             <div class="compliance-track" aria-hidden="true"><i></i><b></b></div>
             <p class="punch">Ни одна необученная мышь не проскочит</p>
             <div class="mouse-run" aria-hidden="true">
-              <svg class="mouse" viewBox="0 0 60 32">
-                <ellipse cx="26" cy="20" rx="17" ry="10"/>
-                <circle cx="43" cy="16" r="8"/>
-                <circle cx="41" cy="8" r="4.5" class="ear"/>
-                <circle cx="47" cy="17" r="1.6" class="eye"/>
-                <path class="tail" d="M9 20Q0 18 3 10"/>
-                <path class="paw" d="M20 29v3M31 29v3"/>
+              <svg class="mouse" viewBox="0 0 82 44">
+                <path class="tail" d="M14 30 C2 30 2 18 9 13 C13 10 18 12 18 16"/>
+                <ellipse class="body" cx="40" cy="28" rx="23" ry="13"/>
+                <circle class="ear" cx="52" cy="12" r="8.5"/>
+                <circle class="ear-in" cx="52" cy="12" r="4.6"/>
+                <circle class="head" cx="61" cy="22" r="11.5"/>
+                <circle class="eye" cx="66" cy="19" r="1.9"/>
+                <circle class="nose" cx="72.4" cy="24.4" r="2.1"/>
+                <path class="whisker" d="M71 27 L79 30 M71.5 24 L80 23 M70.5 21.5 L78 18"/>
+                <path class="paw" d="M31 40 v3.2 M44 40 v3.2"/>
               </svg>
-              <svg class="trap" viewBox="0 0 70 40">
-                <rect class="base" x="4" y="26" width="62" height="10" rx="2"/>
-                <circle class="bait" cx="46" cy="22" r="3.4"/>
-                <path class="bar" d="M10 26 L10 4 L58 4"/>
+              <svg class="trap" viewBox="0 0 96 58">
+                <rect class="base" x="3" y="38" width="90" height="16" rx="3"/>
+                <path class="grain" d="M12 43h72M12 48h56"/>
+                <path class="spring" d="M14 38 a4.5 4.5 0 1 1 0 -9 a4.5 4.5 0 1 1 0 -9"/>
+                <path class="bar" d="M14 34 L14 6 L80 6 L80 34"/>
+                <g class="cheese">
+                  <path d="M58 38 L58 27 L79 27 Z"/>
+                  <circle class="hole" cx="66" cy="33" r="1.8"/>
+                  <circle class="hole" cx="72" cy="31" r="1.3"/>
+                </g>
               </svg>
+              <span class="snap-flash"></span>
             </div>
           </section>
           <section data-panel="2">
@@ -329,7 +339,8 @@
       </div>`,
       beats: [
         beat('Успеваем ли мы работать? Конечно. Составить рабочий индивидуальный план развития теперь занимает двадцать минут вместо трёх часов.', { shot: 0, sound: 'cash' }),
-        beat('Автоматизация процедуры оценка — обучение — перевод подняла соблюдение с тридцати шести целых семидесяти пяти сотых процента до девяноста. И никаких ручных отчётов.', { sound: 'cash' }),
+        beat('Автоматизация процедуры оценка — обучение — перевод подняла соблюдение с тридцати шести целых семидесяти пяти сотых процента до девяноста. И никаких ручных отчётов.',
+          { sound: 'cash', also: [{ sound: 'snap', at: 4.35 }] }),
         beat('Раньше курс переводил наставник, смотрел его вместе с сотрудником и рассказывал, о чём речь. Потом директор тратил драгоценные минуты на назначение нужного курса.', { shot: 1 }),
         beat('Теперь сотрудник сам выбирает язык внутри курса за три секунды. Мы заговорили на восьми языках. Потому что Воппер вкусный на любом языке.', { shot: 2, sound: 'cash', hold: 1.4 })
       ]
