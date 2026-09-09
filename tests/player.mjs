@@ -152,6 +152,7 @@ group("Музыкальный луп");
 group("Громкость музыки крутится на показе");
 {
   const before = window.KUSound.musicGain();
+  check("по умолчанию 60%", before === 60, `${before}%`);
   const louder = window.KUSound.nudgeMusic(.2);
   check("прибавляется", louder > before, `${before}% → ${louder}%`);
   const quieter = window.KUSound.nudgeMusic(-.4);
@@ -214,6 +215,13 @@ group("Портреты команды");
   check("портреты берутся из img/team", /img\/team\/01\.webp/.test(host.children[0].style.backgroundImage));
   window.KUTeam.play(host, false);
   check("кружки расставлены", Boolean(host.children[0].style.transform));
+  check("движению задан easing", Boolean(host.children[0].style.transitionTimingFunction));
+  const finale = window.KU_STORY[12];
+  check("под портретами белый фон",
+    [].concat(finale.backdrop).some(b => b.kind === "white" && b.at === 1));
+  check("портреты держатся на экране не меньше пяти секунд",
+    finale.beats[1].seconds - finale.beats[1].spoken >= 5,
+    `запас ${(finale.beats[1].seconds - finale.beats[1].spoken).toFixed(1)} с`);
   check("QR на месте", Boolean(frame.querySelector(".qr")));
 }
 

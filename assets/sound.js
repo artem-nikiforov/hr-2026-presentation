@@ -130,6 +130,7 @@
   const LEVEL = { bed: .40, epic: .44, confident: .40, warm: .42 };
   const DUCK = .38;
   const GAIN_KEY = "ku-music-gain";
+  const DEFAULT_GAIN = .6;               /* подобрано на репетиции */
 
   const music = {
     el: null,          /* что играет сейчас */
@@ -159,8 +160,8 @@
   function readGain() {
     try {
       const saved = parseFloat(localStorage.getItem(GAIN_KEY));
-      return Number.isFinite(saved) ? Math.min(2.5, Math.max(.1, saved)) : 1;
-    } catch (e) { return 1; }
+      return Number.isFinite(saved) ? Math.min(2.5, Math.max(.1, saved)) : DEFAULT_GAIN;
+    } catch (e) { return DEFAULT_GAIN; }
   }
   let gain = readGain();
 

@@ -63,34 +63,43 @@
       const faces = Array.from(host.children);
       const grid = gridPoints(faces.length, 6);
       const heart = heartPoints(faces.length);
-      const place = (points, spread) => faces.forEach((face, i) => {
+
+      const place = (points, spread, easing) => faces.forEach((face, i) => {
         const point = points[i];
+        if (easing) face.style.transitionTimingFunction = easing;
         face.style.transform =
-          `translate(-50%,-50%) translate(${(point.x * spread).toFixed(2)}cqw, ${(point.y * spread * 0.52).toFixed(2)}cqw)`;
+          `translate(-50%,-50%) translate(${(point.x * spread).toFixed(2)}cqw, ${(point.y * spread * 0.44).toFixed(2)}cqw)`;
       });
 
-      /* Спокойный режим: сразу сердце, без мельтешения. */
+      /* Спокойный режим: сразу ровная сетка, без мельтешения. */
       if (calm) {
-        host.classList.add("shown", "heart");
-        place(heart, 22);
+        host.classList.add("shown", "settled");
+        place(grid, 30);
         return;
       }
 
-      host.classList.remove("shown", "blink", "heart");
-      place(grid, 26);
-      faces.forEach((face, i) => { face.style.transitionDelay = (i * 22) + "ms"; });
-      later(() => host.classList.add("shown"), 40);                    /* появление сеткой */
+      host.classList.remove("shown", "blink", "heart", "settled");
+      place(grid, 30, "cubic-bezier(.2,.9,.3,1)");
+      faces.forEach((face, i) => { face.style.transitionDelay = (i * 26) + "ms"; });
+
+      later(() => host.classList.add("shown"), 40);                       /* появление сеткой */
       later(() => {
         faces.forEach(face => { face.style.transitionDelay = "0ms"; });
-        host.classList.add("blink");                                    /* перемигивание */
-      }, 1500);
-      later(() => place(shuffled(grid), 26), 2600);                     /* меняются местами */
-      later(() => place(shuffled(grid), 26), 3400);
+        host.classList.add("blink");                                       /* перемигивание */
+      }, 1600);
+      /* меняются местами — мягкий разгон и торможение */
+      later(() => place(shuffled(grid), 30, "cubic-bezier(.65,0,.35,1)"), 2700);
+      later(() => place(shuffled(grid), 30, "cubic-bezier(.65,0,.35,1)"), 3900);
       later(() => {
         host.classList.remove("blink");
-        host.classList.add("heart");                                    /* застывают сердцем */
-        place(heart, 22);
-      }, 4300);
+        host.classList.add("heart");                                       /* сердце с лёгким перелётом */
+        place(heart, 26, "cubic-bezier(.3,1.35,.4,1)");
+      }, 5100);
+      later(() => {
+        host.classList.remove("heart");
+        host.classList.add("settled");                                     /* и встают ровно */
+        place(grid, 30, "cubic-bezier(.35,.9,.3,1)");
+      }, 7400);
     },
 
     stop() { clear(); }
