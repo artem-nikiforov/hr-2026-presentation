@@ -63,11 +63,12 @@
       video.setAttribute("playsinline", "");
       video.preload = "auto";
       video.hidden = true;
-      video.src = item.file.replace(/\.jpe?g$/i, "") + ".mp4";
+      video.src = item.file.replace(/\.jpe?g$/i, "") + ".mp4" +
+        (root.KU_VERSION ? "?v=" + root.KU_VERSION : "");
 
       const img = document.createElement("img");
       img.alt = item.alt;
-      img.src = item.file;
+      img.src = item.file + (root.KU_VERSION ? "?v=" + root.KU_VERSION : "");
       img.onerror = () => {
         img.remove();
         figure.insertAdjacentHTML("beforeend",

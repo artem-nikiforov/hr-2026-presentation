@@ -15,6 +15,7 @@
                    bricks: .5, rocket: .5, sparkle: .45, cash: .6, mosaic: .5, warm: .55,
                    snap: .8 };
 
+  const stamp = () => (root.KU_VERSION ? "?v=" + root.KU_VERSION : "");
   let ctx = null, enabled = true;
   const files = new Map();                      /* имя → готовый Audio, если запись нашлась */
   const live = new Set();                       /* всё звучащее — чтобы разом оборвать */
@@ -22,7 +23,7 @@
 
   /* ── записи ──────────────────────────────────────────────────────── */
   NAMES.forEach(name => {
-    const probe = new Audio(`audio/sfx/${name}.mp3`);
+    const probe = new Audio(`audio/sfx/${name}.mp3${stamp()}`);
     probe.preload = "auto";
     probe.addEventListener("canplaythrough", () => files.set(name, probe), { once: true });
     probe.addEventListener("error", () => {}, { once: true });
@@ -144,7 +145,7 @@
   };
 
   TRACKS.forEach(name => {
-    const probe = new Audio(`audio/music/${name}.mp3`);
+    const probe = new Audio(`audio/music/${name}.mp3${stamp()}`);
     probe.preload = "auto";
     probe.addEventListener("canplaythrough", () => {
       music.ready.add(name);
@@ -182,7 +183,7 @@
   }
 
   function start(name, seconds) {
-    const el = new Audio(`audio/music/${name}.mp3`);
+    const el = new Audio(`audio/music/${name}.mp3${stamp()}`);
     el.loop = true;                       /* сквозной луп на весь показ */
     el.volume = 0;
     el.addEventListener("error", () => { if (music.el === el) { music.el = null; music.name = null; } }, { once: true });

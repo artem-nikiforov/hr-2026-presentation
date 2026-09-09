@@ -2,6 +2,7 @@
    Браузер не нужен: сверяются данные, разметка сцен и поведение таймлайна. */
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -51,6 +52,14 @@ group("Озвучка");
       const has = existsSync(join(rootDir, "audio/vo", beat.id + ".mp3"));
       if (!has) { waiting.push(`${beat.id} — «${beat.text.slice(0, 48)}…»`); continue; }
       check(`есть длительность ${beat.id}`, DURATIONS[beat.id] > 0);
+      /* Длительность обязана совпадать с файлом: заменили запись —
+         пересоберите durations.js командой node import_voice.mjs. */
+      const real = Number(execFileSync("ffprobe",
+        ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0",
+         join(rootDir, "audio/vo", beat.id + ".mp3")], { encoding: "utf8" }).trim());
+      check(`${beat.id}: длительность совпадает с записью`,
+        Math.abs(real - DURATIONS[beat.id]) < 0.06,
+        `в файле ${real.toFixed(2)} с, в durations.js ${DURATIONS[beat.id]} с`);
       check(`${beat.id}: показ не короче записи`, beat.seconds >= beat.spoken);
     }
   if (waiting.length) {

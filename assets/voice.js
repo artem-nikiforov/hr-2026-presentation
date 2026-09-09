@@ -42,7 +42,7 @@
 
     file(id, text) {
       return new Promise(resolve => {
-        const audio = new Audio("audio/vo/" + id + ".mp3");
+        const audio = new Audio("audio/vo/" + id + ".mp3" + (root.KU_VERSION ? "?v=" + root.KU_VERSION : ""));
         this.element = audio;                       /* регистрируем сразу, до play() */
         let closed = false;
         const finish = ok => {

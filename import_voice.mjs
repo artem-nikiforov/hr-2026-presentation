@@ -1,7 +1,7 @@
 /* Раскладывает записанную озвучку из «озвучка конфа/» в audio/vo/<id>.mp3
    и снимает реальные длительности в assets/durations.js.
    Запуск: node import_voice.mjs                                            */
-import { copyFileSync, existsSync, writeFileSync, mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, writeFileSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
 const SOURCE = "озвучка конфа";
@@ -49,13 +49,25 @@ const seconds = file =>
 
 mkdirSync("audio/vo", { recursive: true });
 
-const durations = {};
-let missing = 0, total = 0;
+/* 1. Раскладываем записи из папки студии — но только если файл в audio/vo
+      старше исходника. Положенную вручную запись не затираем. */
+let copied = 0, missing = 0;
 for (const [id, name] of Object.entries(MAP)) {
   const from = `${SOURCE}/${name}`;
-  if (!existsSync(from)) { console.error(`нет записи: ${name}`); missing++; continue; }
-  copyFileSync(from, `audio/vo/${id}.mp3`);
-  durations[id] = Number(seconds(from).toFixed(2));
+  const to = `audio/vo/${id}.mp3`;
+  if (!existsSync(from)) { console.error(`нет записи студии: ${name}`); missing++; continue; }
+  if (existsSync(to) && statSync(to).mtimeMs > statSync(from).mtimeMs) continue;   /* заменена вручную */
+  copyFileSync(from, to);
+  copied++;
+}
+
+/* 2. Длительности снимаем с того, что реально лежит в audio/vo, — иначе
+      заменённая вручную запись играет дольше отведённого ей времени. */
+const durations = {};
+let total = 0;
+for (const file of readdirSync("audio/vo").filter(name => name.endsWith(".mp3")).sort()) {
+  const id = file.replace(/\.mp3$/, "");
+  durations[id] = Number(seconds(`audio/vo/${file}`).toFixed(2));
   total += durations[id];
 }
 
@@ -70,5 +82,5 @@ writeFileSync("assets/durations.js",
 })(typeof globalThis !== "undefined" ? globalThis : this);
 `);
 
-console.log(`реплик: ${Object.keys(durations).length}, не найдено: ${missing}`);
+console.log(`записей в audio/vo: ${Object.keys(durations).length}, скопировано из студии: ${copied}, не найдено: ${missing}`);
 console.log(`хронометраж озвучки: ${Math.floor(total / 60)}:${String(Math.round(total % 60)).padStart(2, "0")}`);
