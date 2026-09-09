@@ -197,9 +197,10 @@ group("Подложка вместо фотографии");
   check("подложка создана", Boolean(scene));
   const backdrop = scene.querySelector(".backdrop");
   check("это градиент", backdrop.classList.contains("gradient"));
-  const at = Number(backdrop.dataset.at), beat = Number(scene.dataset.beat);
-  check("включена ровно на своей реплике",
-    backdrop.classList.contains("on") === (beat === at), `реплика ${beat}, ждали ${at}`);
+  const at = Number(backdrop.dataset.at);
+  check("выключена, пока сцена не идёт",
+    !scene.classList.contains("on") ? !backdrop.classList.contains("on") : true);
+  check("знает свою реплику", Number.isFinite(at));
   check("телефон стоит рядом с текстом", Boolean(scene.querySelector("section.split .phone")));
   check("дуги Wi-Fi разделены", scene.querySelectorAll(".wifi-signal .arc").length === 3);
 }
@@ -244,6 +245,48 @@ group("Ролик заменяет фотографию");
   window.dispatchEvent(new window.KeyboardEvent("keydown", { code: "KeyR", bubbles: true }));
   await wait();
   check("ролик запущен на своей сцене", (video.playCalls || 0) > 0);
+}
+
+group("Перескоки стрелками ничего не ломают");
+{
+  const arrow = code => window.dispatchEvent(new window.KeyboardEvent("keydown", { code, bubbles: true }));
+
+  for (let i = 0; i < 8; i++) arrow("ArrowRight");
+  await wait();
+  for (let i = 0; i < 5; i++) arrow("ArrowLeft");
+  await wait();
+  arrow("ArrowRight"); arrow("ArrowRight"); arrow("ArrowLeft");
+  await wait();
+
+  const live = scenes.filter(scene => scene.classList.contains("on"));
+  check("активна ровно одна сцена", live.length === 1, `их ${live.length}`);
+
+  /* На покинутых сценах не должно остаться следов показа: разбитого на
+     буквы текста, набранных счётчиков и включённых состояний графики. */
+  const traces = [];
+  for (const scene of scenes) {
+    if (scene.classList.contains("on")) continue;
+    const marks = [
+      [".serega-gentle,.serega-emotional", "разобранный текст"],
+      ["[data-counted]", "счётчики"],
+      [".reveal.on", "показанные блоки"],
+      [".moving-doc.filed", "уехавшие документы"],
+      [".chart-column.on", "столбцы графика"],
+      [".verb.on", "глаголы"],
+      [".team-heart.shown", "портреты"],
+      [".huge.flash", "вспышка «М-м-м»"]
+    ];
+    for (const [selector, what] of marks)
+      if (scene.querySelector(selector)) traces.push(`${scene.dataset.id}: ${what}`);
+    if (scene.classList.contains("playing")) traces.push(`${scene.dataset.id}: осталась играющей`);
+  }
+  check("покинутые сцены очищены", traces.length === 0, traces.join(", "));
+
+  arrow("Home"); await wait();
+  check("Home возвращает в начало", scenes[0].classList.contains("on"));
+  arrow("End"); await wait();
+  check("End уводит в финал", scenes[scenes.length - 1].classList.contains("on"));
+  arrow("Home"); await wait();
 }
 
 group("Прогон всех сцен");

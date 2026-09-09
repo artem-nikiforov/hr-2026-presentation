@@ -118,7 +118,10 @@
 
     const avatar = null;   /* заглушки видеоаватаров сняты с показа */
     frame.append(el);
-    return { el, cam, figures: Array.from(cam.children), avatar, shot: -1 };
+    return {
+      el, cam, figures: Array.from(cam.children), avatar, shot: -1,
+      layerHTML: el.querySelector(".layer").outerHTML   /* эталон для отката */
+    };
   });
 
   /* ── то, что нужно уметь останавливать ──────────────────────────── */
@@ -244,25 +247,29 @@
       `translate3d(${lerp(0, x, p).toFixed(3)}%, ${lerp(0, y, p).toFixed(3)}%, 0) scale(${lerp(1.015, scale, p).toFixed(4)})`;
   }
 
+  /* ── откат сцены в исходный вид ─────────────────────────────────── */
+  function reset(view) {
+    view.el.classList.remove("on", "playing", "prologue");
+    view.figures.forEach(figure => {
+      const video = figure.querySelector("video");
+      if (video) { try { video.pause(); video.currentTime = 0; } catch (e) {} }
+      figure.classList.remove("on");
+    });
+    view.shot = -1;
+    if (root.KUTeam) root.KUTeam.stop();
+    if (root.KUConfetti) root.KUConfetti.clear();
+    /* Разбитый на буквы текст, набранные счётчики и классы подсказок
+       восстановить поштучно нельзя — возвращаем слой целиком. */
+    const layer = view.el.querySelector(".layer");
+    if (layer) layer.outerHTML = view.layerHTML;
+    const backdrop = view.el.querySelector(".backdrop");
+    if (backdrop) backdrop.classList.remove("on");
+  }
+
   /* ── смена сцены ────────────────────────────────────────────────── */
   function enterScene(index) {
     clearScene();
-    if (current >= 0 && current !== index) {
-      const past = views[current];
-      past.el.classList.remove("on", "playing");
-      past.figures.forEach(figure => {
-        const video = figure.querySelector("video");
-        if (video) { try { video.pause(); video.currentTime = 0; } catch (e) {} }
-      });
-      past.shot = -1;
-      if (past.avatar) past.avatar.classList.remove("on");
-      past.el.querySelectorAll("[data-revealed]").forEach(node => delete node.dataset.revealed);
-      past.el.querySelectorAll("[data-counted]").forEach(node => delete node.dataset.counted);
-      past.el.querySelectorAll(".serega-gentle,.serega-emotional").forEach(node => {
-        node.textContent = node.getAttribute("aria-label") || node.textContent;
-        node.classList.remove("serega-gentle", "serega-emotional");
-      });
-    }
+    if (current >= 0 && current !== index) reset(views[current]);
     current = index;
     const view = views[index];
     /* Музыка меняется только там, где это указано в сценарии. */
@@ -291,6 +298,7 @@
     if (type === "beat") {
       const first = current !== tl.index;
       if (first) enterScene(tl.index);
+      else if (tl.beat === 0) { reset(views[tl.index]); enterScene(tl.index); }
       else { timers.forEach(clearTimeout); timers = []; sound.stop(); voice.cancel(); }
 
       const beat = tl.current;
@@ -409,9 +417,17 @@
     if (event.target.tagName === "BUTTON" && (event.code === "Space" || event.code === "Enter")) return;
     const key = event.code;
     /* Показ идёт сам. Клавиши нужны только на репетиции — кнопок для них нет. */
+    /* Перескок по сценам: показ продолжает идти сам с новой точки. */
+    const jump = to => {
+      sound.warm();
+      timeline.setAuto(true);
+      timeline.go(Math.max(0, Math.min(SCENES.length - 1, to)));
+    };
     if (key === "Space") { event.preventDefault(); bPlay.click(); }
-    else if (key === "ArrowRight") { event.preventDefault(); sound.warm(); timeline.go(timeline.index + 1); }
-    else if (key === "ArrowLeft") { event.preventDefault(); sound.warm(); timeline.go(timeline.index - 1); }
+    else if (key === "ArrowRight") { event.preventDefault(); jump(timeline.index + 1); }
+    else if (key === "ArrowLeft") { event.preventDefault(); jump(timeline.index - 1); }
+    else if (key === "Home") { event.preventDefault(); jump(0); }
+    else if (key === "End") { event.preventDefault(); jump(SCENES.length - 1); }
     else if (key === "KeyM") {
       const playing = root.KUMusic.el && !root.KUMusic.el.paused;
       sound.music(playing ? { pause: true } : { resume: true });
