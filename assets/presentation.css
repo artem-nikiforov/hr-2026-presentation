@@ -559,6 +559,24 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
   padding:1cqh 2cqw;opacity:0;transition:opacity .25s ease;pointer-events:none}
 .toast.on{opacity:1}
 
+/* ═══ Стартовый экран ════════════════════════════════════════════ */
+.start{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6cqh;
+  background:radial-gradient(70% 70% at 50% 45%,rgba(16,11,7,.55),rgba(16,11,7,.88));
+  transition:opacity .6s ease,visibility .6s}
+.start.gone{opacity:0;visibility:hidden;pointer-events:none}
+.start-logo{width:38cqw;max-width:64cqh;filter:drop-shadow(0 1.6cqh 3.4cqh rgba(0,0,0,.55))}
+.start-btn{font-family:var(--ku-font-display);font-size:5.4cqh;line-height:1;
+  color:var(--ku-brand-on);background:var(--ku-brand);border:0;border-radius:999px;
+  padding:2.4cqh 7cqw;cursor:pointer;letter-spacing:.01em;
+  box-shadow:0 1.4cqh 3cqh rgba(0,0,0,.45);
+  transition:transform .18s ease,background .18s ease}
+.start-btn:hover{background:var(--ku-brand-strong);transform:translateY(-.5cqh)}
+.start-btn:active{transform:translateY(0)}
+.start-btn:focus-visible{outline:.5cqh solid var(--ku__cream-100);outline-offset:.6cqh}
+/* пока показ не начался, пульт не нужен */
+body:not(.started) .deck{opacity:0;pointer-events:none}
+
 /* ═══ Полоса хронометража ════════════════════════════════════════ */
 .progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.08);z-index:5}
 .progress i{display:block;height:100%;width:0;background:var(--ku-brand)}

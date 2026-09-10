@@ -6,7 +6,7 @@
   s01_beat1: 3.16,
   s01_beat2: 2.59,
   s02_beat1: 5.41,
-  s02_beat2: 3.4,
+  s02_beat2: 3.24,
   s02_beat3: 8.2,
   s03_beat1: 2.51,
   s03_beat2: 3.16,

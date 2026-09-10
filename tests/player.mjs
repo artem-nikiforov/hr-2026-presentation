@@ -99,13 +99,29 @@ check("в пульте только запуск и полный экран",
 check("титров нет", document.querySelectorAll(".vo").length === 0);
 check("ручного переключения сцен нет", !document.getElementById("rail"));
 
+group("Стартовый экран");
+{
+  const start = document.getElementById("start");
+  check("заставка есть", Boolean(start));
+  check("логотип на месте", /logo\.webp/.test(start.querySelector(".start-logo").src));
+  check("кнопка крупная и одна", start.querySelectorAll("button").length === 1);
+  check("до запуска заставка видна", !start.classList.contains("gone"));
+  check("пульт до запуска скрыт", !document.body.classList.contains("started"));
+}
+
 group("Показ идёт сам");
-click("play");
+click("start-btn");
+await wait();
+{
+  const start = document.getElementById("start");
+  check("после нажатия заставка ушла", start.classList.contains("gone"));
+  check("пульт показался", document.body.classList.contains("started"));
+}
 await wait();
 check("пошла первая реплика", spoken[0] === "s01_beat1.mp3", spoken[0]);
+check("кнопка пульта переключилась в паузу", document.getElementById("play").textContent === "Пауза");
 check("первый блок раскрыт", scenes[0].querySelector('[data-reveal="0"]').classList.contains("on"));
 check("второй блок ещё закрыт", !scenes[0].querySelector('[data-reveal="1"]').classList.contains("on"));
-check("кнопка стала паузой", document.getElementById("play").textContent === "Пауза");
 
 /* Реплика заканчивается — показ переходит дальше сам, без нажатий. */
 for (let i = 0; i < 400; i++) frames.splice(0).forEach(fn => fn(i * 100));

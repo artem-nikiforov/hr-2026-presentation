@@ -18,6 +18,7 @@
   const frame = $("frame"), pos = $("pos"), deck = $("deck");
   const progress = $("progress").firstElementChild;
   const bPlay = $("play"), bFull = $("full"), toast = $("toast");
+  const startScreen = $("start"), startBtn = $("start-btn");
 
   let toastTimer = null;
   function say(text) {
@@ -400,9 +401,18 @@
     later(flash, Math.max(600, ((video.duration || 1.4) - 0.12) * 1000));
   }
 
+  /* Заставка уходит с первым запуском и больше не возвращается. */
+  function begin() {
+    startScreen.classList.add("gone");
+    document.body.classList.add("started");
+    sound.warm();
+    prologue();
+  }
+  startBtn.addEventListener("click", begin);
+
   bPlay.addEventListener("click", () => {
     sound.warm();
-    if (timeline.phase === "ready") return prologue();
+    if (timeline.phase === "ready") return begin();
     if (timeline.done) { sound.musicReset(); return timeline.go(0); }
     timeline.toggle();
   });
