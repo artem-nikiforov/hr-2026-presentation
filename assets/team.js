@@ -76,13 +76,13 @@
         const point = points[i];
         if (easing) face.style.transitionTimingFunction = easing;
         face.style.transform =
-          `translate(-50%,-50%) translate(${(point.x * spread + offset).toFixed(2)}cqw, ${(point.y * spread * 0.44).toFixed(2)}cqw)`;
+          `translate(-50%,-50%) translate(${(point.x * spread + offset).toFixed(2)}cqw, ${(point.y * spread * 0.62).toFixed(2)}cqw)`;
       });
 
       /* Спокойный режим: сразу ровная сетка, без мельтешения. */
       if (calm) {
         host.classList.add("shown", "settled");
-        place(grid, 26, null, 11);
+        place(grid, 24, null, 16);
         return;
       }
 
@@ -106,7 +106,7 @@
       later(() => {
         host.classList.remove("heart");
         host.classList.add("settled");                                     /* и встают ровно */
-        place(grid, 26, "cubic-bezier(.35,.9,.3,1)", 11);
+        place(grid, 24, "cubic-bezier(.35,.9,.3,1)", 16);
       }, 7400);
     },
 

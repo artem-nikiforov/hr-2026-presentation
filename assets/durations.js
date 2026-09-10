@@ -9,7 +9,7 @@
   s02_beat2: 3.4,
   s02_beat3: 8.2,
   s03_beat1: 2.51,
-  s03_beat2: 2.43,
+  s03_beat2: 3.16,
   s03_beat3: 4.91,
   s04_beat1: 7.31,
   s04_beat2: 3.97,

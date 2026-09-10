@@ -415,13 +415,14 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 .chain p{font-size:2.7cqh;color:var(--ku-text-soft);line-height:1.3}
 
 /* ═══ Генеральный директор выходит на свою реплику ═══════════════ */
-.medovy{position:absolute;right:2cqw;bottom:0;height:78cqh;width:auto;z-index:3;
-  transform:translateX(46%) translateY(4cqh);opacity:0;
-  filter:drop-shadow(-1.4cqh 1cqh 2.6cqh rgba(0,0,0,.45));
+.medovy{position:absolute;left:2cqw;bottom:0;height:78cqh;width:auto;z-index:3;
+  transform:translateX(-46%) translateY(4cqh);opacity:0;
+  filter:drop-shadow(1.4cqh 1cqh 2.6cqh rgba(0,0,0,.45));
   transition:transform .85s cubic-bezier(.25,1.15,.4,1),opacity .5s ease}
 .medovy.on{transform:none;opacity:1}
-/* пока он говорит, текст уступает ему правую часть кадра */
-.scene:has(.medovy.on) .results-layout{padding-right:40cqw}
+/* пока он говорит, реплика уходит вправо от него */
+.scene:has(.medovy.on) .results-layout{padding-left:42cqw;padding-right:5cqw}
+.ceo-line{align-items:flex-start;text-align:left}
 .ceo-line .title{max-width:18ch}
 
 /* ═══ Мышь бежит по низу кадра, мышеловка захлопывается ══════════ */
@@ -487,7 +488,7 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 }
 
 /* ═══ s13 · портреты команды складываются в сердце ═══════════════ */
-.team-heart{position:relative;width:100%;height:62cqh}
+.team-heart{position:relative;width:100%;height:68cqh}
 .team-heart .face{position:absolute;left:50%;top:50%;width:13cqh;height:13cqh;border-radius:50%;
   background-size:cover;background-position:center;opacity:0;
   border:.4cqh solid rgba(255,255,255,.9);
@@ -505,7 +506,7 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 .team-heart.settled .face{width:11.5cqh;height:11.5cqh;border-color:rgba(255,255,255,.95);
   box-shadow:0 .8cqh 2.2cqh rgba(80,35,20,.22)}
 /* Руководитель — крупным планом слева от сетки */
-.lead-face{position:absolute;left:2cqw;top:50%;width:30cqh;height:30cqh;border-radius:50%;
+.lead-face{position:absolute;left:1cqw;top:50%;width:28cqh;height:28cqh;border-radius:50%;
   background-size:cover;background-position:center;
   border:.5cqh solid var(--ku-brand);
   box-shadow:0 1.4cqh 3.4cqh rgba(80,35,20,.3);
@@ -525,7 +526,7 @@ section.split{display:grid;grid-template-columns:1fr auto;gap:5cqw;align-items:c
 
 /* ═══ s13 · мозаика команды ══════════════════════════════════════ */
 .finale-copy{min-height:48cqh;align-items:center;text-align:center}
-.finale-copy section{align-items:center;text-align:center}
+.finale-copy section{align-items:center;text-align:center;width:100%}
 .finale-line{font-size:11.4cqh;line-height:1.02;max-width:26ch;margin-inline:auto;text-align:center}
 .mosaic{display:grid;grid-template-columns:repeat(12,1fr);gap:.4cqw;width:52cqw;margin-top:1cqh}
 .mosaic i{aspect-ratio:1;border-radius:.2cqw;background:var(--ku-surface-2);
