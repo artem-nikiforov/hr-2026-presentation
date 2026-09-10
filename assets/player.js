@@ -77,13 +77,15 @@
            <p class="f">${item.file} · промт в assets/scenes.js</p></div>`);
       };
 
+      /* Подмену вешаем на метаданные: они приходят и при экономной
+         предзагрузке, тогда как loadeddata ждёт первого кадра и при
+         preload="metadata" может не наступить вовсе. */
       video.addEventListener("loadedmetadata", () => {
         /* Ролик заметно короче своего места в показе — пускаем по кругу,
            иначе он один раз проигрывается и замирает на последнем кадре. */
         const shown = shotSeconds(scene, index);
         video.loop = video.duration > 0 && shown > 0 && video.duration < shown * 0.6;
-      }, { once: true });
-      video.addEventListener("loadeddata", () => {
+
         figure.classList.add("has-video");
         video.hidden = false;
         img.remove();
@@ -272,12 +274,12 @@
     view.el.querySelectorAll(".backdrop").forEach(node => node.classList.remove("on"));
   }
 
-  /* Заранее подтягиваем ролики следующей сцены — к своему выходу они
-     уже готовы, но при открытии страницы сеть не забита. */
-  function preloadNext(index) {
-    const next = views[index + 1];
-    if (!next) return;
-    next.figures.forEach(figure => {
+  /* Ролики грузятся не все разом: полностью тянем текущую сцену и
+     следующую, остальные ждут своей очереди. */
+  function warmVideos(index) {
+    const view = views[index];
+    if (!view) return;
+    view.figures.forEach(figure => {
       const video = figure.querySelector("video");
       if (video && video.preload !== "auto") { video.preload = "auto"; video.load(); }
     });
@@ -297,7 +299,8 @@
     view.el.classList.remove("playing");
     void view.el.offsetWidth;
     requestAnimationFrame(() => view.el.classList.add("playing"));
-    later(() => preloadNext(index), 900);
+    warmVideos(index);                       /* эта сцена нужна прямо сейчас */
+    later(() => warmVideos(index + 1), 900); /* следующая — с запасом */
 
     /* Портреты команды: секвенция стартует, когда доходит до своей реплики. */
     const team = view.el.querySelector("[data-team]");
@@ -488,6 +491,8 @@
   /* ── исходное состояние: первый кадр виден, звук и таймлайн молчат ── */
   views[0].el.classList.add("on");
   views[0].figures[0].classList.add("on");
+  warmVideos(0);
+  warmVideos(1);
   camera(0, 0);
   paint(timeline);
   wake();

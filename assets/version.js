@@ -3,5 +3,5 @@
    браузер не отдавал закэшированные старые файлы. */
 (function (root) {
   "use strict";
-  root.KU_VERSION = "1789021352";
+  root.KU_VERSION = "1789021877";
 })(typeof globalThis !== "undefined" ? globalThis : this);
