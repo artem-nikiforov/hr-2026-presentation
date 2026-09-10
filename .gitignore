@@ -7,3 +7,14 @@ __pycache__/
 .env.*
 !.env.example
 *.log
+
+# Исходники, которые уже перенесены в проект в рабочем виде
+kitchen.mov
+*.mov
+logo-main.png
+Medovy-char.png
+Medovy-Voice.mp3
+QR.png
+фотки КУ.pptx
+фото_сотрудников_webp/
+deslop/

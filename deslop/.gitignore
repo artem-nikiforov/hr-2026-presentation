@@ -1,8 +1,0 @@
-.DS_Store
-node_modules/
-.pnpm-store/
-**/.vite/
-mini-app/.claude/
-mini-app/skills-lock.json
-mini-app/public/fonts/
-mini-app/scripts/fonts/

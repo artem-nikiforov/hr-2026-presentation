@@ -62,7 +62,7 @@
       video.muted = true;
       video.playsInline = true;
       video.setAttribute("playsinline", "");
-      video.preload = "auto";
+      video.preload = "metadata";
       video.hidden = true;
       video.src = item.file.replace(/\.jpe?g$/i, "") + ".mp4" +
         (root.KU_VERSION ? "?v=" + root.KU_VERSION : "");
@@ -93,6 +93,11 @@
         if (stub) stub.remove();
       }, { once: true });
       video.addEventListener("error", () => video.remove(), { once: true });
+      /* После последнего кадра ролика картинка не должна застывать
+         намертво: пускаем медленный наезд. */
+      video.addEventListener("ended", () => {
+        if (!video.loop) figure.classList.add("frozen");
+      });
 
       figure.append(video, img);
       cam.append(figure);
@@ -212,9 +217,9 @@
       figure.classList.toggle("on", active);
       if (!figure.classList.contains("has-video")) return;
       const video = figure.querySelector("video");
-      if (!active) { try { video.pause(); } catch (e) {} return; }
+      if (!active) { try { video.pause(); } catch (e) {} figure.classList.remove("frozen"); return; }
       if (calm) return;                       /* спокойный режим: первый кадр без движения */
-      if (changed) video.currentTime = 0;
+      if (changed) { video.currentTime = 0; figure.classList.remove("frozen"); }
       startVideo(video);                      /* автозапуск без звука браузеры разрешают */
     });
 
@@ -255,7 +260,7 @@
     view.figures.forEach(figure => {
       const video = figure.querySelector("video");
       if (video) { try { video.pause(); video.currentTime = 0; } catch (e) {} }
-      figure.classList.remove("on");
+      figure.classList.remove("on", "frozen");
     });
     view.shot = -1;
     if (root.KUTeam) root.KUTeam.stop();
@@ -265,6 +270,17 @@
     const layer = view.el.querySelector(".layer");
     if (layer) layer.outerHTML = view.layerHTML;
     view.el.querySelectorAll(".backdrop").forEach(node => node.classList.remove("on"));
+  }
+
+  /* Заранее подтягиваем ролики следующей сцены — к своему выходу они
+     уже готовы, но при открытии страницы сеть не забита. */
+  function preloadNext(index) {
+    const next = views[index + 1];
+    if (!next) return;
+    next.figures.forEach(figure => {
+      const video = figure.querySelector("video");
+      if (video && video.preload !== "auto") { video.preload = "auto"; video.load(); }
+    });
   }
 
   /* ── смена сцены ────────────────────────────────────────────────── */
@@ -281,6 +297,7 @@
     view.el.classList.remove("playing");
     void view.el.offsetWidth;
     requestAnimationFrame(() => view.el.classList.add("playing"));
+    later(() => preloadNext(index), 900);
 
     /* Портреты команды: секвенция стартует, когда доходит до своей реплики. */
     const team = view.el.querySelector("[data-team]");
