@@ -311,7 +311,7 @@
 
       const token = tl.token;
       sound.duck(true);
-      voice.play(beat.id, beat.text).then(() => {
+      voice.play(beat.id, beat.text, beat.gain).then(() => {
         sound.duck(false);
         tl.finishVoice(token);
       });

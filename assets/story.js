@@ -359,11 +359,7 @@
       music: { track: 'warm' },         /* «более тёплая, вдохновляющая, но с драйвом» */
       backdrop: [{ kind: 'white', at: 1 }, { kind: 'gradient', at: 3 }],
       html: `<div class="layer finale-copy">
-        <section data-panel="0">
-          <p class="kicker">Наша кухня</p>
-          <h2 class="title sm">Платформа для пилотов</h2>
-          <p class="thesis">С помощью ИИ, без миллионных бюджетов<br>проверяем механики обучения:<br><em>тренажёры, игры, чат-боты</em></p>
-        </section>
+        <section data-panel="0"></section>
         <section data-panel="1">
           <div class="team-heart" data-team></div>
         </section>
@@ -379,7 +375,7 @@
       </div>`,
       beats: [
         beat('А теперь идёмте, покажу вам, как работает наша кухня! Мы создали платформу для тестирования и пилотирования новых идей. С помощью ИИ, без миллионных бюджетов мы запускаем и проверяем разные механики обучения — тренажёры, игры, чат-боты.',
-          { id: 's13_kitchen', plan: 7, shot: 0, sound: 'sparkle', hold: 0 }),
+          { id: 's13_kitchen', plan: 7, shot: 0, sound: 'sparkle', hold: 12.4 }),
         beat('Как-то так… Потому что мы создаём развивающую среду для роста талантов.',
           { id: 's13_beat1', shot: 1, sound: 'mosaic', hold: 8.2 }),
         beat('Чтобы наши гости получали своё беззаботное удовольствие, а Бургер Кинг оставался самой любимой сетью ресторанов в России.',

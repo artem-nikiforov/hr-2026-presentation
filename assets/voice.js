@@ -27,10 +27,10 @@
        репетиции, а не хронометраж — реальное время даст MP3. */
     estimate(text) { return Math.max(1500, text.split(/\s+/).length * 380); }
 
-    play(id, text) {
+    play(id, text, gain) {
       this.cancel();
       if (!this.enabled) return this.wait(this.estimate(text));
-      return this.file(id, text).then(ok => ok ? undefined : this.speak(text));
+      return this.file(id, text, gain).then(ok => ok ? undefined : this.speak(text));
     }
 
     wait(ms) {
@@ -40,9 +40,10 @@
       });
     }
 
-    file(id, text) {
+    file(id, text, gain) {
       return new Promise(resolve => {
         const audio = new Audio("audio/vo/" + id + ".mp3" + (root.KU_VERSION ? "?v=" + root.KU_VERSION : ""));
+        audio.volume = Math.min(1, Math.max(0, gain === undefined ? 1 : gain));
         this.element = audio;                       /* регистрируем сразу, до play() */
         let closed = false;
         const finish = ok => {
